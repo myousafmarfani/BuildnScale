@@ -1,0 +1,309 @@
+---
+title: "TypeScript Generics: From Basics to Advanced Patterns"
+excerpt: "Master TypeScript generics with practical examples — covering constraints, conditional types, mapped types, infer, and real-world utility patterns used in production codebases."
+date: "2026-02-18"
+readTime: "14 min read"
+tags: ["TypeScript", "JavaScript", "Software Engineering"]
+image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80"
+heroSectionPost: false
+author:
+  name: "M. Yousuf"
+  avatar: "/avatar.jpg"
+---
+
+## Why Generics Exist
+
+The whole point of a type system is to catch errors before runtime. But a type system that forces you to write separate, identical functions for every possible type defeats the purpose — you end up with `numberIdentity`, `stringIdentity`, `booleanIdentity`, and twice the surface area for bugs.
+
+Generics solve this by letting you write code that works with *any* type while still being fully type-safe. They are the most powerful, and most misunderstood, feature in TypeScript.
+
+## The Basics
+
+A generic is a type variable — a placeholder for a type that will be resolved later.
+
+```typescript
+// Without generics — loses type information
+function identity(value: any): any {
+  return value;
+}
+
+// With generics — type is preserved
+function identity<T>(value: T): T {
+  return value;
+}
+
+const n = identity(42);        // n: number
+const s = identity("hello");   // s: string
+```
+
+TypeScript infers `T` from the argument. You can also be explicit: `identity<number>(42)`.
+
+## Generic Interfaces and Classes
+
+```typescript
+interface Repository<T> {
+  findById(id: string): Promise<T | null>;
+  findAll(): Promise<T[]>;
+  create(entity: Omit<T, 'id'>): Promise<T>;
+  update(id: string, partial: Partial<T>): Promise<T>;
+  delete(id: string): Promise<void>;
+}
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: Date;
+}
+
+class UserRepository implements Repository<User> {
+  async findById(id: string): Promise<User | null> { /* ... */ }
+  async findAll(): Promise<User[]> { /* ... */ }
+  async create(entity: Omit<User, 'id'>): Promise<User> { /* ... */ }
+  async update(id: string, partial: Partial<User>): Promise<User> { /* ... */ }
+  async delete(id: string): Promise<void> { /* ... */ }
+}
+```
+
+This pattern gives you a type-safe contract for all data access code. Swap the backing store (Prisma, Drizzle, raw SQL) without changing any calling code.
+
+## Constraints with `extends`
+
+Unconstrained generics can be too permissive. Constraints restrict what types are accepted:
+
+```typescript
+// T must have a 'length' property
+function longest<T extends { length: number }>(a: T, b: T): T {
+  return a.length >= b.length ? a : b;
+}
+
+longest("hello", "world");         // ✅ string has length
+longest([1, 2, 3], [4, 5]);        // ✅ array has length
+longest({ length: 5 }, { length: 2 }); // ✅ object with length
+
+// longest(42, 99);  // ❌ number has no 'length'
+```
+
+### Constraining Keys with `keyof`
+
+```typescript
+function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
+  return obj[key];
+}
+
+const user = { id: "1", name: "Yousuf", age: 22 };
+
+getProperty(user, "name");   // string ✅
+getProperty(user, "age");    // number ✅
+// getProperty(user, "bio");  // ❌ 'bio' is not a key of typeof user
+```
+
+## Conditional Types
+
+Conditional types let the output type depend on an input type:
+
+```typescript
+type IsArray<T> = T extends any[] ? true : false;
+
+type A = IsArray<number[]>;  // true
+type B = IsArray<string>;    // false
+```
+
+### Practical Example: Unwrapping Promises
+
+```typescript
+type Awaited<T> = T extends Promise<infer U> ? Awaited<U> : T;
+
+type A = Awaited<Promise<string>>;          // string
+type B = Awaited<Promise<Promise<number>>>; // number
+type C = Awaited<boolean>;                 // boolean
+```
+
+This is actually how TypeScript's built-in `Awaited<T>` utility type works.
+
+## The `infer` Keyword
+
+`infer` lets you extract and name a type from within a conditional type:
+
+```typescript
+// Extract the return type of a function
+type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
+
+type Fn = (a: number, b: string) => boolean;
+type R = ReturnType<Fn>; // boolean
+
+// Extract first element type of a tuple
+type Head<T extends any[]> = T extends [infer H, ...any[]] ? H : never;
+
+type H = Head<[string, number, boolean]>; // string
+
+// Extract parameter types
+type Parameters<T> = T extends (...args: infer P) => any ? P : never;
+
+type P = Parameters<(x: number, y: string) => void>; // [number, string]
+```
+
+## Mapped Types
+
+Mapped types transform every property in a type programmatically:
+
+```typescript
+// Make all properties optional (built-in Partial<T>)
+type MyPartial<T> = {
+  [K in keyof T]?: T[K];
+};
+
+// Make all properties readonly
+type MyReadonly<T> = {
+  readonly [K in keyof T]: T[K];
+};
+
+// Nullify all properties
+type Nullable<T> = {
+  [K in keyof T]: T[K] | null;
+};
+
+// Pick only specific properties
+type MyPick<T, K extends keyof T> = {
+  [P in K]: T[P];
+};
+```
+
+### Remapping Keys with `as`
+
+TypeScript 4.1+ allows remapping keys in mapped types:
+
+```typescript
+// Convert all property names to uppercase
+type UppercaseKeys<T> = {
+  [K in keyof T as Uppercase<string & K>]: T[K];
+};
+
+type Config = { apiUrl: string; timeout: number };
+type UpperConfig = UppercaseKeys<Config>;
+// { APIURL: string; TIMEOUT: number }
+
+// Generate getter names
+type Getters<T> = {
+  [K in keyof T as `get${Capitalize<string & K>}`]: () => T[K];
+};
+
+type UserGetters = Getters<{ name: string; age: number }>;
+// { getName: () => string; getAge: () => number }
+```
+
+## Template Literal Types
+
+```typescript
+type EventName<T extends string> = `on${Capitalize<T>}`;
+type ClickEvent = EventName<"click">; // "onClick"
+
+type DeepPath<T, Prefix extends string = ""> = {
+  [K in keyof T]: T[K] extends object
+    ? DeepPath<T[K], `${Prefix}${string & K}.`>
+    : `${Prefix}${string & K}`;
+}[keyof T];
+
+type Config = {
+  db: { host: string; port: number };
+  api: { url: string };
+};
+
+type ConfigPath = DeepPath<Config>;
+// "db.host" | "db.port" | "api.url"
+```
+
+## Real-World Patterns
+
+### Type-Safe Event Emitter
+
+```typescript
+type EventMap = {
+  login: { userId: string; timestamp: Date };
+  logout: { userId: string };
+  error: { code: number; message: string };
+};
+
+class TypedEmitter<Events extends Record<string, unknown>> {
+  private listeners: {
+    [K in keyof Events]?: Array<(data: Events[K]) => void>;
+  } = {};
+
+  on<K extends keyof Events>(
+    event: K,
+    listener: (data: Events[K]) => void
+  ): this {
+    (this.listeners[event] ??= []).push(listener);
+    return this;
+  }
+
+  emit<K extends keyof Events>(event: K, data: Events[K]): void {
+    this.listeners[event]?.forEach((l) => l(data));
+  }
+}
+
+const emitter = new TypedEmitter<EventMap>();
+
+// ✅ TypeScript knows the exact shape of each event's data
+emitter.on("login", ({ userId, timestamp }) => {
+  console.log(`User ${userId} logged in at ${timestamp}`);
+});
+
+emitter.emit("login", { userId: "u_123", timestamp: new Date() });
+// emitter.emit("login", { userId: "u_123" }); // ❌ missing 'timestamp'
+```
+
+### Validated API Response Parser
+
+```typescript
+type ApiResponse<T> =
+  | { success: true; data: T }
+  | { success: false; error: string };
+
+async function fetchJson<T>(
+  url: string,
+  validator: (data: unknown) => asserts data is T
+): Promise<ApiResponse<T>> {
+  try {
+    const res = await fetch(url);
+    const json = await res.json();
+    validator(json);
+    return { success: true, data: json };
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Unknown error",
+    };
+  }
+}
+```
+
+### Deep Readonly
+
+```typescript
+type DeepReadonly<T> = T extends (infer U)[]
+  ? ReadonlyArray<DeepReadonly<U>>
+  : T extends object
+  ? { readonly [K in keyof T]: DeepReadonly<T[K]> }
+  : T;
+
+type AppState = DeepReadonly<{
+  user: { name: string; prefs: { theme: string }[] };
+}>;
+
+declare const state: AppState;
+// state.user.name = "x";                  // ❌ readonly
+// state.user.prefs.push({ theme: "dark" }); // ❌ readonly array
+```
+
+## Common Mistakes
+
+**1. Unnecessary generics** — Don't add type parameters that aren't used in at least two positions (input and output). A function `function log<T>(x: T): void` has no reason to be generic; `function log(x: unknown): void` is cleaner.
+
+**2. Overusing `any` in constraints** — `T extends any[]` is fine, but `T extends any` is the same as no constraint at all.
+
+**3. Not leveraging inference** — TypeScript can infer incredibly complex types. Write interfaces that let inference flow naturally rather than manually annotating every intermediate type.
+
+## Conclusion
+
+Generics are the mechanism that lets TypeScript scale from simple scripts to large, refactorable codebases. Master constraints, conditional types, `infer`, and mapped types, and you'll write APIs that are both flexible and airtight. The patterns covered here appear constantly in popular libraries like React, Zod, and Prisma — understanding them makes reading and contributing to open source dramatically easier.

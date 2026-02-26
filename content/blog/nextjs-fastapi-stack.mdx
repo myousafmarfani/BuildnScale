@@ -1,0 +1,254 @@
+---
+title: "Next.js + FastAPI: The Perfect Stack for AI Applications"
+excerpt: "Discover why combining Next.js frontend with FastAPI backend creates the ideal architecture for building scalable AI-powered web applications."
+date: "2026-02-18"
+readTime: "8 min read"
+tags: ["Next.js", "FastAPI", "Architecture"]
+image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&q=80"
+heroSectionPost: true
+author:
+  name: "M. Yousuf"
+  avatar: "/avatar.jpg"
+---
+
+## Why This Stack?
+
+When building modern AI applications, choosing the right tech stack is crucial. After building multiple AI-powered applications, I've found that **Next.js + FastAPI** provides the perfect balance of developer experience, performance, and flexibility.
+
+## The Frontend: Next.js 14
+
+Next.js has revolutionized how we build React applications:
+
+### Key Features
+
+1. **App Router**: Modern routing with React Server Components
+2. **Server Actions**: Direct server-side mutations without API routes
+3. **Streaming**: Progressive rendering for better UX
+4. **Image Optimization**: Automatic image optimization out of the box
+
+### Example: Creating a Chat Interface
+
+```typescript
+'use client';
+
+import { useState } from 'react';
+
+export default function ChatInterface() {
+  const [message, setMessage] = useState('');
+  const [conversation, setConversation] = useState<Message[]>([]);
+
+  const handleSend = async () => {
+    const response = await fetch('http://localhost:8000/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message }),
+    });
+
+    const data = await response.json();
+    setConversation([...conversation, 
+      { role: 'user', content: message },
+      { role: 'assistant', content: data.response }
+    ]);
+  };
+
+  return (
+    <div className="chat-container">
+      {/* Chat UI */}
+    </div>
+  );
+}
+```
+
+## The Backend: FastAPI
+
+FastAPI is the fastest growing Python web framework for good reasons:
+
+### Why FastAPI?
+
+- **Speed**: One of the fastest Python frameworks available
+- **Type Safety**: Automatic request/response validation
+- **Async Support**: Built-in async/await support
+- **Auto Docs**: Swagger UI and ReDoc out of the box
+
+### Example: AI Chat Endpoint
+
+```python
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from openai import AsyncOpenAI
+
+app = FastAPI()
+client = AsyncOpenAI()
+
+class ChatRequest(BaseModel):
+    message: str
+    conversation_id: str
+
+class ChatResponse(BaseModel):
+    response: str
+    conversation_id: str
+
+@app.post("/chat", response_model=ChatResponse)
+async def chat(request: ChatRequest):
+    try:
+        completion = await client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "user", "content": request.message}
+            ]
+        )
+        
+        return ChatResponse(
+            response=completion.choices[0].message.content,
+            conversation_id=request.conversation_id
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+```
+
+## Architecture Overview
+
+Here's how to structure your full-stack application:
+
+```
+project/
+├── frontend/               # Next.js app
+│   ├── app/
+│   ├── components/
+│   └── lib/
+├── backend/               # FastAPI app
+│   ├── app/
+│   │   ├── main.py
+│   │   ├── models.py
+│   │   └── routes/
+│   └── requirements.txt
+└── docker-compose.yml
+```
+
+## Deployment Strategy
+
+### Production Setup
+
+1. **Frontend**: Deploy on Vercel
+2. **Backend**: Deploy on Railway/Render
+3. **Database**: Use Supabase/PlanetScale
+4. **Caching**: Redis for session management
+
+### Docker Compose Example
+
+```yaml
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://user:pass@db:5432/mydb
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+```
+
+## Performance Optimization
+
+### Frontend Optimization
+
+```typescript
+// Use Next.js Image component
+import Image from 'next/image';
+
+export function OptimizedImage() {
+  return (
+    <Image
+      src="/hero.jpg"
+      width={800}
+      height={600}
+      alt="Hero"
+      priority
+    />
+  );
+}
+
+// Implement streaming
+export async function StreamingComponent() {
+  const data = await fetch('...');
+  
+  return (
+    <Suspense fallback={<Loading />}>
+      <DataDisplay data={data} />
+    </Suspense>
+  );
+}
+```
+
+### Backend Optimization
+
+```python
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+
+app = FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Add compression
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+# Cache responses
+from functools import lru_cache
+
+@lru_cache()
+def get_settings():
+    return Settings()
+```
+
+## Real-World Use Cases
+
+This stack is perfect for:
+
+1. **AI Chatbots**: Real-time conversation interfaces
+2. **Data Dashboards**: Interactive analytics with ML predictions
+3. **Content Platforms**: AI-powered content generation
+4. **SaaS Applications**: Complex business logic with modern UI
+
+## Conclusion
+
+The Next.js + FastAPI combination provides:
+
+- **Developer Experience**: Hot reload, type safety, great tooling
+- **Performance**: Fast builds, efficient runtime, optimal SEO
+- **Scalability**: Easy to scale horizontally
+- **Flexibility**: Use the best tool for each layer
+
+Start building your next AI application with this powerful stack today!
+
+## Resources
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [Example Repository](https://github.com/myousafmarfani)

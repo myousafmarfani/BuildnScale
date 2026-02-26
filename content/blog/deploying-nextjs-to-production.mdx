@@ -1,0 +1,346 @@
+---
+title: "Deploying Next.js 15 to Production: Vercel, Docker, and CI/CD"
+excerpt: "A complete production deployment guide for Next.js 15 apps — covering Vercel, self-hosted Docker, GitHub Actions CI/CD, environment management, and performance optimization."
+date: "2026-02-22"
+readTime: "13 min read"
+tags: ["Next.js", "DevOps", "Docker", "CI/CD", "Vercel"]
+image: "https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=800&q=80"
+heroSectionPost: true
+author:
+  name: "M. Yousuf"
+  avatar: "/avatar.jpg"
+---
+
+## Why Deployment Strategy Matters
+
+Writing good code is only half the job. How you ship it determines your app's reliability, security, and the cost of every future change. A poorly configured Next.js deployment can leak secrets, serve stale cache, or crash under modest load the moment you hit the front page of Hacker News.
+
+This guide covers three paths to production:
+
+1. **Vercel** — the canonical choice for zero-config simplicity
+2. **Self-hosted Docker** — for full control on AWS, GCP, or a VPS
+3. **GitHub Actions CI/CD** — the pipeline that connects your code to either target
+
+## Option 1 — Deploying to Vercel
+
+Vercel is built by the same team that built Next.js, which means zero-day support for every new feature. For most projects, it is the right starting point.
+
+### Initial Setup
+
+```bash
+npm i -g vercel
+vercel login
+vercel          # follow the prompts from your project root
+```
+
+Vercel automatically detects Next.js, sets `next build` as the build command, and configures the output directory.
+
+### Environment Variables
+
+Never commit secrets. Add them in the Vercel dashboard under **Settings → Environment Variables**, or via CLI:
+
+```bash
+vercel env add DATABASE_URL production
+vercel env add OPENAI_API_KEY production
+```
+
+Vercel injects these at build time and runtime. For variables needed only at runtime (not embedded in the client bundle), prefix them with nothing — just set them as server-side secrets. For variables exposed to the browser, you **must** prefix them with `NEXT_PUBLIC_`.
+
+### Preview Deployments
+
+Every pull request gets its own preview URL automatically. This is the single biggest workflow improvement Vercel offers. Use it:
+
+- Link the preview URL in your PR description
+- Run E2E tests against it in CI (see GitHub Actions section below)
+- Share it with stakeholders for asynchronous reviews
+
+### Custom Domains and Edge Config
+
+```bash
+vercel domains add yourdomain.com
+```
+
+For configuration that changes without a redeploy (feature flags, A/B tests), use **Vercel Edge Config** — a globally distributed key-value store with sub-millisecond reads.
+
+## Option 2 — Self-Hosted Docker
+
+When you need full infrastructure control — custom networking, compliance requirements, or simply want to avoid vendor lock-in — Docker on your own server is the answer.
+
+### Writing the Dockerfile
+
+Next.js has official support for standalone output mode. First, enable it in `next.config.ts`:
+
+```typescript
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
+  output: 'standalone',
+};
+
+export default nextConfig;
+```
+
+Then write a multi-stage Dockerfile that produces a minimal production image:
+
+```dockerfile
+# Stage 1: Install dependencies
+FROM node:22-alpine AS deps
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --frozen-lockfile
+
+# Stage 2: Build
+FROM node:22-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN npm run build
+
+# Stage 3: Production image
+FROM node:22-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+EXPOSE 3000
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]
+```
+
+The multi-stage build keeps the final image small — typically under 150 MB compared to 1 GB+ for a naive single-stage build.
+
+### Docker Compose for Local Parity
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.production
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/ssl/certs:ro
+    depends_on:
+      - web
+```
+
+### Nginx as Reverse Proxy
+
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name yourdomain.com;
+
+    ssl_certificate     /etc/ssl/certs/fullchain.pem;
+    ssl_certificate_key /etc/ssl/certs/privkey.pem;
+
+    gzip on;
+    gzip_types text/plain application/json application/javascript text/css;
+
+    location / {
+        proxy_pass http://web:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+## Option 3 — GitHub Actions CI/CD
+
+Whether you deploy to Vercel or Docker, automating your pipeline prevents human error and enforces quality gates before anything reaches production.
+
+### Vercel Deployment Pipeline
+
+```yaml
+# .github/workflows/deploy.yml
+name: CI / Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+```
+
+### Docker + VPS Deployment Pipeline
+
+```yaml
+# .github/workflows/deploy-docker.yml
+name: Build and Deploy Docker
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: yourusername/yourapp:latest,${{ github.sha }}
+          cache-from: type=registry,ref=yourusername/yourapp:latest
+          cache-to: type=inline
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            docker pull yourusername/yourapp:latest
+            docker stop nextapp || true
+            docker rm nextapp || true
+            docker run -d \
+              --name nextapp \
+              --restart unless-stopped \
+              -p 3000:3000 \
+              --env-file /etc/nextapp/.env \
+              yourusername/yourapp:latest
+```
+
+## Performance Optimizations Before Go-Live
+
+### Enable ISR for Dynamic Pages
+
+Incremental Static Regeneration lets you statically render pages and revalidate them in the background:
+
+```typescript
+// app/blog/[slug]/page.tsx
+export const revalidate = 3600; // regenerate every hour
+```
+
+### Configure Cache Headers for Static Assets
+
+```typescript
+// next.config.ts
+const nextConfig: NextConfig = {
+  output: 'standalone',
+  async headers() {
+    return [
+      {
+        source: '/_next/static/(.*)',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
+    ];
+  },
+};
+```
+
+### Bundle Analysis
+
+```bash
+npm install --save-dev @next/bundle-analyzer
+```
+
+```typescript
+// next.config.ts
+import bundleAnalyzer from '@next/bundle-analyzer';
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
+
+export default withBundleAnalyzer(nextConfig);
+```
+
+```bash
+ANALYZE=true npm run build
+```
+
+Run this before your first production deploy. Any client-side bundle over 250 KB is worth investigating.
+
+## Security Checklist
+
+- [ ] All secrets in environment variables, never in source code
+- [ ] `NEXT_PUBLIC_` prefix only on truly public config
+- [ ] Security headers set (`X-Frame-Options`, `Content-Security-Policy`, `Strict-Transport-Security`)
+- [ ] Dependency audit: `npm audit --audit-level=high`
+- [ ] Docker image runs as non-root user (see Dockerfile above)
+- [ ] Rate limiting on API routes
+- [ ] `robots.ts` excludes admin and API paths from indexing
+
+## Monitoring After Launch
+
+Set up these three things before you sleep:
+
+1. **Uptime monitoring** — Better Uptime or Checkly pings your URL every minute and alerts you immediately
+2. **Error tracking** — Sentry catches unhandled exceptions with full stack traces and user context
+3. **Real User Monitoring** — Vercel Analytics or Datadog RUM shows Core Web Vitals from real visitors
+
+## Conclusion
+
+There is no single right way to deploy Next.js — the right answer depends on your team size, compliance requirements, and budget. Start with Vercel for speed, migrate to Docker when you need control, and let GitHub Actions be the consistent layer that enforces quality regardless of your target.
+
+Once your CI/CD pipeline is green and your monitoring is in place, deploying becomes the boring, automated process it should be.

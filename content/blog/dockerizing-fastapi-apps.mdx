@@ -1,0 +1,327 @@
+---
+title: "Docker for Python Developers: Containerizing FastAPI Apps"
+excerpt: "Learn how to containerize FastAPI applications with Docker — from writing a production-grade Dockerfile to orchestrating multi-service apps with Docker Compose and deploying to the cloud."
+date: "2026-02-15"
+readTime: "11 min read"
+tags: ["Python", "FastAPI", "Docker", "DevOps"]
+image: "https://images.unsplash.com/photo-1605745341112-85968b19335b?w=800&q=80"
+heroSectionPost: false
+author:
+  name: "M. Yousuf"
+  avatar: "/avatar.jpg"
+---
+
+## Why Containerize Your FastAPI App?
+
+"Works on my machine" is not a deployment strategy. Docker packages your application with every dependency it needs — the exact Python version, every library, system packages — and guarantees identical behavior from your laptop to CI to production.
+
+For FastAPI specifically, containerization also solves:
+
+- **Async worker concurrency** — run multiple Uvicorn workers behind Gunicorn trivially
+- **Reproducible performance benchmarks** — the environment is always the same
+- **Zero-downtime deploys** — swap containers atomically without package conflicts
+- **Easy scaling** — duplicate containers behind a load balancer in seconds
+
+## Writing a Production-Grade Dockerfile
+
+A naive Dockerfile installs everything in one layer and ships as root. Here is the correct approach:
+
+```dockerfile
+# Base stage: shared config
+FROM python:3.12-slim AS base
+
+ENV PYTHONFAULTHANDLER=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+WORKDIR /app
+
+# -------------------------------------------------------------------
+# Deps stage: install Python packages
+# -------------------------------------------------------------------
+FROM base AS deps
+
+COPY requirements.txt .
+RUN pip install --upgrade pip \
+    && pip install --prefix=/install -r requirements.txt
+
+# -------------------------------------------------------------------
+# Production stage: lean final image
+# -------------------------------------------------------------------
+FROM base AS production
+
+# Copy installed packages from deps stage
+COPY --from=deps /install /usr/local
+
+# Create non-root user
+RUN addgroup --system appgroup && adduser --system --group appuser
+
+# Copy application code
+COPY --chown=appuser:appgroup . .
+
+USER appuser
+
+EXPOSE 8000
+
+CMD ["gunicorn", "app.main:app", \
+     "--workers", "4", \
+     "--worker-class", "uvicorn.workers.UvicornWorker", \
+     "--bind", "0.0.0.0:8000", \
+     "--timeout", "120", \
+     "--keep-alive", "5", \
+     "--access-logfile", "-"]
+```
+
+Key decisions explained:
+
+- **`python:3.12-slim`** — the Debian slim variant is ~175 MB vs ~900 MB for the full image
+- **`PYTHONDONTWRITEBYTECODE=1`** — no `.pyc` files in the image
+- **Multi-stage build** — the `deps` stage keeps build tools out of production
+- **Non-root user** — if the container is compromised, the attacker has no root privileges
+- **Gunicorn + UvicornWorker** — Gunicorn manages worker processes; Uvicorn handles async within each worker
+
+## The `requirements.txt`
+
+Pin exact versions in production. Never use floating constraints like `fastapi>=0.100`:
+
+```
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+gunicorn==23.0.0
+pydantic==2.10.4
+sqlalchemy==2.0.37
+alembic==1.14.0
+asyncpg==0.30.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.20
+httpx==0.28.1
+```
+
+Generate this from a virtual environment after testing: `pip freeze > requirements.txt`.
+
+## The Application Structure
+
+Organize your app to cleanly separate concerns:
+
+```
+myapp/
+├── app/
+│   ├── __init__.py
+│   ├── main.py          # FastAPI app instance + lifespan
+│   ├── config.py        # Pydantic Settings from env vars
+│   ├── database.py      # SQLAlchemy async engine
+│   ├── models/
+│   │   └── user.py
+│   ├── routers/
+│   │   ├── auth.py
+│   │   └── users.py
+│   └── schemas/
+│       └── user.py
+├── alembic/
+│   └── versions/
+├── tests/
+├── Dockerfile
+├── docker-compose.yml
+├── .env.example
+└── requirements.txt
+```
+
+### `app/main.py`
+
+```python
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
+from app.database import engine
+from app.models import Base
+from app.routers import auth, users
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+    # Shutdown
+    await engine.dispose()
+
+app = FastAPI(
+    title="My API",
+    version="1.0.0",
+    lifespan=lifespan,
+)
+
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(users.router, prefix="/users", tags=["users"])
+```
+
+### `app/config.py`
+
+```python
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+class Settings(BaseSettings):
+    database_url: str
+    secret_key: str
+    algorithm: str = "HS256"
+    access_token_expire_minutes: int = 30
+    cors_origins: list[str] = ["http://localhost:3000"]
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+    )
+
+settings = Settings()
+```
+
+Pydantic Settings validates and type-coerces every environment variable at startup. If `DATABASE_URL` is missing, the app refuses to start and logs a clear error — far better than a mysterious crash at the first database call.
+
+## Docker Compose: Running the Full Stack
+
+```yaml
+# docker-compose.yml
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: .
+      target: production
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://user:password@db:5432/mydb
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d mydb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+  redis_data:
+```
+
+Notice `condition: service_healthy` on the `db` dependency. Without this, the API container starts before Postgres is ready to accept connections and crashes immediately — a common pitfall.
+
+## Running Database Migrations
+
+Do not run migrations inside the application startup. Run them as a separate step before the app process begins:
+
+```bash
+# In CI/CD, after pushing the new image but before routing traffic:
+docker compose run --rm api alembic upgrade head
+
+# Then start/restart the app
+docker compose up -d api
+```
+
+## Environment Variable Management
+
+Never put secrets in a `Dockerfile` or commit a `.env` file. Use:
+
+- **Local development** — `.env` file (in `.gitignore`) loaded by Docker Compose
+- **CI/CD** — GitHub Actions secrets injected as environment variables
+- **Production** — AWS Secrets Manager, Doppler, or Infisical for dynamic secret injection
+
+Provide an `.env.example` in your repository documenting every required variable:
+
+```env
+DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/mydb
+SECRET_KEY=change-this-to-a-32-char-random-string
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+```
+
+## Optimizing Image Build Times
+
+Docker caches each layer. A cache miss on any layer invalidates every subsequent layer. Exploit this:
+
+```dockerfile
+# ✅ GOOD: dependencies layer rarely changes → cached most of the time
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .           # source code changes frequently — last
+
+# ❌ BAD: any file change invalidates the pip install
+COPY . .
+RUN pip install -r requirements.txt
+```
+
+Use `.dockerignore` to exclude files that shouldn't be in the image:
+
+```
+.git
+.env
+.env.*
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.mypy_cache
+tests/
+*.md
+```
+
+## Health Checks
+
+Add a `/health` endpoint and configure Docker to use it:
+
+```python
+@app.get("/health", include_in_schema=False)
+async def health():
+    return {"status": "ok"}
+```
+
+```dockerfile
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:8000/health || exit 1
+```
+
+Container orchestrators (ECS, Kubernetes) use health checks to decide when to terminate and replace unhealthy instances automatically.
+
+## Common Mistakes to Avoid
+
+**Running as root** — use a non-root user as shown in the Dockerfile above. It is one line.
+
+**Not handling `SIGTERM`** — FastAPI + Gunicorn handles this correctly by default, but if you write a custom entrypoint, make sure it forwards signals to the child process so graceful shutdown works.
+
+**Single-stage builds in production** — your production image should not contain `gcc`, `git`, or your `.git` folder.
+
+**Ignoring the `.dockerignore`** — without it, Docker copies everything including `node_modules` (if you have a frontend), the `.git` directory, and test fixtures into the build context, making builds slow and images bloated.
+
+## Conclusion
+
+Containerizing a FastAPI app is not just a DevOps task — it is a software quality improvement. The discipline it imposes (explicit dependencies, environment variables, health checks) makes your application more reliable everywhere it runs. Once your `Dockerfile` and `docker-compose.yml` are in place, onboarding a new developer is a single command: `docker compose up`.

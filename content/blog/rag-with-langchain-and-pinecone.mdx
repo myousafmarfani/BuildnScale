@@ -1,0 +1,268 @@
+---
+title: "Building a Production RAG Pipeline with LangChain and Pinecone"
+excerpt: "A step-by-step guide to building a Retrieval-Augmented Generation system that grounds LLM responses in your own data using LangChain, Pinecone, and OpenAI."
+date: "2026-02-24"
+readTime: "15 min read"
+tags: ["Python", "LangChain", "RAG", "AI", "Pinecone"]
+image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&q=80"
+heroSectionPost: true
+author:
+  name: "M. Yousuf"
+  avatar: "/avatar.jpg"
+---
+
+## What Is RAG and Why Does It Matter?
+
+Large Language Models are powerful — but they are frozen in time. The moment a model is trained, its knowledge stops updating. Ask GPT-4 about an event from last week and it either hallucinates an answer or says it doesn't know.
+
+**Retrieval-Augmented Generation (RAG)** solves this by injecting relevant, up-to-date documents directly into the LLM's prompt at inference time. The model reasons over *your* data instead of guessing from training memory.
+
+Use cases include:
+
+- **Customer support bots** grounded in your documentation
+- **Internal knowledge bases** answering questions about company policies
+- **Legal and medical Q&A** with verifiable source references
+- **Code assistants** trained on your private codebase
+
+This guide walks you through building a production-grade RAG pipeline from scratch.
+
+## Architecture Overview
+
+A RAG pipeline has five key stages:
+
+1. **Document Loading** — ingest PDFs, web pages, databases, etc.
+2. **Chunking** — split documents into overlapping segments
+3. **Embedding** — convert chunks into high-dimensional vectors
+4. **Storage** — index vectors in a vector database (Pinecone)
+5. **Retrieval + Generation** — at query time, find the most relevant chunks and pass them to the LLM
+
+## Setting Up the Environment
+
+```bash
+pip install langchain langchain-openai langchain-pinecone pinecone-client pypdf tiktoken python-dotenv
+```
+
+Create a `.env` file:
+
+```env
+OPENAI_API_KEY=sk-...
+PINECONE_API_KEY=...
+PINECONE_INDEX_NAME=rag-docs
+```
+
+## Step 1: Load and Chunk Your Documents
+
+LangChain provides loaders for virtually every document format. Here we load a folder of PDFs:
+
+```python
+from langchain_community.document_loaders import PyPDFDirectoryLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+# Load all PDFs from a directory
+loader = PyPDFDirectoryLoader("./docs")
+raw_documents = loader.load()
+
+print(f"Loaded {len(raw_documents)} pages")
+
+# Split into overlapping chunks
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=1000,
+    chunk_overlap=200,
+    length_function=len,
+    separators=["\n\n", "\n", " ", ""],
+)
+
+chunks = splitter.split_documents(raw_documents)
+print(f"Created {len(chunks)} chunks")
+```
+
+The `chunk_overlap=200` ensures that semantic context isn't lost at chunk boundaries — a crucial detail for coherent retrieval.
+
+## Step 2: Embed and Index in Pinecone
+
+```python
+import os
+from pinecone import Pinecone, ServerlessSpec
+from langchain_openai import OpenAIEmbeddings
+from langchain_pinecone import PineconeVectorStore
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Initialize Pinecone
+pc = Pinecone(api_key=os.environ["PINECONE_API_KEY"])
+index_name = os.environ["PINECONE_INDEX_NAME"]
+
+# Create index if it doesn't exist
+if index_name not in pc.list_indexes().names():
+    pc.create_index(
+        name=index_name,
+        dimension=1536,  # text-embedding-3-small dimension
+        metric="cosine",
+        spec=ServerlessSpec(cloud="aws", region="us-east-1"),
+    )
+
+# Embed and upsert
+embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+vector_store = PineconeVectorStore.from_documents(
+    documents=chunks,
+    embedding=embeddings,
+    index_name=index_name,
+)
+
+print("Documents indexed successfully.")
+```
+
+**Why `text-embedding-3-small`?** It is 5× cheaper than `text-embedding-ada-002` and outperforms it on most retrieval benchmarks, making it the default choice for production workloads.
+
+## Step 3: Build the RAG Chain
+
+```python
+from langchain_openai import ChatOpenAI
+from langchain.chains import RetrievalQA
+from langchain.prompts import PromptTemplate
+
+# Load existing index
+vector_store = PineconeVectorStore(
+    index_name=index_name,
+    embedding=embeddings,
+)
+
+retriever = vector_store.as_retriever(
+    search_type="similarity",
+    search_kwargs={"k": 5},
+)
+
+# Custom prompt that enforces grounded answers
+prompt_template = """You are a helpful assistant. Use ONLY the context below to answer the question.
+If the answer is not in the context, say "I don't have enough information to answer that."
+Do not make up information.
+
+Context:
+{context}
+
+Question: {question}
+
+Answer:"""
+
+PROMPT = PromptTemplate(
+    template=prompt_template,
+    input_variables=["context", "question"],
+)
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+
+qa_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=retriever,
+    chain_type_kwargs={"prompt": PROMPT},
+    return_source_documents=True,
+)
+```
+
+## Step 4: Query the Pipeline
+
+```python
+def ask(question: str) -> dict:
+    result = qa_chain.invoke({"query": question})
+    return {
+        "answer": result["result"],
+        "sources": [
+            doc.metadata.get("source", "unknown")
+            for doc in result["source_documents"]
+        ],
+    }
+
+# Example usage
+response = ask("What is the refund policy for enterprise customers?")
+print(response["answer"])
+print("Sources:", response["sources"])
+```
+
+The pipeline returns both the answer and the source documents it used — essential for building trust and allowing users to verify claims.
+
+## Improving Retrieval Quality
+
+### Hybrid Search
+
+Pure vector search can miss exact keyword matches. Pinecone supports hybrid search combining dense vectors with sparse BM25 scores:
+
+```python
+retriever = vector_store.as_retriever(
+    search_type="mmr",           # Maximum Marginal Relevance
+    search_kwargs={"k": 8, "fetch_k": 20},
+)
+```
+
+**MMR** diversifies results by penalizing near-duplicate chunks, surfacing a broader range of relevant information.
+
+### Metadata Filtering
+
+Add structured metadata during ingestion to enable filtered queries:
+
+```python
+for chunk in chunks:
+    chunk.metadata["department"] = "legal"
+    chunk.metadata["year"] = 2025
+
+# Query with filter
+retriever = vector_store.as_retriever(
+    search_kwargs={
+        "k": 5,
+        "filter": {"department": "legal"},
+    }
+)
+```
+
+### Re-Ranking with a Cross-Encoder
+
+Add a re-ranking step after initial retrieval to improve precision:
+
+```python
+from sentence_transformers import CrossEncoder
+
+reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
+
+def rerank(query: str, docs: list, top_k: int = 3):
+    pairs = [(query, doc.page_content) for doc in docs]
+    scores = reranker.predict(pairs)
+    ranked = sorted(zip(scores, docs), key=lambda x: x[0], reverse=True)
+    return [doc for _, doc in ranked[:top_k]]
+```
+
+## Exposing RAG as a FastAPI Service
+
+```python
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI(title="RAG API")
+
+class Query(BaseModel):
+    question: str
+
+@app.post("/ask")
+async def ask_question(body: Query):
+    result = ask(body.question)
+    return result
+
+# Run: uvicorn main:app --reload
+```
+
+## Production Checklist
+
+Before going live, make sure you have:
+
+- **Rate limiting** on the API endpoint to control costs
+- **Caching** (Redis) for repeated queries — identical embeddings waste money
+- **Async ingestion** — updating the index should be a background job, not a blocking call
+- **Observability** — log latency, token counts, and retrieval scores per request with LangSmith or your own solution
+- **Guardrails** — validate inputs to prevent prompt injection attacks
+- **Index namespacing** — use Pinecone namespaces to isolate data per tenant in multi-tenant apps
+
+## Conclusion
+
+RAG is the practical bridge between the raw power of LLMs and the specific, current knowledge your application needs. The architecture discussed here scales from a weekend project to a production system handling thousands of queries per day. The key levers to tune are chunk size, retrieval depth (`k`), and your system prompt — invest time in evaluating these before launch.
+
+In the next post, we'll cover **evaluating RAG pipelines** with RAGAS to systematically measure faithfulness, answer relevancy, and context precision.

@@ -1,26 +1,124 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Tell Tailwind v4 to use class-based dark mode (for next-themes compatibility) */
+@variant dark (&:where(.dark, .dark *));
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  * {
+    @apply border-zinc-200 dark:border-zinc-800;
+  }
+  
+  body {
+    @apply bg-white text-zinc-900 dark:bg-black dark:text-white;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  html {
+    @apply scroll-smooth;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme {
+  /* Custom theme configuration */
+  --font-family-inter: var(--font-inter);
+}
+
+/* Prose styles for blog content */
+@layer components {
+  .prose {
+    @apply text-zinc-900 dark:text-white;
+  }
+  
+  .prose h1, .prose h2, .prose h3, .prose h4 {
+    @apply text-zinc-900 dark:text-white font-bold;
+  }
+  
+  .prose h2 {
+    @apply text-3xl mt-12 mb-4;
+  }
+  
+  .prose h3 {
+    @apply text-2xl mt-8 mb-3;
+  }
+  
+  .prose p {
+    @apply text-zinc-600 dark:text-zinc-400 leading-7 mb-4;
+  }
+  
+  .prose a {
+    @apply text-blue-500 hover:text-blue-600 transition-colors;
+  }
+  
+  .prose ul, .prose ol {
+    @apply my-6 ml-6;
+  }
+  
+  .prose li {
+    @apply mb-2 text-zinc-600 dark:text-zinc-400;
+  }
+  
+  .prose code {
+    @apply px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-sm;
+  }
+  
+  .prose pre {
+    @apply bg-zinc-900 dark:bg-zinc-950 rounded-xl p-4 overflow-x-auto my-6;
+    color: rgb(228 228 231) !important; /* zinc-200 — always light text on dark bg */
+  }
+  
+  .prose pre code {
+    @apply bg-transparent p-0;
+    color: inherit !important;
+  }
+
+  /* rehype-pretty-code wraps blocks in a figure — ensure text stays visible */
+  .prose [data-rehype-pretty-code-figure] pre {
+    color: rgb(228 228 231) !important;
+  }
+  
+  .prose blockquote {
+    @apply border-l-4 border-blue-500 pl-4 italic my-6;
+  }
+  
+  .prose img {
+    @apply rounded-xl my-6;
+  }
+  
+  .prose strong {
+    @apply font-bold text-zinc-900 dark:text-white;
+  }
+}
+
+/* Smooth transitions */
+@layer utilities {
+  .transition-smooth {
+    @apply transition-all duration-200 ease-in-out;
+  }
+
+  /* Thin, unobtrusive scrollbar for sticky sidebars */
+  .sidebar-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(212 212 216) transparent; /* zinc-300 */
+  }
+
+  .sidebar-scroll::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+    background-color: rgb(212 212 216); /* zinc-300 */
+    border-radius: 9999px;
+  }
+
+  :is(.dark) .sidebar-scroll {
+    scrollbar-color: rgb(63 63 70) transparent; /* zinc-700 */
+  }
+
+  :is(.dark) .sidebar-scroll::-webkit-scrollbar-thumb {
+    background-color: rgb(63 63 70); /* zinc-700 */
+  }
 }

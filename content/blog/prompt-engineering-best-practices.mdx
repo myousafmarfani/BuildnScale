@@ -1,0 +1,331 @@
+---
+title: "Prompt Engineering Best Practices for Production AI Applications"
+excerpt: "Move beyond basic prompting. Learn systematic techniques — chain-of-thought, few-shot examples, structured output, and prompt versioning — that produce reliable, consistent results in production."
+date: "2026-02-10"
+readTime: "12 min read"
+tags: ["AI", "Prompt Engineering", "LLM", "Python"]
+image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800&q=80"
+heroSectionPost: false
+author:
+  name: "M. Yousuf"
+  avatar: "/avatar.jpg"
+---
+
+## The Gap Between Demo and Production
+
+Getting an LLM to produce an impressive demo is easy. Getting it to produce *correct, consistent, and safe* output across thousands of real user inputs every day is a different problem entirely.
+
+Prompt engineering is often dismissed as "just writing instructions." It is actually a form of programming — one where the compiler is a stochastic model and the error messages are hallucinations. This guide covers the techniques that separate fragile demos from production-ready AI features.
+
+## Principle 1: Be Specific, Not Restrictive
+
+Vague prompts produce vague outputs. The single most impactful change most developers can make is adding explicit format specifications.
+
+**Before:**
+```
+Summarize the following article.
+```
+
+**After:**
+```
+Summarize the following article. Your summary must:
+- Be exactly 3 sentences
+- Cover the main argument, key evidence, and conclusion
+- Use plain language (no jargon)
+- Not introduce any information not present in the article
+
+Article:
+{article}
+```
+
+Notice the second prompt is *specific* but not *over-restrictive* — it defines the shape of a good output without telling the model how to think.
+
+## Principle 2: Chain-of-Thought Prompting
+
+For tasks requiring reasoning, asking the model to "show its work" dramatically improves accuracy. This works because forcing the model to generate intermediate steps keeps its internal state consistent.
+
+**Zero-shot CoT** — simply append reasoning instructions:
+
+```python
+prompt = """
+You are a financial analyst. Analyze whether this investment opportunity is sound.
+
+Opportunity: {opportunity_details}
+
+Before giving your final recommendation, think through:
+1. What are the key risks?
+2. What are the potential returns?
+3. How does this compare to market benchmarks?
+4. What assumptions are you making?
+
+After thinking through each point, give a final recommendation of INVEST, AVOID, or INVESTIGATE FURTHER, followed by a one-paragraph justification.
+"""
+```
+
+**Few-shot CoT** — provide complete examples including the reasoning chain:
+
+```python
+prompt = """
+Classify customer support tickets by urgency: CRITICAL, HIGH, MEDIUM, LOW.
+
+Example 1:
+Ticket: "My API key stopped working and our production app is down"
+Reasoning: Production outage affecting live users — immediate revenue impact
+Classification: CRITICAL
+
+Example 2:
+Ticket: "Can you add dark mode to the dashboard?"
+Reasoning: Feature request with no current functionality impact
+Classification: LOW
+
+Now classify:
+Ticket: {ticket_text}
+Reasoning:
+Classification:
+"""
+```
+
+## Principle 3: Structured Output
+
+Parsing unstructured text at scale is error-prone. Force JSON output and validate it with Pydantic:
+
+### With OpenAI's Structured Outputs (Recommended)
+
+```python
+from openai import OpenAI
+from pydantic import BaseModel, Field
+
+client = OpenAI()
+
+class SentimentAnalysis(BaseModel):
+    sentiment: Literal["positive", "negative", "neutral"]
+    confidence: float = Field(ge=0.0, le=1.0)
+    key_phrases: list[str] = Field(max_length=5)
+    summary: str = Field(max_length=200)
+
+def analyze_sentiment(text: str) -> SentimentAnalysis:
+    response = client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a sentiment analysis expert. Analyze the provided text.",
+            },
+            {"role": "user", "content": text},
+        ],
+        response_format=SentimentAnalysis,
+    )
+    return response.choices[0].message.parsed
+```
+
+When using `response_format` with a Pydantic model, OpenAI guarantees the response matches the schema exactly — no parsing errors, no empty fields.
+
+### Fallback JSON Parsing
+
+For models without native structured output support:
+
+```python
+import json
+import re
+from typing import TypeVar, Type
+from pydantic import BaseModel, ValidationError
+
+T = TypeVar("T", bound=BaseModel)
+
+def parse_structured_response(raw: str, model: Type[T]) -> T:
+    # Extract JSON from response (handles markdown code blocks)
+    json_match = re.search(r"```(?:json)?\s*([\s\S]*?)```", raw)
+    if json_match:
+        raw = json_match.group(1)
+    
+    # Try direct parse first
+    try:
+        return model.model_validate_json(raw.strip())
+    except (json.JSONDecodeError, ValidationError):
+        pass
+    
+    # Last resort: extract first { ... } block
+    brace_match = re.search(r"\{[\s\S]*\}", raw)
+    if brace_match:
+        return model.model_validate_json(brace_match.group(0))
+    
+    raise ValueError(f"Could not extract valid JSON from response: {raw[:200]}")
+```
+
+## Principle 4: System Prompt Design
+
+The system prompt is your application's contract with the model. Write it like you would write a technical specification:
+
+```python
+SYSTEM_PROMPT = """You are a customer support AI for Acme SaaS.
+
+## Your Role
+Answer questions about Acme's pricing, features, and account management.
+Escalate billing disputes and technical outages to human agents.
+
+## Response Format
+- Use plain, friendly language. No corporate jargon.
+- Maximum 3 short paragraphs unless the user asks for detail.
+- Always end with a clear next step or offer to help further.
+
+## Boundaries
+- Do NOT discuss competitors.
+- Do NOT make promises about future features.
+- Do NOT share pricing information not listed in the context below.
+- If you don't know the answer, say so and offer to connect the user with support.
+
+## Company Context
+{company_context}
+"""
+```
+
+The explicit `DO NOT` list is not about politeness — it is a safety constraint. Without it, the model may confidently answer questions outside its intended scope.
+
+## Principle 5: Temperature and Sampling Parameters
+
+| Task | Temperature | Why |
+|------|------------|-----|
+| Code generation | 0.0 – 0.2 | Determinism matters; bugs from creativity |
+| Structured extraction | 0.0 | Exact schema compliance required |
+| Summarization | 0.3 – 0.5 | Factual but not robotic |
+| Creative writing | 0.7 – 1.0 | Diversity is desirable |
+| Brainstorming | 1.0+ | Maximum variety |
+
+Set `temperature=0` for any task where you're validating the output against a schema or running automated tests.
+
+Also consider `top_p` (nucleus sampling) for a softer alternative to temperature, and `seed` for reproducible outputs during evaluation.
+
+## Principle 6: Context Window Management
+
+LLMs degrade in quality when the context is too long — the "lost in the middle" problem, where information in the middle of a long context is underweighted. Strategies:
+
+**Summarize long histories:**
+```python
+async def get_messages_with_summary(
+    history: list[Message],
+    max_recent: int = 10,
+) -> list[dict]:
+    if len(history) <= max_recent:
+        return [{"role": m.role, "content": m.content} for m in history]
+    
+    old_messages = history[:-max_recent]
+    recent_messages = history[-max_recent:]
+    
+    summary_response = await client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "user", "content": f"Summarize this conversation in 3 sentences:\n\n{format_messages(old_messages)}"}
+        ],
+    )
+    summary = summary_response.choices[0].message.content
+    
+    return [
+        {"role": "system", "content": f"Earlier conversation summary: {summary}"},
+        *[{"role": m.role, "content": m.content} for m in recent_messages],
+    ]
+```
+
+**Token counting before sending:**
+```python
+import tiktoken
+
+encoder = tiktoken.encoding_for_model("gpt-4o-mini")
+
+def count_tokens(messages: list[dict]) -> int:
+    total = 0
+    for msg in messages:
+        total += 4  # overhead per message
+        total += len(encoder.encode(msg["content"]))
+    return total + 2  # reply priming
+
+MAX_CONTEXT_TOKENS = 12_000  # leave room for response
+
+if count_tokens(messages) > MAX_CONTEXT_TOKENS:
+    messages = truncate_or_summarize(messages)
+```
+
+## Principle 7: Prompt Versioning and Testing
+
+Prompts are code. They need version control, automated tests, and a deployment process.
+
+**Version your prompts:**
+```python
+# prompts/sentiment_v2.py
+SENTIMENT_SYSTEM_PROMPT_V2 = """..."""
+SENTIMENT_SYSTEM_PROMPT_VERSION = "2.1.0"
+```
+
+**Regression tests:**
+```python
+# tests/test_prompts.py
+import pytest
+from app.ai import analyze_sentiment
+
+@pytest.mark.parametrize("text,expected_sentiment", [
+    ("I love this product, it's exactly what I needed!", "positive"),
+    ("This is completely broken and I want a refund.", "negative"),
+    ("The product arrived on Tuesday.", "neutral"),
+    # Edge cases
+    ("It's not bad, I guess.", "neutral"),
+    ("I hate how much I love this.", "positive"),
+])
+def test_sentiment_classification(text, expected_sentiment):
+    result = analyze_sentiment(text)
+    assert result.sentiment == expected_sentiment, (
+        f"Expected '{expected_sentiment}' for: '{text}'\n"
+        f"Got: '{result.sentiment}' (confidence: {result.confidence:.2f})"
+    )
+```
+
+Run these tests against every prompt change. A prompt "improvement" that breaks existing cases is a regression, full stop.
+
+## Principle 8: Guardrails and Input Validation
+
+Never pass raw user input directly to an LLM without validation:
+
+```python
+from pydantic import BaseModel, field_validator
+
+class ChatInput(BaseModel):
+    message: str
+    conversation_id: str
+
+    @field_validator("message")
+    @classmethod
+    def validate_message(cls, v: str) -> str:
+        if len(v) > 4000:
+            raise ValueError("Message too long (max 4000 characters)")
+        
+        # Basic prompt injection detection
+        injection_patterns = [
+            "ignore previous instructions",
+            "disregard all prior",
+            "you are now",
+            "act as",
+        ]
+        lower = v.lower()
+        for pattern in injection_patterns:
+            if pattern in lower:
+                raise ValueError("Invalid message content")
+        
+        return v.strip()
+```
+
+This is not a complete defense against adversarial users — treat it as a first filter. For high-stakes applications, add a separate moderation call using OpenAI's Moderation API or a fine-tuned classifier.
+
+## Production Checklist
+
+Before shipping an AI feature:
+
+- [ ] Prompts are stored in versioned files, not scattered inline strings
+- [ ] All prompt inputs are sanitized and length-bounded
+- [ ] Output is validated with a Pydantic schema before use in the application
+- [ ] Temperature is set appropriately for the task (usually 0 for structured tasks)
+- [ ] System prompt explicitly states what the model should and should not do
+- [ ] Automated regression tests pass on the current prompt version
+- [ ] Errors from the LLM API are caught and handled gracefully (rate limits, timeouts, refusals)
+- [ ] Token usage is logged per request for cost monitoring
+
+## Conclusion
+
+Reliable AI features are engineered, not improvised. The gap between a prompt that occasionally works and one that works consistently at scale is closed by the same fundamentals that close it in conventional software: structure, validation, testing, and version control. Apply those fundamentals to your prompts and you will ship AI features you can actually trust in production.

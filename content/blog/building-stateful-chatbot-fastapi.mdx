@@ -1,0 +1,247 @@
+---
+title: "Building a Stateful Chatbot with Authentication in Python + FastAPI"
+excerpt: "Learn how to build a production-ready chatbot with user authentication, session management, and persistent memory using FastAPI and modern Python practices."
+date: "2026-02-20"
+readTime: "12 min read"
+tags: ["Python", "FastAPI", "AI", "Authentication"]
+image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80"
+heroSectionPost: true
+author:
+  name: "M. Yousuf"
+  avatar: "/avatar.jpg"
+---
+
+## Introduction
+
+Building a chatbot is one thing, but building a **production-ready chatbot** with proper authentication and state management is entirely different. In this comprehensive guide, we'll explore how to create a chatbot that maintains conversation history, handles user sessions, and implements secure authentication.
+
+## Why FastAPI for Chatbots?
+
+FastAPI has become the go-to framework for building AI applications for several reasons:
+
+- **Fast Performance**: Built on Starlette and Pydantic, it's one of the fastest Python frameworks
+- **Type Safety**: Automatic request validation with Pydantic models
+- **Async Support**: Native async/await support for better concurrency
+- **Auto Documentation**: Interactive API docs with Swagger UI
+
+## Setting Up the Environment
+
+First, let's set up our development environment with all necessary dependencies:
+
+```bash
+pip install fastapi uvicorn python-jose passlib python-multipart sqlalchemy
+```
+
+Let's create our project structure:
+
+```
+chatbot-api/
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── auth.py
+│   ├── models.py
+│   └── database.py
+├── requirements.txt
+└── .env
+```
+
+## Building the Authentication System
+
+Authentication is crucial for any production application. We'll use JWT tokens for secure authentication:
+
+```python
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+from datetime import datetime, timedelta
+from pydantic import BaseModel
+
+# Password hashing
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+# JWT configuration
+SECRET_KEY = "your-secret-key-here"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class User(BaseModel):
+    username: str
+    email: str
+    full_name: str
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+def get_password_hash(password):
+    return pwd_context.hash(password)
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+```
+
+## Implementing State Management
+
+For maintaining conversation context, we'll implement a simple in-memory state manager:
+
+```python
+from typing import Dict, List
+from datetime import datetime
+
+class ConversationState:
+    def __init__(self):
+        self.conversations: Dict[str, List[dict]] = {}
+    
+    def add_message(self, user_id: str, role: str, content: str):
+        if user_id not in self.conversations:
+            self.conversations[user_id] = []
+        
+        self.conversations[user_id].append({
+            "role": role,
+            "content": content,
+            "timestamp": datetime.utcnow()
+        })
+    
+    def get_conversation(self, user_id: str, limit: int = 10):
+        if user_id not in self.conversations:
+            return []
+        return self.conversations[user_id][-limit:]
+    
+    def clear_conversation(self, user_id: str):
+        if user_id in self.conversations:
+            del self.conversations[user_id]
+
+# Initialize global state
+state_manager = ConversationState()
+```
+
+## Creating the Chat Endpoint
+
+Now let's create the main chat endpoint that ties everything together:
+
+```python
+from fastapi import FastAPI, Depends
+from pydantic import BaseModel
+
+app = FastAPI(title="Stateful Chatbot API")
+
+class ChatMessage(BaseModel):
+    message: str
+
+class ChatResponse(BaseModel):
+    response: str
+    conversation_id: str
+
+@app.post("/chat", response_model=ChatResponse)
+async def chat(
+    message: ChatMessage,
+    current_user: User = Depends(get_current_user)
+):
+    # Add user message to state
+    state_manager.add_message(
+        current_user.username,
+        "user",
+        message.message
+    )
+    
+    # Get conversation history
+    history = state_manager.get_conversation(current_user.username)
+    
+    # Generate AI response (simplified)
+    ai_response = generate_response(message.message, history)
+    
+    # Add AI response to state
+    state_manager.add_message(
+        current_user.username,
+        "assistant",
+        ai_response
+    )
+    
+    return ChatResponse(
+        response=ai_response,
+        conversation_id=current_user.username
+    )
+```
+
+## Adding Memory Functionality
+
+For persistent memory across sessions, we can integrate a database:
+
+```python
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from datetime import datetime
+
+Base = declarative_base()
+
+class Message(Base):
+    __tablename__ = "messages"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, index=True)
+    role = Column(String)
+    content = Column(Text)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+
+# Database setup
+SQLALCHEMY_DATABASE_URL = "sqlite:///./chatbot.db"
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base.metadata.create_all(bind=engine)
+```
+
+## Testing and Deployment
+
+Before deploying, make sure to test all endpoints:
+
+```python
+# test_main.py
+from fastapi.testclient import TestClient
+from app.main import app
+
+client = TestClient(app)
+
+def test_chat_endpoint():
+    response = client.post(
+        "/chat",
+        json={"message": "Hello!"},
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    assert response.status_code == 200
+    assert "response" in response.json()
+```
+
+To deploy, run:
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+## Conclusion
+
+You now have a fully functional stateful chatbot with authentication and persistent memory. This architecture can be extended with:
+
+- PostgreSQL for production database
+- Redis for session caching
+- WebSocket support for real-time chat
+- Integration with LLM providers (OpenAI, Anthropic)
+
+The key is to start simple and iterate based on your specific needs. Happy coding!
+
+## Next Steps
+
+- [Multi-Agent Emergency Response System](/blog/multi-agent-emergency-response)
+- [Secure Data Encryption in Python](/blog/secure-encryption-python)
+- [Next.js + FastAPI: The Perfect Stack](/blog/nextjs-fastapi-stack)
