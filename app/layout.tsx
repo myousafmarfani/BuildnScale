@@ -21,23 +21,23 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: "BuildnScale - Full-Stack Development & Agentic AI Enthusiast",
-  description: "Learn full-stack development with AI integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.",
+  description: "Learn full-stack and Agentic AI development with integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.",
   keywords: ["Next.js", "FastAPI", "AI", "Full-Stack Development", "Python", "TypeScript"],
-  authors: [{ name: "M. Yousuf" }],
-  creator: "M. Yousuf",
+  authors: [{ name: "Muhammad Yousaf Marfani" }],
+  creator: "Muhammad Yousaf Marfani",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    title: "BuildnScale - Full-Stack Developer & AI Enthusiast",
-    description: "Learn full-stack development with AI integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.",
+    title: "BuildnScale - Full-Stack Development & Agentic AI Enthusiast",
+    description: "Learn full-stack and Agentic AI development with integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.",
     siteName: "BuildnScale",
   },
   twitter: {
     card: "summary_large_image",
-    title: "BuildnScale - Full-Stack Developer & AI Enthusiast",
-    description: "Learn full-stack development with AI integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.",
-    creator: "@myousafmarfani",
+    title: "BuildnScale - Full-Stack Development & Agentic AI Enthusiast",
+    description: "Learn full-stack and Agentic AI development with integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.",
+    creator: "@MuhammadYousafMarfani",
   },
 };
 
