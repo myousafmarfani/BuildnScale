@@ -1,4 +1,5 @@
 import { BlogPost } from '@/types/blog';
+import { siteUrl } from '@/lib/utils';
 
 interface StructuredDataProps {
   post: BlogPost;
@@ -21,12 +22,12 @@ export function ArticleStructuredData({ post }: StructuredDataProps) {
       name: 'M. Yousuf',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://yourdomain.com/logo.png',
+        url: `${siteUrl}/logo.png`,
       },
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://yourdomain.com/blog/${post.slug}`,
+      '@id': `${siteUrl}/blog/${post.slug}`,
     },
   };
 
@@ -43,7 +44,7 @@ export function PersonStructuredData() {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: 'M. Yousuf',
-    url: 'https://yourdomain.com',
+    url: siteUrl,
     sameAs: [
       'https://github.com/myousafmarfani',
       'https://linkedin.com/in/myousafmarfani',
@@ -66,11 +67,11 @@ export function WebSiteStructuredData() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'M. Yousuf - Full-Stack Developer & AI Enthusiast',
-    url: 'https://yourdomain.com',
+    url: siteUrl,
     description: 'Learn full-stack development with AI integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.',
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://yourdomain.com/search?q={search_term_string}',
+      target: `${siteUrl}/search?q={search_term_string}`,
       'query-input': 'required name=search_term_string',
     },
   };

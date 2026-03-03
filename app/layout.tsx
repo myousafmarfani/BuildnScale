@@ -6,6 +6,7 @@ import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { Analytics } from "@/components/analytics";
 import { WebSiteStructuredData, PersonStructuredData } from "@/components/structured-data";
+import { siteUrl } from "@/lib/utils";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://yourdomain.com",
+    url: siteUrl,
     title: "M. Yousuf - Full-Stack Developer & AI Enthusiast",
     description: "Learn full-stack development with AI integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.",
     siteName: "M. Yousuf",

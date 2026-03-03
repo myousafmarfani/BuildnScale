@@ -12,7 +12,7 @@ import {
   Share2,
 } from 'lucide-react';
 import { getAllPosts, getPostBySlug } from '@/lib/blog';
-import { formatDate, extractHeadings } from '@/lib/utils';
+import { formatDate, extractHeadings, siteUrl } from '@/lib/utils';
 import BlogSidebar from '@/components/sidebar';
 import ScrollAwareSidebar from '@/components/scroll-aware-sidebar';
 import TableOfContents from '@/components/table-of-contents';
@@ -181,7 +181,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
               Share this post
             </span>
             <a
-              href={`https://x.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`https://yourdomain.com/blog/${post.slug}`)}`}
+              href={`https://x.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`${siteUrl}/blog/${post.slug}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-blue-500 hover:text-blue-500 transition-colors"
@@ -189,7 +189,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
               X / Twitter
             </a>
             <a
-              href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(`https://yourdomain.com/blog/${post.slug}`)}&title=${encodeURIComponent(post.title)}`}
+              href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(`${siteUrl}/blog/${post.slug}`)}&title=${encodeURIComponent(post.title)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-blue-500 hover:text-blue-500 transition-colors"

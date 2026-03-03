@@ -5,11 +5,11 @@
 
 @layer base {
   * {
-    @apply border-zinc-200 dark:border-zinc-800;
+    @apply border-zinc-200 dark:border-zinc-800/70;
   }
   
   body {
-    @apply bg-white text-zinc-900 dark:bg-black dark:text-white;
+    @apply bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100;
     transition: background-color 0.25s ease, color 0.25s ease;
   }
 
@@ -26,11 +26,11 @@
 /* Prose styles for blog content */
 @layer components {
   .prose {
-    @apply text-zinc-900 dark:text-white;
+    @apply text-zinc-900 dark:text-zinc-100;
   }
   
   .prose h1, .prose h2, .prose h3, .prose h4 {
-    @apply text-zinc-900 dark:text-white font-bold;
+    @apply text-zinc-900 dark:text-zinc-100 font-bold;
   }
   
   .prose h2 {
@@ -85,7 +85,7 @@
   }
   
   .prose strong {
-    @apply font-bold text-zinc-900 dark:text-white;
+    @apply font-bold text-zinc-900 dark:text-zinc-100;
   }
 }
 

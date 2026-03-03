@@ -71,7 +71,7 @@ export default function Navigation() {
             : 'translate-y-0 opacity-100'
         } ${
           atTop
-            ? 'inset-x-0 top-0 bg-white dark:bg-black border-b border-zinc-200 dark:border-zinc-800'
+            ? 'inset-x-0 top-0 bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800/70'
             : 'inset-x-3 sm:inset-x-6 top-3 rounded-2xl bg-white/85 dark:bg-zinc-950/85 backdrop-blur-xl border border-zinc-200/60 dark:border-zinc-700/40 shadow-xl shadow-black/[0.07]'
         }`}
       >
