@@ -7,6 +7,7 @@ import Footer from "@/components/footer";
 import { Analytics } from "@/components/analytics";
 import { WebSiteStructuredData, PersonStructuredData } from "@/components/structured-data";
 import { siteUrl } from "@/lib/utils";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -64,6 +65,7 @@ export default function RootLayout({
           <Footer />
         </Providers>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
