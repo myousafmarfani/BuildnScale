@@ -52,6 +52,7 @@ export default function RootLayout({
         <WebSiteStructuredData />
         <PersonStructuredData />
         <meta name="google-site-verification" content="s9faGWURF6VDwYE3r0NexHCUTcie24oCK_9SY2ARfxM" />
+        <meta name="msvalidate.01" content="B97BD30FA9C112E8070A4860E1E77751" />
       </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable} font-inter antialiased`}>
         <Providers>
