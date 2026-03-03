@@ -20,7 +20,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "M. Yousuf - Full-Stack Developer & AI Enthusiast",
+  title: "BuildnScale - Full-Stack Development & Agentic AI Enthusiast",
   description: "Learn full-stack development with AI integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.",
   keywords: ["Next.js", "FastAPI", "AI", "Full-Stack Development", "Python", "TypeScript"],
   authors: [{ name: "M. Yousuf" }],
@@ -29,15 +29,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    title: "M. Yousuf - Full-Stack Developer & AI Enthusiast",
+    title: "BuildnScale - Full-Stack Developer & AI Enthusiast",
     description: "Learn full-stack development with AI integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.",
-    siteName: "M. Yousuf",
+    siteName: "BuildnScale",
   },
   twitter: {
     card: "summary_large_image",
-    title: "M. Yousuf - Full-Stack Developer & AI Enthusiast",
+    title: "BuildnScale - Full-Stack Developer & AI Enthusiast",
     description: "Learn full-stack development with AI integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.",
-    creator: "@myousaf_codes",
+    creator: "@myousafmarfani",
   },
 };
 
@@ -51,6 +51,7 @@ export default function RootLayout({
       <head>
         <WebSiteStructuredData />
         <PersonStructuredData />
+        <meta name="google-site-verification" content="s9faGWURF6VDwYE3r0NexHCUTcie24oCK_9SY2ARfxM" />
       </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable} font-inter antialiased`}>
         <Providers>
