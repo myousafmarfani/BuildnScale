@@ -1,6 +1,7 @@
 'use client';
 
 import Script from 'next/script';
+import { Analytics as VercelAnalytics } from '@vercel/analytics/next';
 
 export function Analytics() {
   return (
@@ -23,8 +24,8 @@ export function Analytics() {
         </>
       )}
 
-      {/* Vercel Analytics (if using Vercel) */}
-      {/* <Analytics /> from '@vercel/analytics/react' */}
+      {/* Vercel Analytics */}
+      <VercelAnalytics />
       
       {/* Microsoft Clarity */}
       {process.env.NEXT_PUBLIC_CLARITY_ID && (
