@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "BuildnScale - Full-Stack Development & Agentic AI Enthusiast",
     description: "Learn full-stack and Agentic AI development with integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.",
-    creator: "@MuhammadYousafMarfani",
+    creator: "@myousafmarfani",
   },
 };
 
