@@ -1,5 +1,6 @@
 # Professional Content Platform
 
+
 A production-ready content platform built with Next.js 14, TypeScript, and Tailwind CSS. Features a minimal, Vercel-inspired design with comprehensive blog functionality, learning roadmaps, project portfolio, and affiliate resources.
 
 ## Features
