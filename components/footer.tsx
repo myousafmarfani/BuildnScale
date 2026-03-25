@@ -15,6 +15,7 @@ const footerSections = [
     links: [
       { href: '/projects', label: 'Projects & Builds' },
       { href: '/resources', label: 'Recommended Tools' },
+      { href: '/contact', label: 'Contact' },
       { href: '/author', label: 'About the Author' },
       { href: 'https://github.com/myousafmarfani', label: 'GitHub Profile', external: true },
     ],
@@ -22,9 +23,9 @@ const footerSections = [
   {
     title: 'Services',
     links: [
-      { href: 'https://www.fiverr.com/myousaf_codes', label: 'Fiverr Gigs', external: true },
-      { href: 'https://www.fiverr.com/myousaf_codes/develop-ai-powered-chatbot', label: 'AI Chatbots', external: true },
-      { href: 'https://www.fiverr.com/myousaf_codes/build-fullstack-web-app', label: 'Web Apps', external: true },
+      { href: 'https://www.fiverr.com/yousaf_codes', label: 'Fiverr Gigs', external: true },
+      { href: 'https://www.fiverr.com/yousaf_codes/develop-ai-powered-chatbot', label: 'AI Chatbots', external: true },
+      { href: 'https://www.fiverr.com/yousaf_codes/build-fullstack-web-app', label: 'Web Apps', external: true },
     ],
   },
 ];
@@ -65,7 +66,7 @@ export default function Footer() {
                 <Linkedin size={16} />
               </a>
               <a
-                href="https://x.com/myousaf_codes"
+                href="https://x.com/myousafmarfani"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="X / Twitter"

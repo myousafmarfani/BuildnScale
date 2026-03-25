@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Clock, Calendar, ArrowRight, BookOpen, Rss, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Clock, Calendar, BookOpen, Rss, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getAllPosts } from '@/lib/blog';
+import { getAllRoadmaps } from '@/lib/roadmaps';
+import { affiliateResources } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 import BlogSidebar from '@/components/sidebar';
 import type { Metadata } from 'next';
@@ -31,6 +33,7 @@ export default async function BlogPage({
   const activeTag = tagParam || null;
 
   const allPosts = getAllPosts();
+  const roadmaps = await getAllRoadmaps();
   const allTags = Array.from(new Set(allPosts.flatMap((p) => p.tags))).sort();
 
   const filteredPosts = activeTag
@@ -43,6 +46,20 @@ export default async function BlogPage({
     (safePage - 1) * POSTS_PER_PAGE,
     safePage * POSTS_PER_PAGE
   );
+
+  const sidebarRoadmaps = roadmaps.slice(0, 3).map((roadmap) => ({
+    title: roadmap.title,
+    description: roadmap.headline,
+    href: `/roadmaps/${roadmap.slug}`,
+    meta: roadmap.difficulty,
+  }));
+
+  const sidebarResources = affiliateResources.slice(0, 4).map((resource) => ({
+    name: resource.name,
+    description: resource.description,
+    href: resource.link,
+    tag: resource.category,
+  }));
 
   const buildHref = (p: number, tag?: string | null) => {
     const params = new URLSearchParams();
@@ -217,7 +234,7 @@ export default async function BlogPage({
         {/* ── Right: Sidebar ─────────────────────────────────────── */}
         <aside className="lg:col-span-1">
           <div className="lg:sticky lg:top-28">
-            <BlogSidebar />
+            <BlogSidebar roadmaps={sidebarRoadmaps} resources={sidebarResources} />
           </div>
         </aside>
       </div>

@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 
 export const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL || 'https://buildnscale.vercel.app';
+  process.env.NEXT_PUBLIC_SITE_URL || 'https://buildnscale.dev';
 
 export function cn(...inputs: ClassValue[]) {
   return clsx(inputs);

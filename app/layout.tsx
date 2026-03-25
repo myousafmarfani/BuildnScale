@@ -5,7 +5,10 @@ import { Providers } from "@/components/providers";
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { Analytics } from "@/components/analytics";
-import { WebSiteStructuredData, PersonStructuredData } from "@/components/structured-data";
+import {
+  WebSiteStructuredData,
+  PersonStructuredData,
+} from "@/components/structured-data";
 import { siteUrl } from "@/lib/utils";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -22,8 +25,16 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: "BuildnScale - Full-Stack Development & Agentic AI Enthusiast",
-  description: "Learn full-stack and Agentic AI development with integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.",
-  keywords: ["Next.js", "FastAPI", "AI", "Full-Stack Development", "Python", "TypeScript"],
+  description:
+    "Learn full-stack and Agentic AI development with integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.",
+  keywords: [
+    "Next.js",
+    "FastAPI",
+    "AI",
+    "Full-Stack Development",
+    "Python",
+    "TypeScript",
+  ],
   authors: [{ name: "Muhammad Yousaf Marfani" }],
   creator: "Muhammad Yousaf Marfani",
   openGraph: {
@@ -31,13 +42,15 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: siteUrl,
     title: "BuildnScale - Full-Stack Development & Agentic AI Enthusiast",
-    description: "Learn full-stack and Agentic AI development with integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.",
+    description:
+      "Learn full-stack and Agentic AI development with integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.",
     siteName: "BuildnScale",
   },
   twitter: {
     card: "summary_large_image",
     title: "BuildnScale - Full-Stack Development & Agentic AI Enthusiast",
-    description: "Learn full-stack and Agentic AI development with integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.",
+    description:
+      "Learn full-stack and Agentic AI development with integration. Building production-ready applications with Next.js, FastAPI, and modern technologies.",
     creator: "@myousafmarfani",
   },
 };
@@ -52,15 +65,18 @@ export default function RootLayout({
       <head>
         <WebSiteStructuredData />
         <PersonStructuredData />
-        <meta name="google-site-verification" content="Ue1LwsRs0zqtVTyE9A5ZoptmSGY55i2c8GnNAPJFXMI" />
+        <meta
+          name="google-site-verification"
+          content="Ue1LwsRs0zqtVTyE9A5ZoptmSGY55i2c8GnNAPJFXMI"
+        />
       </head>
-      <body className={`${inter.variable} ${spaceGrotesk.variable} font-inter antialiased`}>
+      <body
+        className={`${inter.variable} ${spaceGrotesk.variable} font-inter antialiased`}
+      >
         <Providers>
           <Navigation />
           {/* Spacer for fixed navigation bar */}
-          <div className="pt-16">
-            {children}
-          </div>
+          <div className="pt-16">{children}</div>
           <Footer />
         </Providers>
         <Analytics />

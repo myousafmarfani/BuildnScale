@@ -1,58 +1,77 @@
 'use client';
 
+import Link from 'next/link';
 import { Mail, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
-export default function BlogSidebar() {
+type RoadmapSidebarItem = {
+  title: string;
+  description: string;
+  href: string;
+  meta?: string;
+};
+
+type ResourceSidebarItem = {
+  name: string;
+  description: string;
+  href: string;
+  tag?: string;
+};
+
+type BlogSidebarProps = {
+  roadmapCta?: React.ReactNode;
+  roadmaps?: RoadmapSidebarItem[];
+  resources?: ResourceSidebarItem[];
+  professionalCta?: {
+    title: string;
+    description: string;
+    primaryLabel: string;
+    primaryHref: string;
+    secondaryLabel?: string;
+    secondaryHref?: string;
+  };
+};
+
+export default function BlogSidebar({
+  roadmapCta,
+  roadmaps,
+  resources,
+  professionalCta,
+}: BlogSidebarProps) {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
-
-  const fiverrServices = [
-    {
-      title: 'AI Chatbot Development',
-      description: 'Custom AI-powered chatbots with authentication and memory',
-      price: 'Starting at $500',
-      icon: '💬',
-      link: 'https://www.fiverr.com/myousaf_codes/develop-ai-powered-chatbot',
-    },
-    {
-      title: 'Full-Stack Web Apps',
-      description: 'Next.js + FastAPI production-ready applications',
-      price: 'Starting at $800',
-      icon: '🚀',
-      link: 'https://www.fiverr.com/myousaf_codes/build-fullstack-web-app',
-    },
-    {
-      title: 'API Integration',
-      description: 'Seamless third-party API integrations for your apps',
-      price: 'Starting at $300',
-      icon: '🔌',
-      link: 'https://www.fiverr.com/myousaf_codes/integrate-apis',
-    },
-  ];
+  const [isError, setIsError] = useState(false);
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setMessage('');
+    setIsError(false);
 
     try {
       const response = await fetch('/api/newsletter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: email.trim() }),
       });
 
-      const data = await response.json();
+      let data: { success?: boolean; message?: string; error?: string } = {};
+      try {
+        data = (await response.json()) as { success?: boolean; message?: string; error?: string };
+      } catch {
+        data = {};
+      }
 
-      if (response.ok) {
-        setMessage('Successfully subscribed!');
+      if (response.ok && data.success) {
+        setMessage(data.message || 'Thanks. You are subscribed to the newsletter.');
         setEmail('');
       } else {
-        setMessage(data.error || 'Failed to subscribe');
+        setIsError(true);
+        setMessage(data.error || 'Failed to subscribe. Please try again.');
       }
     } catch {
+      setIsError(true);
       setMessage('An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
@@ -61,6 +80,8 @@ export default function BlogSidebar() {
 
   return (
     <div className="space-y-6">
+
+      {roadmapCta}
 
       {/* Newsletter */}
       <div className="bg-zinc-50 dark:bg-zinc-900/70 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 space-y-4">
@@ -93,56 +114,122 @@ export default function BlogSidebar() {
             {isLoading ? 'Subscribing…' : 'Subscribe — It\'s Free'}
           </button>
         </form>
-        {message && (
-          <p className={`text-xs font-medium ${message.includes('Success') ? 'text-green-500' : 'text-red-500'}`}>
+        {message ? (
+          <p className={`text-xs font-medium ${isError ? 'text-red-500' : 'text-green-500'}`}>
             {message}
           </p>
-        )}
+        ) : null}
       </div>
 
-      {/* Fiverr Services */}
-      <div className="bg-zinc-50 dark:bg-zinc-900/70 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 space-y-4">
-        <h3 className="font-bold text-base flex items-center gap-2">
-          <span className="text-lg">💼</span>
-          <span>Hire Me on Fiverr</span>
-        </h3>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          Need a custom AI-powered application? Let&apos;s build it together.
-        </p>
-        <div className="space-y-3">
-          {fiverrServices.map((service, idx) => (
+      {roadmaps && roadmaps.length > 0 && (
+        <div className="bg-zinc-50 dark:bg-zinc-900/70 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 space-y-4">
+          <h3 className="font-bold text-base">Roadmaps</h3>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            Structured paths to build full-stack, AI, and cloud skills.
+          </p>
+          <div className="space-y-3">
+            {roadmaps.map((roadmap) => (
+              <Link
+                key={roadmap.href}
+                href={roadmap.href}
+                className="block border border-zinc-200 dark:border-zinc-700 rounded-xl p-3 hover:border-blue-500/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <h4 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 truncate">
+                      {roadmap.title}
+                    </h4>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2">
+                      {roadmap.description}
+                    </p>
+                  </div>
+                  <span className="text-xs font-semibold text-blue-500 shrink-0">
+                    {roadmap.meta || 'Explore'}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <Link
+            href="/roadmaps"
+            className="flex items-center justify-center gap-1.5 w-full border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white py-2.5 rounded-xl font-semibold text-sm transition-colors"
+          >
+            View All Roadmaps <ChevronRight size={14} />
+          </Link>
+        </div>
+      )}
+
+      {resources && resources.length > 0 && (
+        <div className="bg-zinc-50 dark:bg-zinc-900/70 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 space-y-4">
+          <h3 className="font-bold text-base">Resources</h3>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            Curated tools, platforms, and references to ship faster.
+          </p>
+          <div className="space-y-3">
+            {resources.map((resource) => (
+              <a
+                key={resource.href}
+                href={resource.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block border border-zinc-200 dark:border-zinc-700 rounded-xl p-3 hover:border-blue-500/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <h4 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 truncate">
+                      {resource.name}
+                    </h4>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2">
+                      {resource.description}
+                    </p>
+                  </div>
+                  <span className="text-xs font-semibold text-blue-500 shrink-0">
+                    {resource.tag || 'Open'}
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+          <Link
+            href="/resources"
+            className="flex items-center justify-center gap-1.5 w-full border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white py-2.5 rounded-xl font-semibold text-sm transition-colors"
+          >
+            View All Resources <ChevronRight size={14} />
+          </Link>
+        </div>
+      )}
+
+      {professionalCta && (
+        <div className="bg-zinc-50 dark:bg-zinc-900/70 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 space-y-4">
+          <div className="space-y-1">
+            <h3 className="font-bold text-base">{professionalCta.title}</h3>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              {professionalCta.description}
+            </p>
+          </div>
+          <div className="space-y-2">
             <a
-              key={idx}
-              href={service.link}
+              href={professionalCta.primaryHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-start gap-3 p-3 border border-zinc-200 dark:border-zinc-700 rounded-xl hover:border-blue-500/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all group"
+              className="flex items-center justify-center gap-1.5 w-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white py-2.5 rounded-xl font-semibold text-sm transition-colors"
             >
-              <span className="text-xl flex-shrink-0">{service.icon}</span>
-              <div className="flex-1 min-w-0">
-                <h4 className="font-semibold text-sm mb-0.5 group-hover:text-blue-500 transition-colors leading-snug">
-                  {service.title}
-                </h4>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-1.5 line-clamp-2">
-                  {service.description}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-blue-500">{service.price}</span>
-                  <ChevronRight size={13} className="text-blue-500 group-hover:translate-x-0.5 transition-transform" />
-                </div>
-              </div>
+              {professionalCta.primaryLabel}
+              <ChevronRight size={14} />
             </a>
-          ))}
+            {professionalCta.secondaryLabel && professionalCta.secondaryHref && (
+              <a
+                href={professionalCta.secondaryHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-1.5 w-full border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-blue-500 hover:text-blue-500 py-2.5 rounded-xl font-semibold text-sm transition-colors"
+              >
+                {professionalCta.secondaryLabel}
+              </a>
+            )}
+          </div>
         </div>
-        <a
-          href="https://www.fiverr.com/myousaf_codes"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-1.5 w-full border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white py-2.5 rounded-xl font-semibold text-sm transition-colors"
-        >
-          View All Services <ChevronRight size={14} />
-        </a>
-      </div>
+      )}
     </div>
   );
 }

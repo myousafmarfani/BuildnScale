@@ -293,7 +293,17 @@ export default function ProjectsPage() {
         {/* ── Right: Sidebar ─────────────────────────────────────── */}
         <aside className="lg:col-span-1">
           <div className="lg:sticky lg:top-28">
-            <BlogSidebar />
+            <BlogSidebar
+              professionalCta={{
+                title: 'Have a project in mind?',
+                description:
+                  'Looking for a freelance Full-Stack and AI developer to build, ship, or scale your product?',
+                primaryLabel: 'Start a Project',
+                primaryHref: '/contact',
+                secondaryLabel: 'View Case Studies',
+                secondaryHref: 'https://github.com/myousafmarfani',
+              }}
+            />
           </div>
         </aside>
       </div>

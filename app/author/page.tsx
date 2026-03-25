@@ -154,7 +154,7 @@ export default function AuthorPage() {
               LinkedIn
             </a>
             <a
-              href="https://x.com/myousaf_codes"
+              href="https://x.com/myousafmarfani"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:border-blue-500/60 hover:text-blue-500 transition-all"

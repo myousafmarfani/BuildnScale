@@ -18,6 +18,7 @@ export default function Navigation() {
   const pathname = usePathname();
 
   // Hydration guard for theme
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
   // Scroll listener — hide on scroll-down, show rounded on scroll-up, flat at top
@@ -50,6 +51,7 @@ export default function Navigation() {
   }, []);
 
   // Close mobile menu on route change
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMobileOpen(false), [pathname]);
 
   const navLinks = [

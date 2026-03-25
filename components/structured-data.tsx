@@ -48,7 +48,7 @@ export function PersonStructuredData() {
     sameAs: [
       'https://github.com/myousafmarfani',
       'https://linkedin.com/in/myousafmarfani',
-      'https://x.com/myousaf_codes',
+      'https://x.com/myousafmarfani',
     ],
     jobTitle: 'Full-Stack Developer',
     description: 'Learning ML, DL & Agentic AI. Building production-ready applications with Next.js, FastAPI, and modern AI tools.',

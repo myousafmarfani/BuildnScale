@@ -1,13 +1,14 @@
 import { MetadataRoute } from 'next';
-import { siteUrl } from '@/lib/utils';
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: '*',
-      allow: '/',
-      disallow: '/api/',
-    },
-    sitemap: `${siteUrl}/sitemap.xml`,
+    rules: [
+      {
+        userAgent: '*',
+        allow: ['/', '/blog/', '/roadmaps/', '/projects/', '/resources/', '/author/'],
+        disallow: ['/api/', '/_next/', '/search'],
+      },
+    ],
+    sitemap: 'https://buildnscale.dev/sitemap.xml',
   };
 }

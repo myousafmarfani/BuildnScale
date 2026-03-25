@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
-  ChevronRight,
   Calendar,
   Clock,
   Github,
@@ -16,12 +15,14 @@ import { formatDate, extractHeadings, siteUrl } from '@/lib/utils';
 import BlogSidebar from '@/components/sidebar';
 import ScrollAwareSidebar from '@/components/scroll-aware-sidebar';
 import TableOfContents from '@/components/table-of-contents';
+import RoadmapCTA from '@/components/roadmaps/RoadmapCTA';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
 import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import CodeBlock from '@/components/code-block';
+import { affiliateResources } from '@/lib/data';
 
 export async function generateStaticParams() {
   const posts = getAllPosts();
@@ -63,6 +64,12 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   const post = getPostBySlug(slug);
   const allPosts = getAllPosts();
   const relatedPosts = allPosts.filter((p) => p.slug !== slug).slice(0, 3);
+  const sidebarResources = affiliateResources.slice(0, 4).map((resource) => ({
+    name: resource.name,
+    description: resource.description,
+    href: resource.link,
+    tag: resource.category,
+  }));
 
   if (!post) {
     notFound();
@@ -221,7 +228,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                   className="p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
                   <Linkedin size={15} />
                 </a>
-                <a href="https://x.com/myousaf_codes" target="_blank" rel="noopener noreferrer"
+                <a href="https://x.com/myousafmarfani" target="_blank" rel="noopener noreferrer"
                   className="p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
                   <Twitter size={15} />
                 </a>
@@ -257,7 +264,10 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
         {/* ── Right: Blog Sidebar (Newsletter + Fiverr) ─────────── */}
         <aside className="hidden lg:block">
           <ScrollAwareSidebar>
-            <BlogSidebar />
+            <BlogSidebar
+              roadmapCta={<RoadmapCTA tags={post.tags} />}
+              resources={sidebarResources}
+            />
           </ScrollAwareSidebar>
         </aside>
       </div>

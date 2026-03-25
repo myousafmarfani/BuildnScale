@@ -2,30 +2,30 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    let body: { email?: string };
+    let body: { email?: string; roadmapTitle?: string };
     try {
-      body = (await request.json()) as { email?: string };
+      body = (await request.json()) as { email?: string; roadmapTitle?: string };
     } catch {
       return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
     }
 
-    const { email } = body;
+    const { email, roadmapTitle } = body;
 
     if (!email || !email.includes('@')) {
-      return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid email address.' }, { status: 400 });
     }
 
-    const accessKey = process.env.WEB3FORMS_NEWSLETTER_ACCESS_KEY;
+    const accessKey = process.env.WEB3FORMS_NOTIFYME_ACCESS_KEY;
     if (!accessKey) {
       return NextResponse.json({ error: 'Form service is not configured.' }, { status: 500 });
     }
 
     const payload = {
       access_key: accessKey,
-      subject: 'Newsletter subscription',
-      from_name: 'BuildnScale Newsletter',
+      subject: `Roadmap Notify Request: ${roadmapTitle || 'Roadmap'}`,
+      from_name: 'BuildnScale Roadmaps',
       email,
-      message: `Newsletter subscription request: ${email}`,
+      message: `Please notify this email when ${roadmapTitle || 'the roadmap'} is live: ${email}`,
     };
 
     const web3Response = await fetch('https://api.web3forms.com/submit', {
@@ -40,19 +40,19 @@ export async function POST(request: NextRequest) {
 
     if (!web3Response.ok || !web3Data.success) {
       return NextResponse.json(
-        { error: 'Failed to subscribe. Please try again.' },
+        { error: 'Unable to submit your request right now. Please try again.' },
         { status: 502 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Thanks. You are subscribed to the newsletter.',
+      message: 'Thanks. You are on the launch notification list.',
     });
   } catch (error) {
-    console.error('Newsletter subscription error:', error);
+    console.error('Roadmap notify submission error:', error);
     return NextResponse.json(
-      { error: 'Failed to subscribe. Please try again.' },
+      { error: 'Something went wrong. Please try again.' },
       { status: 500 }
     );
   }

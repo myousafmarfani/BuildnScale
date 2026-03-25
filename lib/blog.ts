@@ -67,7 +67,7 @@ export function getPostBySlug(slug: string): BlogPost | null {
         avatar: '/avatar.jpg',
       },
     } as BlogPost;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
