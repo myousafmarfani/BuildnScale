@@ -48,8 +48,9 @@ export default function Footer() {
               <span className="text-zinc-900 dark:text-white">Scale</span>
             </Link>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-xs">
-              A practical engineering blog for building production-ready apps with Next.js,
-              FastAPI, and modern AI systems.
+              BuildnScale is a technical learning platform focused on Full-Stack Development and
+              Agentic AI engineering. Explore production-ready tutorials, roadmaps, and developer
+              resources for modern web and AI systems.
             </p>
             <div className="flex items-center gap-2">
               <a
@@ -86,13 +87,13 @@ export default function Footer() {
               >
                 <Mail size={16} />
               </a>
-              <a
+              <Link
                 href="/sitemap.xml"
                 aria-label="RSS / Sitemap"
                 className="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all"
               >
                 <Rss size={16} />
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -135,15 +136,15 @@ export default function Footer() {
             © 2026 Build n Scale. All rights reserved.
           </p>
           <div className="flex items-center gap-5">
-            <a href="#" className="text-xs text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">
-              Privacy Policy
-            </a>
-            <a href="#" className="text-xs text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">
-              Terms of Use
-            </a>
-            <a href="#" className="text-xs text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">
+            <Link href="/contact" className="text-xs text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">
+              Contact
+            </Link>
+            <Link href="/author" className="text-xs text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">
+              Author
+            </Link>
+            <Link href="/resources" className="text-xs text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">
               Affiliate Disclosure
-            </a>
+            </Link>
           </div>
         </div>
       </div>

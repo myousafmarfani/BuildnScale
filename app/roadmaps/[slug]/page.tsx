@@ -9,6 +9,7 @@ import RoadmapSidebar from '@/components/roadmaps/RoadmapSidebar';
 import RoadmapProgress from '@/components/roadmaps/RoadmapProgress';
 import CodeBlock from '@/components/roadmaps/CodeBlock';
 import SkillBadge from '@/components/roadmaps/SkillBadge';
+import { JsonLd } from '@/components/seo/JsonLd';
 
 export const dynamicParams = false;
 
@@ -76,7 +77,7 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
           alt: meta.title,
         },
       ],
-      url: `https://buildnscale.dev/roadmaps/${slug}`,
+      url: `https://www.buildnscale.dev/roadmaps/${slug}`,
     },
     twitter: {
       card: 'summary_large_image',
@@ -85,7 +86,7 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
       images: [meta.ogImage],
     },
     alternates: {
-      canonical: `https://buildnscale.dev/roadmaps/${slug}`,
+      canonical: `https://www.buildnscale.dev/roadmaps/${slug}`,
     },
   };
 }
@@ -110,7 +111,7 @@ export default async function RoadmapPage({ params }: { params: Promise<PagePara
     '@type': 'LearningResource',
     name: meta.title,
     description: meta.description,
-    url: `https://buildnscale.dev/roadmaps/${slug}`,
+    url: `https://www.buildnscale.dev/roadmaps/${slug}`,
     educationalLevel: meta.difficulty,
     timeRequired: toIsoDuration(meta.duration),
     teaches: meta.tags,
@@ -120,14 +121,27 @@ export default async function RoadmapPage({ params }: { params: Promise<PagePara
     author: {
       '@type': 'Person',
       name: 'M. Yousuf',
-      url: 'https://buildnscale.dev/author',
+      url: 'https://www.buildnscale.dev/author',
     },
     publisher: {
       '@type': 'Organization',
       name: 'BuildnScale',
-      url: 'https://buildnscale.dev',
+      url: 'https://www.buildnscale.dev',
     },
     image: meta.ogImage,
+  };
+
+  const roadmapSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    name: meta.title,
+    description: meta.description,
+    provider: {
+      '@type': 'Person',
+      name: 'M. Yousaf Marfani',
+      url: 'https://www.buildnscale.dev/author',
+    },
+    url: `https://www.buildnscale.dev/roadmaps/${slug}`,
   };
 
   const breadcrumbSchema = {
@@ -138,19 +152,19 @@ export default async function RoadmapPage({ params }: { params: Promise<PagePara
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://buildnscale.dev',
+        item: 'https://www.buildnscale.dev',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'Roadmaps',
-        item: 'https://buildnscale.dev/roadmaps',
+        item: 'https://www.buildnscale.dev/roadmaps',
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: meta.title,
-        item: `https://buildnscale.dev/roadmaps/${slug}`,
+        item: `https://www.buildnscale.dev/roadmaps/${slug}`,
       },
     ],
   };
@@ -243,21 +257,16 @@ export default async function RoadmapPage({ params }: { params: Promise<PagePara
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(learningResourceSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
+      <JsonLd data={learningResourceSchema} />
+      <JsonLd data={roadmapSchema} />
+      <JsonLd data={breadcrumbSchema} />
 
       <div className="grid grid-cols-1 gap-8 py-8 lg:grid-cols-[300px_1fr]">
         <div className="self-start lg:sticky lg:top-6">
           <RoadmapSidebar meta={meta} slug={slug} />
         </div>
 
-        <article className="min-w-0 rounded-2xl border border-blue-200/70 bg-gradient-to-b from-blue-50/70 to-transparent p-6 dark:border-blue-900/40 dark:from-blue-950/20">
+        <article className="min-w-0 rounded-2xl border border-blue-200/70 bg-linear-to-b from-blue-50/70 to-transparent p-6 dark:border-blue-900/40 dark:from-blue-950/20">
           <nav aria-label="Breadcrumb" className="mb-6">
             <ol className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
               <li>

@@ -5,59 +5,50 @@ import RoadmapNotifyModal from '@/components/roadmaps/RoadmapNotifyModal';
 import RoadmapSuggestionForm from '@/components/roadmaps/RoadmapSuggestionForm';
 import { getAllRoadmaps } from '@/lib/roadmaps';
 
-const pageTitle = 'Developer Roadmaps 2026 | BuildnScale';
 const pageDescription =
   'Free, opinionated learning roadmaps for 2026. Structured paths for Full-Stack Web Development and AI Engineering — written from real production experience by M. Yousuf.';
 
-export async function generateMetadata(): Promise<Metadata> {
-  return {
-    title: pageTitle,
-    description: pageDescription,
-    openGraph: {
-      title: pageTitle,
-      description: pageDescription,
-      type: 'website',
-      url: 'https://buildnscale.dev/roadmaps',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: pageTitle,
-      description: pageDescription,
-    },
-    alternates: {
-      canonical: 'https://buildnscale.dev/roadmaps',
-    },
-  };
-}
+export const metadata: Metadata = {
+  title: 'Learning Roadmaps - Full-Stack & AI Engineer Paths 2026',
+  description:
+    'Structured, opinionated learning roadmaps for Full-Stack Web Developers and AI Engineers in 2026. Built from real production experience - not just a list of tools.',
+  alternates: { canonical: 'https://www.buildnscale.dev/roadmaps' },
+  openGraph: {
+    title: 'Learning Roadmaps 2026 | BuildnScale',
+    description: 'Practical roadmaps to become a Full-Stack Developer or AI Engineer in 2026.',
+    url: 'https://www.buildnscale.dev/roadmaps',
+    type: 'website',
+  },
+};
 
 export default async function RoadmapsPage() {
   const roadmaps = await getAllRoadmaps();
-  const roadmapUrls = roadmaps.map((roadmap) => `https://buildnscale.dev/roadmaps/${roadmap.slug}`);
+  const roadmapUrls = roadmaps.map((roadmap) => `https://www.buildnscale.dev/roadmaps/${roadmap.slug}`);
 
   const collectionPageJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: 'Developer Roadmaps 2026 | BuildnScale',
     description: pageDescription,
-    url: 'https://buildnscale.dev/roadmaps',
+    url: 'https://www.buildnscale.dev/roadmaps',
     inLanguage: 'en',
-    author: { '@type': 'Person', name: 'M. Yousuf', url: 'https://buildnscale.dev/author' },
+    author: { '@type': 'Person', name: 'M. Yousuf', url: 'https://www.buildnscale.dev/author' },
     hasPart: [
       {
         '@type': 'LearningResource',
         name: 'Full-Stack Web Developer Roadmap 2026',
-        url: 'https://buildnscale.dev/roadmaps/full-stack-developer',
+        url: 'https://www.buildnscale.dev/roadmaps/full-stack-developer',
       },
       {
         '@type': 'LearningResource',
         name: 'AI Engineer Roadmap 2026',
-        url: 'https://buildnscale.dev/roadmaps/ai-engineer',
+        url: 'https://www.buildnscale.dev/roadmaps/ai-engineer',
       },
       ...roadmapUrls
         .filter(
           (url) =>
-            url !== 'https://buildnscale.dev/roadmaps/full-stack-developer' &&
-            url !== 'https://buildnscale.dev/roadmaps/ai-engineer'
+            url !== 'https://www.buildnscale.dev/roadmaps/full-stack-developer' &&
+            url !== 'https://www.buildnscale.dev/roadmaps/ai-engineer'
         )
         .map((url) => ({ '@type': 'LearningResource', name: url.split('/').pop(), url })),
     ],

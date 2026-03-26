@@ -18,13 +18,14 @@ import BlogSidebar from '@/components/sidebar';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Projects | M. Yousuf',
+  title: 'Projects - Production Builds with Next.js, FastAPI & AI',
   description:
-    'Real-world AI-powered and full-stack projects built with Next.js, FastAPI, Python and more. Browse source code, tutorials, and detailed breakdowns.',
+    'Open-source and production projects built with Next.js, FastAPI, LangChain, and Agentic AI. Real codebases, not toy examples.',
+  alternates: { canonical: 'https://www.buildnscale.dev/projects' },
   openGraph: {
-    title: 'Projects | M. Yousuf',
-    description:
-      'Real-world applications built from scratch. Source code, tutorials, and breakdowns — learn by building.',
+    title: 'Projects | BuildnScale',
+    description: 'Real production projects: AI task managers, multi-agent systems, and analytics dashboards.',
+    url: 'https://www.buildnscale.dev/projects',
     type: 'website',
   },
 };

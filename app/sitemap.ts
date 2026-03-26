@@ -1,68 +1,94 @@
 import { MetadataRoute } from 'next';
 import { getAllPosts } from '@/lib/blog';
-import { getRoadmapSlugs } from '@/lib/roadmaps';
-import { siteUrl } from '@/lib/utils';
+import { getAllRoadmaps } from '@/lib/roadmaps';
+import { getAllResources } from '@/lib/resources';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const base = 'https://www.buildnscale.dev';
   const posts = getAllPosts();
-  const roadmapSlugs = await getRoadmapSlugs();
-  const baseUrl = siteUrl;
+  const resources = getAllResources();
+  const roadmaps = await getAllRoadmaps();
 
-  // Roadmap entries: /roadmaps/ai-engineer, /roadmaps/full-stack-developer
-  // (auto-grows as new MDX files are added to content/roadmaps/)
+  const toValidDate = (value?: string): Date => {
+    if (!value) return new Date();
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+  };
 
-  const staticPages: MetadataRoute.Sitemap = [
+  const latestDate = (dates: Date[]): Date => {
+    if (dates.length === 0) return new Date();
+    return new Date(Math.max(...dates.map((date) => date.getTime())));
+  };
+
+  const postDates = posts.map((post) => toValidDate(post.updatedAt || post.date));
+  const resourceDates = resources.map((resource) => toValidDate(resource.lastVerified));
+  const roadmapDates = roadmaps.map((roadmap) => toValidDate(roadmap.lastUpdated));
+
+  const staticRoutes: MetadataRoute.Sitemap = [
     {
-      url: `${baseUrl}`,
-      lastModified: new Date(),
+      url: base,
+      lastModified: latestDate([...postDates, ...resourceDates, ...roadmapDates]),
       changeFrequency: 'weekly',
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/blog`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
+      url: `${base}/blog`,
+      lastModified: latestDate(postDates),
+      changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/roadmaps`,
-      lastModified: new Date(),
+      url: `${base}/resources`,
+      lastModified: latestDate(resourceDates),
       changeFrequency: 'monthly',
-      priority: 0.9,
+      priority: 0.8,
     },
     {
-      url: `${baseUrl}/projects`,
-      lastModified: new Date(),
+      url: `${base}/roadmaps`,
+      lastModified: latestDate(roadmapDates),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${base}/projects`,
+      lastModified: latestDate(postDates),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/resources`,
-      lastModified: new Date(),
+      url: `${base}/author`,
+      lastModified: latestDate(postDates),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/author`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
+      url: `${base}/contact`,
+      lastModified: latestDate(postDates),
+      changeFrequency: 'yearly',
+      priority: 0.4,
     },
   ];
 
-  const postUrls = posts.map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: new Date(post.date),
-    changeFrequency: 'monthly' as const,
-    priority: 0.8,
-  }));
-
-  const roadmapUrls = roadmapSlugs.map((slug) => ({
-    url: `${baseUrl}/roadmaps/${slug}`,
-    lastModified: new Date(),
+  const postRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
+    url: `${base}/blog/${post.slug}`,
+    lastModified: toValidDate(post.updatedAt || post.date),
     changeFrequency: 'monthly' as const,
     priority: 0.85,
   }));
 
-  return [...staticPages, ...postUrls, ...roadmapUrls];
+  const resourceRoutes: MetadataRoute.Sitemap = resources.map((resource) => ({
+    url: `${base}/resources/${resource.slug}`,
+    lastModified: toValidDate(resource.lastVerified),
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }));
+
+  const roadmapRoutes: MetadataRoute.Sitemap = roadmaps.map((roadmap) => ({
+    url: `${base}/roadmaps/${roadmap.slug}`,
+    lastModified: toValidDate(roadmap.lastUpdated),
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }));
+
+  return [...staticRoutes, ...postRoutes, ...resourceRoutes, ...roadmapRoutes];
 }

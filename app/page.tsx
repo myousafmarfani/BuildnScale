@@ -7,6 +7,21 @@ import HomepageSidebar from '@/components/homepage-sidebar';
 import ScrollAwareSidebar from '@/components/scroll-aware-sidebar';
 import RoadmapNotifyModal from '@/components/roadmaps/RoadmapNotifyModal';
 import { formatDate } from '@/lib/utils';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'BuildnScale - Full-Stack & Agentic AI Engineering Blog',
+  description:
+    'Production-focused tutorials on Next.js 15, FastAPI, TypeScript, Python, LangChain, and Agentic AI systems from real engineering work.',
+  alternates: { canonical: 'https://www.buildnscale.dev' },
+  openGraph: {
+    title: 'BuildnScale - Full-Stack & Agentic AI Engineering Blog',
+    description:
+      'Practical engineering guides on Next.js, FastAPI, RAG pipelines, and AI systems you can ship to production.',
+    url: 'https://www.buildnscale.dev',
+    type: 'website',
+  },
+};
 
 export default function Home() {
   const posts = getAllPosts();
@@ -35,6 +50,21 @@ export default function Home() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* <section className="pt-8 pb-2">
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">
+          Full-Stack Development and Agentic AI Engineering at BuildnScale
+        </h1>
+        <p className="mt-3 max-w-3xl text-base md:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300">
+          BuildnScale publishes production-focused guidance on Next.js, FastAPI, TypeScript,
+          Python, RAG systems, and multi-agent architecture. Start with the
+          {' '}<Link href="/blog" className="text-blue-500 hover:text-blue-600 font-medium">Blog</Link>,
+          explore guided
+          {' '}<Link href="/roadmaps" className="text-blue-500 hover:text-blue-600 font-medium">Roadmaps</Link>,
+          and use curated
+          {' '}<Link href="/resources" className="text-blue-500 hover:text-blue-600 font-medium">Resources</Link>
+          {' '}to accelerate your learning and shipping velocity.
+        </p>
+      </section> */}
 
       {/* ─── Hero Posts Grid: 1 Rectangle (60%) + 2 Squares (40%) ──── */}
       {heroPosts.length > 0 && (
@@ -267,14 +297,12 @@ export default function Home() {
             <div className="space-y-4">
               {resourceCards.map((resource, idx) => (
                 // Keep CTA layout aligned with cards while centering content.
-                <a
-                  key={idx}
-                  href={resource.link}
-                  target={'isCta' in resource && resource.isCta ? undefined : '_blank'}
-                  rel={'isCta' in resource && resource.isCta ? undefined : 'noopener noreferrer'}
-                  className={`block p-6 bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/5 transition-all group ${'isCta' in resource && resource.isCta ? 'text-center' : ''}`}
-                >
-                  {'isCta' in resource && resource.isCta ? (
+                'isCta' in resource && resource.isCta ? (
+                  <Link
+                    key={idx}
+                    href={resource.link}
+                    className="block p-6 bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/5 transition-all group text-center"
+                  >
                     <div className="flex flex-col items-center gap-3">
                       <span className="text-xs uppercase tracking-[0.2em] text-zinc-400">More resources</span>
                       <h3 className="text-xl font-bold group-hover:text-blue-500 transition-colors">{resource.name}</h3>
@@ -290,32 +318,38 @@ export default function Home() {
                         Explore all resources <ArrowRight size={14} />
                       </span>
                     </div>
-                  ) : (
-                    <>
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-1">
-                            <h3 className="text-lg font-bold group-hover:text-blue-500 transition-colors">{resource.name}</h3>
-                            <span className="bg-green-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">{resource.discount}</span>
-                          </div>
-                          <span className="text-xs text-zinc-400">{resource.category}</span>
+                  </Link>
+                ) : (
+                  <a
+                    key={idx}
+                    href={resource.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block p-6 bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/5 transition-all group"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-1">
+                          <h3 className="text-lg font-bold group-hover:text-blue-500 transition-colors">{resource.name}</h3>
+                          <span className="bg-green-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">{resource.discount}</span>
                         </div>
-                        <div className="text-right ml-4">
-                          <div className="text-xl font-bold text-blue-500">{resource.price}</div>
-                        </div>
+                        <span className="text-xs text-zinc-400">{resource.category}</span>
                       </div>
-                      <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">{resource.description}</p>
-                      <div className="flex flex-wrap gap-3">
-                        {resource.features.map((feature, fi) => (
-                          <span key={fi} className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
-                            <CheckCircle size={13} className="text-green-500" />
-                            {feature}
-                          </span>
-                        ))}
+                      <div className="text-right ml-4">
+                        <div className="text-xl font-bold text-blue-500">{resource.price}</div>
                       </div>
-                    </>
-                  )}
-                </a>
+                    </div>
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">{resource.description}</p>
+                    <div className="flex flex-wrap gap-3">
+                      {resource.features.map((feature, fi) => (
+                        <span key={fi} className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                          <CheckCircle size={13} className="text-green-500" />
+                          {feature}
+                        </span>
+                      ))}
+                    </div>
+                  </a>
+                )
               ))}
             </div>
           </section>

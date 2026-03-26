@@ -24,13 +24,14 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 
 export const metadata: Metadata = {
-  title: 'Resources | M. Yousuf',
+  title: 'Developer Resources - Curated Tools, Platforms & References',
   description:
-    'Curated resources for learning, hosting, databases, and developer tools.',
+    'Curated developer resources for full-stack and AI engineers: learning platforms, deployment clouds, databases, and developer tools reviewed and recommended by BuildnScale.',
+  alternates: { canonical: 'https://www.buildnscale.dev/resources' },
   openGraph: {
-    title: 'Resources | M. Yousuf',
-    description:
-      'Curated learning platforms, cloud hosting, databases, and developer tools.',
+    title: 'Developer Resources | BuildnScale',
+    description: 'Curated tools, platforms, and references to build and ship production apps faster.',
+    url: 'https://www.buildnscale.dev/resources',
     type: 'website',
   },
 };
@@ -80,26 +81,35 @@ function getStyle(category: string) {
   return categoryStyles[category] ?? categoryStyles['Default'];
 }
 
-type CategoryFilterKey = 'all' | 'learning-platforms' | 'deployment-clouds' | 'developer-tools' | 'databases';
-
-const filterTabs: Array<{ key: CategoryFilterKey; label: string; category?: string }> = [
-  { key: 'all', label: 'All' },
-  { key: 'learning-platforms', label: 'Learning Platforms', category: 'Learning Platforms' },
-  { key: 'deployment-clouds', label: 'Deployment Clouds', category: 'Deployment Clouds' },
-  { key: 'developer-tools', label: 'Developer Tools', category: 'Developer Tools' },
-  { key: 'databases', label: 'Databases', category: 'Databases' },
-];
-
 type ResourcesPageProps = {
-  searchParams?: { category?: string };
+  searchParams?: Promise<{ category?: string | string[] }>;
 };
+
+type FilterTab = {
+  key: string;
+  label: string;
+  category?: string;
+};
+
+const toCategoryKey = (category: string) =>
+  category.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
 export default async function ResourcesPage({ searchParams }: ResourcesPageProps) {
   const allPosts = getAllPosts();
   const roadmaps = await getAllRoadmaps();
-  const categoryParam = Array.isArray(searchParams?.category)
-    ? searchParams?.category[0]
-    : searchParams?.category;
+  const uniqueCategories = Array.from(new Set(affiliateResources.map((resource) => resource.category))).sort();
+  const filterTabs: FilterTab[] = [
+    { key: 'all', label: 'All' },
+    ...uniqueCategories.map((category) => ({
+      key: toCategoryKey(category),
+      label: category,
+      category,
+    })),
+  ];
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const categoryParam = Array.isArray(resolvedSearchParams?.category)
+    ? resolvedSearchParams?.category[0]
+    : resolvedSearchParams?.category;
   const activeTab = filterTabs.find((tab) => tab.key === categoryParam) ?? filterTabs[0];
   const filteredResources = activeTab.category
     ? affiliateResources.filter((resource) => resource.category === activeTab.category)
@@ -173,10 +183,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                 Editor&apos;s Pick
               </h2>
 
-              <a
-                href={featuredResource.link}
-                target="_blank"
-                rel="noopener noreferrer"
+              <div
                 className="group block relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-linear-to-br from-blue-500/5 via-transparent to-cyan-500/5 p-7 hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/8 transition-all duration-300"
               >
                 {/* Decorative */}
@@ -186,9 +193,12 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                   <div className="flex items-start justify-between mb-5 flex-wrap gap-3">
                     <div>
                       <div className="flex items-center gap-3 mb-1.5 flex-wrap">
-                        <h3 className="text-2xl font-bold group-hover:text-blue-500 transition-colors">
+                        <Link
+                          href={`/resources/${featuredResource.slug}`}
+                          className="text-2xl font-bold group-hover:text-blue-500 transition-colors hover:text-blue-500"
+                        >
                           {featuredResource.name}
-                        </h3>
+                        </Link>
                         <span className="px-2.5 py-1 rounded-full bg-green-500 text-white text-xs font-bold shadow-sm">
                           {featuredResource.discount}
                         </span>
@@ -220,13 +230,24 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                   </div>
 
                   <div className="flex items-center gap-3 flex-wrap">
-                    <div className="inline-flex items-center gap-2 bg-blue-500 group-hover:bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-lg shadow-blue-500/25">
+                    <a
+                      href={featuredResource.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-lg shadow-blue-500/25"
+                    >
                       Visit Resource <ExternalLink size={13} />
-                    </div>
+                    </a>
                     <span className="text-xs text-zinc-400">Official site and docs</span>
+                    <Link
+                      href={`/resources/${featuredResource.slug}`}
+                      className="text-xs text-blue-500 hover:text-blue-600 font-medium"
+                    >
+                      Learn more →
+                    </Link>
                   </div>
                 </div>
-              </a>
+              </div>
             </section>
           )}
 
@@ -249,19 +270,19 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
 
                 <div className="space-y-4">
                   {categoryResources.map((resource, idx) => (
-                    <a
+                    <div
                       key={idx}
-                      href={resource.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       className={`group block relative overflow-hidden p-6 bg-linear-to-br ${style.cardBg} rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-blue-500/40 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300`}
                     >
                       <div className="flex items-start justify-between mb-3 flex-wrap gap-3">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-3 mb-1 flex-wrap">
-                            <h3 className="text-lg font-bold group-hover:text-blue-500 transition-colors">
+                            <Link
+                              href={`/resources/${resource.slug}`}
+                              className="text-lg font-bold group-hover:text-blue-500 transition-colors hover:text-blue-500"
+                            >
                               {resource.name}
-                            </h3>
+                            </Link>
                             <span className="bg-green-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
                               {resource.discount}
                             </span>
@@ -290,11 +311,24 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                             </span>
                           ))}
                         </div>
-                        <span className="text-xs text-blue-500 flex items-center gap-1 font-medium opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                          Open resource <ExternalLink size={11} />
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <a
+                            href={resource.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-zinc-500 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 px-2.5 py-1 rounded-lg hover:border-blue-500 hover:text-blue-500 transition-colors"
+                          >
+                            Visit
+                          </a>
+                          <Link
+                            href={`/resources/${resource.slug}`}
+                            className="text-xs text-blue-500 flex items-center gap-1 font-medium opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                          >
+                            Learn more <ExternalLink size={11} />
+                          </Link>
+                        </div>
                       </div>
-                    </a>
+                    </div>
                   ))}
                 </div>
               </section>

@@ -20,11 +20,14 @@ import {
 import { getAllPosts } from '@/lib/blog';
 import { formatDate } from '@/lib/utils';
 import Image from 'next/image';
+import type { Metadata } from 'next';
+import { JsonLd } from '@/components/seo/JsonLd';
 
-export const metadata = {
-  title: 'About the Author — M. Yousuf | Full-Stack × AI',
+export const metadata: Metadata = {
+  title: 'About - M. Yousaf Marfani, Full-Stack & AI Engineer',
   description:
-    'M. Yousuf is a Full-Stack Developer specialising in Next.js, FastAPI, and Agentic AI. Student at GIAIC building production-ready applications and sharing deep-dive tutorials.',
+    'M. Yousaf Marfani is a Full-Stack Developer and AI Engineer specialising in Next.js, FastAPI, LangChain, and Agentic AI systems. Writing at BuildnScale.',
+  alternates: { canonical: 'https://www.buildnscale.dev/author' },
 };
 
 const skills = [
@@ -77,9 +80,33 @@ const timeline = [
 export default function AuthorPage() {
   const allPosts = getAllPosts();
   const recentPosts = allPosts.slice(0, 4);
+  const personSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'M. Yousaf Marfani',
+    url: 'https://www.buildnscale.dev/author',
+    sameAs: [
+      'https://github.com/myousafmarfani',
+      'https://www.fiverr.com/yousaf_codes',
+    ],
+    jobTitle: 'Full-Stack and Agentic AI Engineer',
+    knowsAbout: [
+      'Next.js',
+      'FastAPI',
+      'TypeScript',
+      'Python',
+      'LangChain',
+      'RAG pipelines',
+      'Agentic AI systems',
+      'Full-Stack Development',
+    ],
+    description:
+      'Full-stack and AI engineer focused on production systems with Next.js, FastAPI, and agentic AI architecture.',
+  };
 
   return (
     <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-20">
+      <JsonLd data={personSchema} />
 
       {/* ─── Hero ─────────────────────────────────────────────────── */}
       <section className="flex flex-col md:flex-row items-start gap-10 md:gap-14 pt-4">

@@ -3,6 +3,7 @@ export interface BlogPost {
   title: string;
   excerpt: string;
   date: string;
+  updatedAt?: string;
   readTime: string;
   tags: string[];
   image: string;
@@ -33,13 +34,40 @@ export interface Project {
 }
 
 export interface AffiliateResource {
+  slug: string;
   name: string;
   category: string;
+  url: string;
   description: string;
+  tags: string[];
   price: string;
+  badge?: string;
   discount: string;
   rating?: number;
   features: string[];
+  longDescription: string;
+  whatItIs: string;
+  keyFeatures: {
+    title: string;
+    description: string;
+  }[];
+  useCases: {
+    title: string;
+    description: string;
+  }[];
+  pros: string[];
+  cons: string[];
+  pricing: {
+    plan: string;
+    price: string;
+    features: string[];
+  }[];
+  alternatives: string[];
+  relatedArticles: string[];
+  gettingStarted: string;
+  seoTitle: string;
+  seoDescription: string;
+  lastVerified: string;
   link: string;
 }
 

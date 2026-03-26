@@ -6,21 +6,39 @@ import { getAllRoadmaps } from '@/lib/roadmaps';
 import { affiliateResources } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 import BlogSidebar from '@/components/sidebar';
+import TagFilterBar from '@/components/blog/TagFilterBar';
 import type { Metadata } from 'next';
 
 const POSTS_PER_PAGE = 6;
 
-export const metadata: Metadata = {
-  title: 'Blog | M. Yousuf',
-  description:
-    'Deep-dive tutorials on Next.js, FastAPI, and Agentic AI — from architecture to production-ready deployment.',
-  openGraph: {
-    title: 'Blog | M. Yousuf',
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; tag?: string }>;
+}): Promise<Metadata> {
+  const { page, tag } = await searchParams;
+  const isFiltered = Boolean(tag);
+  const pageNumber = Number.parseInt(page || '1', 10);
+  const isPaginated = Number.isFinite(pageNumber) && pageNumber > 1;
+  const shouldNoIndex = isFiltered || isPaginated;
+
+  return {
+    title: 'Blog - All Articles',
     description:
-      'Deep-dive tutorials on Next.js, FastAPI, and Agentic AI — from architecture to production-ready deployment.',
-    type: 'website',
-  },
-};
+      'In-depth tutorials and engineering articles on Next.js 15, FastAPI, LangChain, RAG, Agentic AI, TypeScript, Docker, and Python. Written for developers who build for production.',
+    alternates: { canonical: 'https://www.buildnscale.dev/blog' },
+    robots: {
+      index: !shouldNoIndex,
+      follow: true,
+    },
+    openGraph: {
+      title: 'Blog - BuildnScale',
+      description: 'Deep-dives on Next.js, FastAPI, and Agentic AI - from architecture to production deployment.',
+      url: 'https://www.buildnscale.dev/blog',
+      type: 'website',
+    },
+  };
+}
 
 export default async function BlogPage({
   searchParams,
@@ -97,31 +115,7 @@ export default async function BlogPage({
         <div className="lg:col-span-2 space-y-8">
 
           {/* Tag Filters */}
-          <div className="flex flex-wrap gap-2">
-            <Link
-              href="/blog"
-              className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-colors ${
-                !activeTag
-                  ? 'bg-blue-500 border-blue-500 text-white'
-                  : 'border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-blue-500 hover:text-blue-500'
-              }`}
-            >
-              All
-            </Link>
-            {allTags.map((tag) => (
-              <Link
-                key={tag}
-                href={buildHref(1, tag)}
-                className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-colors ${
-                  activeTag === tag
-                    ? 'bg-blue-500 border-blue-500 text-white'
-                    : 'border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-blue-500 hover:text-blue-500'
-                }`}
-              >
-                {tag}
-              </Link>
-            ))}
-          </div>
+          <TagFilterBar tags={allTags} activeTag={activeTag} />
 
           {/* Post Grid */}
           {pagePosts.length > 0 ? (
@@ -186,18 +180,20 @@ export default async function BlogPage({
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-2 pt-6 border-t border-zinc-100 dark:border-zinc-800">
-              <Link
-                href={safePage > 1 ? buildHref(safePage - 1, activeTag) : '#'}
-                aria-disabled={safePage <= 1}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl border text-sm font-medium transition-colors ${
-                  safePage <= 1
-                    ? 'border-zinc-100 dark:border-zinc-800 text-zinc-300 dark:text-zinc-700 pointer-events-none'
-                    : 'border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-blue-500 hover:text-blue-500'
-                }`}
-              >
-                <ChevronLeft size={15} />
-                Prev
-              </Link>
+              {safePage > 1 ? (
+                <Link
+                  href={buildHref(safePage - 1, activeTag)}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl border text-sm font-medium transition-colors border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-blue-500 hover:text-blue-500"
+                >
+                  <ChevronLeft size={15} />
+                  Prev
+                </Link>
+              ) : (
+                <span className="flex items-center gap-1.5 px-4 py-2 rounded-xl border text-sm font-medium border-zinc-100 dark:border-zinc-800 text-zinc-300 dark:text-zinc-700">
+                  <ChevronLeft size={15} />
+                  Prev
+                </span>
+              )}
 
               <div className="flex items-center gap-1">
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
@@ -215,18 +211,20 @@ export default async function BlogPage({
                 ))}
               </div>
 
-              <Link
-                href={safePage < totalPages ? buildHref(safePage + 1, activeTag) : '#'}
-                aria-disabled={safePage >= totalPages}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl border text-sm font-medium transition-colors ${
-                  safePage >= totalPages
-                    ? 'border-zinc-100 dark:border-zinc-800 text-zinc-300 dark:text-zinc-700 pointer-events-none'
-                    : 'border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-blue-500 hover:text-blue-500'
-                }`}
-              >
-                Next
-                <ChevronRight size={15} />
-              </Link>
+              {safePage < totalPages ? (
+                <Link
+                  href={buildHref(safePage + 1, activeTag)}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl border text-sm font-medium transition-colors border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-blue-500 hover:text-blue-500"
+                >
+                  Next
+                  <ChevronRight size={15} />
+                </Link>
+              ) : (
+                <span className="flex items-center gap-1.5 px-4 py-2 rounded-xl border text-sm font-medium border-zinc-100 dark:border-zinc-800 text-zinc-300 dark:text-zinc-700">
+                  Next
+                  <ChevronRight size={15} />
+                </span>
+              )}
             </div>
           )}
         </div>

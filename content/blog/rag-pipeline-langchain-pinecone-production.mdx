@@ -1,469 +1,397 @@
----
-title: "Building a Production RAG Pipeline with LangChain and Pinecone"
-excerpt: "Move beyond demos. Learn how to build, scale, and evaluate a production-ready RAG pipeline using LangChain and Pinecone with real-world patterns."
+﻿---
+title: "RAG Pipeline with LangChain and Pinecone for Production"
+excerpt: "Build a RAG pipeline with LangChain and Pinecone that survives real traffic with reliable retrieval, versioned indexing, and measurable quality controls."
 date: "2026-03-26"
-readTime: "14 min read"
-category: "AI Engineering"
-tags:
-  - RAG
-  - LangChain
-  - Pinecone
-  - FastAPI
-  - LLM
-  - Software Engineering
+updatedAt: "2026-03-26"
+readTime: "10 min read"
+tags: ["RAG", "LangChain", "Pinecone", "LLM", "FastAPI", "Software Engineering"]
 image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80"
-slug: "rag-pipeline-langchain-pinecone-production"
-seo:
-  metaTitle: "Production RAG Pipeline with LangChain and Pinecone Guide"
-  metaDescription: "Build a production RAG pipeline with LangChain and Pinecone. Learn architecture, chunking, retrieval, indexing, scaling, evaluation, and deployment trade-offs."
-  canonical: "https://www.buildnscale.dev/blog/rag-pipeline-langchain-pinecone-production"
-  keywords:
-    - RAG pipeline with LangChain and Pinecone
-    - production rag pipeline
-    - LangChain Pinecone RAG
-    - vector database indexing
-    - document chunking strategy
-    - LangChain
-    - Pinecone
+heroSectionPost: true
+author:
+  name: "M. Yousuf"
+  avatar: "/avatar.jpg"
 ---
 
-<script
-  type="application/ld+json"
-  dangerouslySetInnerHTML={{
-    __html: JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "TechArticle",
-      "headline": "Production RAG Pipeline with LangChain and Pinecone Guide",
-      "description": "Build a production RAG pipeline with LangChain and Pinecone. Learn architecture, chunking, retrieval, indexing, scaling, evaluation, and deployment trade-offs.",
-      "datePublished": "2026-03-26",
-      "dateModified": "2026-03-26",
-      "author": {
-        "@type": "Person",
-        "name": "M. Yousuf",
-        "url": "https://www.buildnscale.dev/author"
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "BuildnScale",
-        "url": "https://www.buildnscale.dev",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://www.buildnscale.dev/logo.png"
-        }
-      },
-      "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": "https://www.buildnscale.dev/blog/rag-pipeline-langchain-pinecone-production"
-      },
-      "keywords": "RAG pipeline with LangChain and Pinecone, production rag pipeline, LangChain Pinecone RAG, vector database indexing, document chunking strategy, LangChain, Pinecone",
-      "articleSection": "AI Engineering",
-      "wordCount": 2850,
-      "proficiencyLevel": "Intermediate"
-    })
-  }}
-/>
+A RAG pipeline with LangChain and Pinecone fails in production for predictable reasons: noisy chunks, weak metadata, unbounded prompt context, and zero evaluation discipline. Demo systems answer a few curated prompts and look impressive. Production systems face ambiguous user intent, stale documentation, security boundaries, and strict latency and cost budgets. If you are shipping internal copilots, support assistants, or developer knowledge tools, retrieval reliability is what users trust, not model brand names.
 
-# Building a Production RAG Pipeline with LangChain and Pinecone
+This guide is for engineers who already know the basics and now need an implementation that holds up under load. You will build an end-to-end pipeline with versioned indexing, metadata-aware retrieval, citation-first answer generation, and an evaluation harness that catches regressions before they hit users.
 
-You built a RAG demo. It worked. Then you plugged in real data — and everything broke.
+## Overview: what we are building and where it fits in your stack
 
-That’s the part most tutorials skip. A **RAG pipeline with LangChain and Pinecone** looks clean in a notebook, but once you feed it messy PDFs, long docs, or real user queries, things start falling apart — irrelevant chunks, slow retrieval, and hallucinated answers.
+The system in this article has two distinct planes. The first plane is offline indexing: load documents, normalize content, split into chunks, embed each chunk, and upsert vectors into Pinecone. The second plane is online answering: embed a user query, retrieve relevant chunks, construct grounded context, generate an answer with citations, and return a confidence-aware response. Treating these planes separately is not architecture theater. It is how you isolate failures and scale each stage independently.
 
-I’ve debugged this more times than I’d like to admit. And the pattern is always the same: it’s not the LLM that fails — it’s the pipeline.
+Before implementation, define non-negotiables:
 
-> **📊 Stat:** According to Pinecone (2024), roughly 31% of AI applications now rely on RAG to improve accuracy.
+- Scope: what repositories, wikis, and runbooks are indexed.
+- Trust contract: answer from evidence or decline.
+- Latency target: set p95 for end user responses.
+- Cost envelope: cap embedding and completion spend per request.
+- Update policy: control when reindex runs and how rollbacks happen.
 
-But production-grade systems are still rare, because most implementations stop at “it works” instead of “it scales and stays correct.”
+If your product UI is built with Next.js and your backend is Python, this RAG service should live behind a stable API boundary, similar to the approach in [Next.js FastAPI full-stack architecture](/blog/nextjs-fastapi-stack). That keeps retrieval iteration independent from UI deployment cycles.
 
-This guide is about building one that actually holds up in production.
-
-## Architecting a Production RAG Pipeline
-
-A working RAG demo hides architectural problems that will break under real data.
-
-In production, you should think in two separate pipelines:
-
-- **Offline pipeline (indexing)**
-  Load → Chunk → Embed → Store in Pinecone
-- **Online pipeline (query-time)**
-  Query → Retrieve → Generate → Respond
-
-The system flow looks like this:
-
-```text
-User Query
-    ↓
-Embedding Model
-    ↓
-Pinecone Vector Search
-    ↓
-Top-K Documents
-    ↓
-LLM via LangChain
-    ↓
-Final Answer
-```
-
-LangChain is your orchestration layer — it wires components together. Pinecone is your retrieval engine — it makes semantic search fast.
-
-> **💡 Tip:** If you only take one thing: **RAG is a data system, not an LLM feature.**
-
-Most performance issues come from how data is stored and retrieved — not from which model you use.
-
-This becomes even more important when you integrate it into a real backend (like a FastAPI service or Next.js app), where latency and consistency matter.
-
-## Building the Knowledge Base (Chunking is Everything)
-
-Bad chunking silently kills your RAG system.
-
-You can have the best model and still get terrible answers if your chunks are poorly structured. From experience, chunk sizes between **250–500 tokens** work best for most documentation-style content.
-
-### Step 1 — Load Documents
+To keep configuration explicit and environment-safe, start with a typed settings object.
 
 ```python
-from langchain_community.document_loaders import TextLoader, PyPDFLoader
+# app/settings.py
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-def load_documents(paths: list[str]):
-    docs = []
-    for path in paths:
-        if path.endswith(".txt"):
-            docs.extend(TextLoader(path).load())
-        elif path.endswith(".pdf"):
-            docs.extend(PyPDFLoader(path).load())
-    return docs
+
+class Settings(BaseSettings):
+    openai_api_key: str
+    pinecone_api_key: str
+    pinecone_index_name: str = "buildnscale-rag"
+    pinecone_namespace: str = "docs-v1"
+    embedding_model: str = "text-embedding-3-small"
+    chat_model: str = "gpt-4o-mini"
+    chunk_size: int = 900
+    chunk_overlap: int = 150
+    retrieval_k: int = 8
+    retrieval_score_threshold: float = 0.72
+
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+
+
+settings = Settings()
 ```
 
-This part is straightforward — but consistency matters. Normalize everything early (encoding, formatting, etc.).
+This settings layer gives you deterministic behavior across local, staging, and production, which reduces mystery bugs during incident response.
 
-### Step 2 — Smart Chunking
+## Core concepts: why retrieval quality dominates generation quality
+
+The common misconception is that a better model fixes a weak RAG stack. In practice, model upgrades only amplify whatever evidence you provide. Good context produces great answers. Bad context produces confident nonsense. That is why high-quality retrieval is the primary engineering problem.
+
+There are four concepts to get right from first principles.
+
+1. Chunk semantics over chunk count. Chunks should preserve local meaning, not just token limits.
+2. Metadata as a control plane. Every chunk needs source, section, tenant, and version fields.
+3. Versioned indexing. Never overwrite production vectors without rollback capability.
+4. Grounded generation. Prompt templates must force evidence-bounded answers.
+
+LangChain helps compose loaders, splitters, embeddings, retrievers, and chains. Pinecone provides low-latency ANN retrieval with namespaces and metadata filters. Together they are a strong operational pair, especially when you need to separate tenant data or run multiple documentation versions side by side.
+
+The next code creates deterministic normalization and splitting primitives that preserve context and attach metadata before indexing.
 
 ```python
+# app/rag/core.py
+from langchain_core.documents import Document
+from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+from app.settings import settings
+
+
+embeddings = OpenAIEmbeddings(
+    api_key=settings.openai_api_key,
+    model=settings.embedding_model,
+)
+
 splitter = RecursiveCharacterTextSplitter(
-    chunk_size=500,
-    chunk_overlap=75
+    chunk_size=settings.chunk_size,
+    chunk_overlap=settings.chunk_overlap,
+    separators=["\n\n", "\n", ". ", " ", ""],
 )
 
-chunks = splitter.split_documents(documents)
 
-# Output:
-# List[Document]
-```
-
-The overlap is critical. Without it, you’ll lose context across boundaries.
-
-> **⚠️ Warning:** Common mistake — avoid this.
-
-```python
-chunk_overlap = 0  # ❌ breaks semantic continuity
-```
-
-This leads to incomplete answers because important context is split across chunks.
-
-### Step 3 — Embeddings
-
-```python
-from langchain_openai import OpenAIEmbeddings
-
-embedding_model = OpenAIEmbeddings(
-    model="text-embedding-3-small"
-)
-
-embeddings = [
-    embedding_model.embed_query(doc.page_content)
-    for doc in chunks
-]
-```
-
-> **💡 Tip:** Always attach metadata early.
-
-```python
-doc.metadata = {
-    "source": "docs/api.md",
-    "section": "authentication"
-}
-```
-
-You’ll use metadata later for filtering — skipping this now is painful to fix later.
-
-## Embeddings + Pinecone Index Design
-
-Your embedding model and index configuration define what your system *can* retrieve.
-
-> **📊 Stat:** According to ANN (Approximate Nearest Neighbor) research, these systems provide **100–1000× faster search** with minimal accuracy loss.
-
-This is why vector databases like Pinecone are essential at scale.
-
-### Initialize Pinecone
-
-```python
-from pinecone import Pinecone, ServerlessSpec
-
-pc = Pinecone(api_key="YOUR_API_KEY")
-
-index_name = "rag-index"
-
-if index_name not in pc.list_indexes().names():
-    pc.create_index(
-        name=index_name,
-        dimension=1536,
-        metric="cosine",
-        spec=ServerlessSpec(
-            cloud="aws",
-            region="us-east-1"
-        )
+def normalize_document(raw_text: str, source: str, version: str) -> Document:
+    cleaned = " ".join(raw_text.split())
+    return Document(
+        page_content=cleaned,
+        metadata={
+            "source": source,
+            "version": version,
+            "pipeline": "rag-langchain-pinecone",
+        },
     )
 
-index = pc.Index(index_name)
+
+def split_documents(docs: list[Document]) -> list[Document]:
+    return splitter.split_documents(docs)
 ```
 
-Make sure your dimension matches your embedding model — this is a common failure point.
+If you are hardening the generation side too, use the response-shaping patterns from [prompt engineering production AI](/blog/prompt-engineering-best-practices) to reduce format drift and improve reliability.
 
-### Batch Upserts
+## Step-by-step implementation: indexing, retrieval, and API serving
+
+Build this in three testable modules: index management, ingestion, and query answering. Test each module independently before composing them.
+
+The first code block creates or reuses a Pinecone index, generates deterministic vector IDs, and upserts in batches.
 
 ```python
-def upsert_batches(chunks, embeddings, batch_size=100):
-    for i in range(0, len(chunks), batch_size):
-        batch = []
+# app/rag/indexing.py
+import hashlib
+from pinecone import Pinecone, ServerlessSpec
 
-        for j in range(batch_size):
-            if i + j >= len(chunks):
-                break
+from app.settings import settings
 
-            doc = chunks[i + j]
 
-            batch.append({
-                "id": f"doc-{i+j}",
-                "values": embeddings[i + j],
-                "metadata": doc.metadata
-            })
+pc = Pinecone(api_key=settings.pinecone_api_key)
 
-        index.upsert(vectors=batch)
+
+def get_or_create_index() -> None:
+    existing = pc.list_indexes().names()
+    if settings.pinecone_index_name not in existing:
+        pc.create_index(
+            name=settings.pinecone_index_name,
+            dimension=1536,
+            metric="cosine",
+            spec=ServerlessSpec(cloud="aws", region="us-east-1"),
+        )
+
+
+def build_vector_id(source: str, text: str) -> str:
+    digest = hashlib.sha256(f"{source}:{text}".encode("utf-8")).hexdigest()
+    return digest[:32]
+
+
+def upsert_batch(rows: list[dict]) -> int:
+    index = pc.Index(settings.pinecone_index_name)
+    vectors = []
+    for row in rows:
+        vectors.append(
+            {
+                "id": build_vector_id(row["metadata"]["source"], row["text"]),
+                "values": row["embedding"],
+                "metadata": row["metadata"],
+            }
+        )
+
+    index.upsert(vectors=vectors, namespace=settings.pinecone_namespace)
+    return len(vectors)
 ```
 
-> **⚠️ Warning:** Small upserts will destroy ingestion performance. Always batch.
-
-### Namespace Strategy
+Now wire ingestion from filesystem to Pinecone.
 
 ```python
-index.upsert(vectors=batch, namespace="docs-v1")
+# app/rag/ingest.py
+from pathlib import Path
+from langchain_core.documents import Document
+
+from app.rag.core import embeddings, normalize_document, split_documents
+from app.rag.indexing import get_or_create_index, upsert_batch
+
+
+def load_markdown(path: str, version: str) -> list[Document]:
+    docs: list[Document] = []
+    for file in Path(path).rglob("*.md"):
+        text = file.read_text(encoding="utf-8")
+        docs.append(normalize_document(text, source=str(file), version=version))
+    return docs
+
+
+def run_ingestion(path: str, version: str) -> int:
+    get_or_create_index()
+    docs = load_markdown(path, version)
+    chunks = split_documents(docs)
+
+    total = 0
+    batch_size = 100
+    rows: list[dict] = []
+
+    for chunk in chunks:
+        rows.append(
+            {
+                "text": chunk.page_content,
+                "embedding": embeddings.embed_query(chunk.page_content),
+                "metadata": {
+                    **chunk.metadata,
+                    "text": chunk.page_content,
+                },
+            }
+        )
+
+        if len(rows) == batch_size:
+            total += upsert_batch(rows)
+            rows = []
+
+    if rows:
+        total += upsert_batch(rows)
+
+    return total
+
+
+if __name__ == "__main__":
+    inserted = run_ingestion(path="./knowledge", version="2026-03-26")
+    print(f"Indexed vectors: {inserted}")
 ```
 
-Namespaces help you:
-
-- isolate tenants
-- version data
-- roll out updates safely
-
-## Retrieval Layer — Where Most RAG Pipelines Fail
-
-Retrieval quality matters more than model quality in a RAG pipeline with LangChain and Pinecone.
-
-This is where most systems break. You can upgrade your model all day — if retrieval is wrong, your answers will still be wrong.
-
-### Create Retriever
+Finally, create a retrieval-plus-generation function and expose it via FastAPI.
 
 ```python
-from langchain_pinecone import PineconeVectorStore
+# app/rag/query.py
+from openai import OpenAI
+from pinecone import Pinecone
 
-vectorstore = PineconeVectorStore(
-    index=index,
-    embedding=embedding_model
-)
+from app.rag.core import embeddings
+from app.settings import settings
 
-retriever = vectorstore.as_retriever(
-    search_kwargs={"k": 5}
-)
+
+llm_client = OpenAI(api_key=settings.openai_api_key)
+pc = Pinecone(api_key=settings.pinecone_api_key)
+index = pc.Index(settings.pinecone_index_name)
+
+
+def retrieve(query: str, version: str | None = None) -> list[dict]:
+    vector = embeddings.embed_query(query)
+    metadata_filter = {"version": {"$eq": version}} if version else None
+
+    result = index.query(
+        vector=vector,
+        namespace=settings.pinecone_namespace,
+        top_k=settings.retrieval_k,
+        include_metadata=True,
+        filter=metadata_filter,
+    )
+
+    matches = []
+    for m in result.matches:
+        if m.score >= settings.retrieval_score_threshold:
+            matches.append(
+                {
+                    "score": float(m.score),
+                    "source": m.metadata.get("source", "unknown"),
+                    "text": m.metadata.get("text", ""),
+                }
+            )
+    return matches
+
+
+def answer_query(query: str, version: str | None = None) -> dict:
+    rows = retrieve(query, version=version)
+    if not rows:
+        return {
+            "answer": "I do not have enough verified context to answer this safely.",
+            "citations": [],
+        }
+
+    evidence = "\n\n".join(
+        [f"Source: {row['source']}\nContext: {row['text']}" for row in rows]
+    )
+
+    completion = llm_client.chat.completions.create(
+        model=settings.chat_model,
+        temperature=0,
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a technical assistant. Use only provided evidence. If insufficient, decline.",
+            },
+            {"role": "user", "content": f"Question: {query}\n\nEvidence:\n{evidence}"},
+        ],
+    )
+
+    return {
+        "answer": completion.choices[0].message.content,
+        "citations": [{"source": row["source"], "score": row["score"]} for row in rows],
+    }
 ```
-
-Keep `k` small. More context doesn’t mean better answers.
-
-### RetrievalQA Chain
 
 ```python
-from langchain.chains import RetrievalQA
-from langchain_openai import ChatOpenAI
+# app/main.py
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
 
-llm = ChatOpenAI(model="gpt-4o-mini")
+from app.rag.query import answer_query
 
-qa_chain = RetrievalQA.from_chain_type(
-    llm=llm,
-    retriever=retriever,
-    return_source_documents=True
-)
 
-response = qa_chain.invoke({"query": "What is the refund policy?"})
+app = FastAPI(title="RAG API", version="1.0.0")
 
-print(response["result"])
 
-# Output:
-# "Our refund policy allows returns within 30 days..."
+class AskRequest(BaseModel):
+    question: str = Field(min_length=3, max_length=1200)
+    version: str | None = None
+
+
+class AskResponse(BaseModel):
+    answer: str
+    citations: list[dict]
+
+
+@app.post("/ask", response_model=AskResponse)
+async def ask(payload: AskRequest) -> AskResponse:
+    try:
+        return AskResponse(**answer_query(payload.question, payload.version))
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"RAG execution failed: {exc}")
 ```
 
-> **⚠️ Warning:** Common mistake.
+This separation gives you cleaner test boundaries and supports partial rollouts during migration.
+
+## Production considerations: performance, security, and reliability
+
+After correctness, your priorities are consistency and containment. The first production question is latency. Your p95 typically depends on embedding time, vector query time, and generation token count. Keep top_k constrained, filter with metadata aggressively, and avoid dumping raw chunks into prompts. A smaller high-confidence context usually outperforms larger noisy context.
+
+The second question is relevance drift. Documentation changes constantly, so retrieval quality degrades unless indexing is versioned and scheduled. Keep version tags in metadata and run incremental reindex jobs. Never overwrite vectors blindly. If retrieval quality drops, rollback by namespace or version without touching application logic.
+
+The third question is security. Indexed content can include sensitive values, stale credentials, or tenant-specific text. Add ingestion-time scrubbing, enforce tenant and version filters at query time, and avoid storing secrets in chunk text. For strict protection requirements, combine this with [data encryption Python production](/blog/secure-encryption-python) for key handling and at-rest controls.
+
+The fourth question is observability. Track retrieval score histograms, decline rate, token usage, and citation coverage. If user feedback declines while generation appears fluent, you likely have retrieval mismatch. Add request correlation IDs so one failed answer can be traced through query, retrieval, and generation stages.
+
+If your workflow includes conversational memory and user identity, connect this retrieval path with session-aware logic in [stateful chatbot with FastAPI](/blog/building-stateful-chatbot-fastapi). It is the cleanest way to keep persistent user context outside your retrieval index.
+
+## Common pitfalls and debugging patterns
+
+Most teams hit the same failure modes. First is embedding-model mismatch. If you switch embedding models without reindexing, cosine similarity becomes meaningless even if queries still return results. Always reindex when model families change.
+
+Second is metadata loss during transformation. Engineers attach metadata on documents, then forget to preserve it in vector payloads. You lose tenant scoping and version filters, and incident response becomes guesswork. Verify metadata presence before every upsert.
+
+Third is chunking that ignores semantic boundaries. Tiny chunks increase ambiguity. Huge chunks increase token cost and add unrelated context. Start around 700 to 1000 tokens with 10 to 20 percent overlap, then tune using measured retrieval performance.
+
+Fourth is no decline strategy. Systems that always answer create false confidence in high-risk contexts. Your API should explicitly return insufficient context when score thresholds are not met.
+
+The following evaluation harness gives you a concrete regression check for retrieval quality.
 
 ```python
-k = 20  # ❌ too many chunks = noisy context
+# app/rag/eval.py
+from app.rag.query import retrieve
+
+
+TEST_CASES = [
+    {
+        "question": "How do we rotate API keys for production services?",
+        "expected_source_contains": "security",
+    },
+    {
+        "question": "What is the webhook retry policy?",
+        "expected_source_contains": "webhook",
+    },
+]
+
+
+def run_eval() -> None:
+    passed = 0
+
+    for case in TEST_CASES:
+        rows = retrieve(case["question"])
+        sources = " ".join([row["source"].lower() for row in rows])
+        ok = case["expected_source_contains"] in sources
+        print(f"{'PASS' if ok else 'FAIL'}: {case['question']}")
+
+        if not ok:
+            print(f"  Sources returned: {[row['source'] for row in rows]}")
+        else:
+            passed += 1
+
+    print(f"Summary: {passed}/{len(TEST_CASES)} passed")
+
+
+if __name__ == "__main__":
+    run_eval()
 ```
 
-More documents introduce noise and reduce answer quality.
+Run this after every reindex and before every release. It is cheap insurance against retrieval regressions that are otherwise invisible until users complain.
 
-### Prompt Control (Underrated)
+## Conclusion and next steps
 
-```python
-from langchain.prompts import PromptTemplate
+A RAG pipeline with LangChain and Pinecone becomes production-ready when retrieval is deterministic, evidence is traceable, and behavior is measurable. The most effective teams treat RAG as a data system with strict operational controls, not as a prompt experiment. That mindset is what keeps quality stable as your document volume, user traffic, and product surface grow.
 
-template = """
-You are a helpful assistant.
+Your next actions should be direct:
 
-Use ONLY the context below.
-If the answer is not in the context, say "I don't know".
+1. Build a benchmark set of real user questions and expected source files.
+2. Add score-threshold decline behavior in your API before launch.
+3. Version your index writes so rollback is operationally simple.
+4. Instrument retrieval and citation metrics in your observability stack.
 
-Context:
-{context}
+For adjacent architecture work, continue with [deploy Next.js 15 to production](/blog/deploying-nextjs-to-production) for delivery hardening and [multi-agent AI system Python](/blog/multi-agent-emergency-response) if you need planner-worker coordination on top of retrieval.
 
-Question:
-{question}
-"""
-
-prompt = PromptTemplate(
-    template=template,
-    input_variables=["context", "question"]
-)
-```
-
-This reduces hallucination significantly.
-
-## Scaling a RAG Pipeline in Production
-
-Scaling RAG is a data systems problem, not an LLM problem.
-
-Systems typically start degrading around **1M+ documents** if you don’t optimize retrieval and indexing.
-
-### Metadata Filtering
-
-```python
-query_embedding = embedding_model.embed_query("pricing plans")
-
-results = index.query(
-    vector=query_embedding,
-    top_k=5,
-    filter={"section": {"$eq": "pricing"}}
-)
-```
-
-Filtering reduces search space and improves both speed and relevance.
-
-### Async Ingestion
-
-```python
-import asyncio
-
-async def async_upsert(batch):
-    index.upsert(vectors=batch)
-
-await asyncio.gather(*[async_upsert(b) for b in batches])
-```
-
-Parallel ingestion becomes critical as your dataset grows.
-
-> **💡 Tip:** Split your data:
-
-- Hot index → frequently accessed
-- Cold index → archive
-
-This improves latency and reduces cost.
-
-## Evaluation, Monitoring, and Real-World Pitfalls
-
-If you’re not evaluating your RAG system, you’re guessing.
-
-Most teams don’t measure:
-
-- retrieval relevance
-- answer faithfulness
-- hallucination rate
-
-That’s why systems feel unreliable.
-
-### Example Evaluation
-
-```python
-from ragas import evaluate
-
-results = evaluate(
-    dataset=my_dataset,
-    metrics=["faithfulness", "answer_relevancy"]
-)
-
-print(results)
-```
-
-> **⚠️ Warning:** Hard truth.
-
-High retrieval accuracy does NOT guarantee good answers.
-
-The LLM still depends on:
-
-- clean context
-- clear instructions
-- proper formatting
-
-## Deployment and Cost Trade-offs
-
-RAG pipelines fail in production because of infrastructure, not models.
-
-> **📊 Stat:** According to Pinecone (2024), ~55% of organizations now run AI systems in production.
-
-This means reliability and cost matter more than experimentation.
-
-### Docker Setup
-
-```dockerfile
-FROM python:3.12-slim
-
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
-COPY . .
-
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-```
-
-### Cost Reality
-
-You’re paying for:
-
-- embeddings (per token)
-- vector storage
-- query operations
-
-> **💡 Tip:** Cache aggressively:
-
-- repeated queries
-- embeddings
-
-### Security
-
-- Never expose API keys
-- Use environment variables
-- Rotate keys regularly
-
-## Conclusion
-
-A production RAG system isn’t about plugging LangChain into Pinecone and calling it done.
-
-It’s about:
-
-- chunking correctly
-- retrieving precisely
-- scaling intelligently
-- evaluating continuously
-
-If you get those right, the LLM becomes the easiest part.
-
-And that’s the real takeaway — building a **RAG pipeline with LangChain and Pinecone** is less about AI magic, and more about engineering discipline.
-
+A reliable RAG system is not one perfect prompt. It is repeatable engineering discipline across ingestion, retrieval, generation, and feedback loops.

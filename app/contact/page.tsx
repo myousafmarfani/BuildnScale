@@ -15,16 +15,10 @@ import ScheduleCallForm from '@/components/contact/ScheduleCallForm';
 import { siteUrl } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'Contact | M. Yousuf',
+  title: 'Contact - BuildnScale',
   description:
-    'Get in touch for freelance full-stack and AI projects, consulting, or collaborations.',
-  openGraph: {
-    title: 'Contact | M. Yousuf',
-    description:
-      'Reach out for full-stack and AI engineering projects, consulting, or collaborations.',
-    type: 'website',
-    url: `${siteUrl}/contact`,
-  },
+    'Get in touch with M. Yousaf Marfani for collaborations, freelance work, or AI and full-stack development inquiries.',
+  alternates: { canonical: 'https://www.buildnscale.dev/contact' },
 };
 
 export default function ContactPage() {
@@ -48,14 +42,14 @@ export default function ContactPage() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <a
+            <Link
               href="#schedule-call"
               className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600 transition-colors"
             >
               Schedule a Call <ArrowRight size={14} />
-            </a>
+            </Link>
             <a
-              href="mailto:contact@myousaf.dev"
+              href="mailto:myousaf@buildnscale.dev"
               className="inline-flex items-center gap-2 rounded-full border border-blue-500 px-4 py-2 text-sm font-semibold text-blue-500 hover:bg-blue-500 hover:text-white transition-colors"
             >
               Email Me <Mail size={14} />
@@ -84,15 +78,15 @@ export default function ContactPage() {
             <div className="space-y-3 text-sm text-zinc-500 dark:text-zinc-400">
               <div className="flex items-center gap-3">
                 <Mail size={16} className="text-blue-500" />
-                <a href="mailto:contact@myousaf.dev" className="hover:text-blue-500">
-                  contact@myousaf.dev
+                <a href="mailto:myousaf@buildnscale.dev" className="hover:text-blue-500">
+                  myousaf@buildnscale.dev
                 </a>
               </div>
               <div className="flex items-center gap-3">
                 <Globe size={16} className="text-blue-500" />
-                <a href={siteUrl} className="hover:text-blue-500">
+                <Link href="/" className="hover:text-blue-500">
                   {siteUrl.replace('https://', '')}
-                </a>
+                </Link>
               </div>
               <div className="flex items-center gap-3">
                 <MapPin size={16} className="text-blue-500" />
@@ -100,7 +94,7 @@ export default function ContactPage() {
               </div>
               <div className="flex items-center gap-3">
                 <Calendar size={16} className="text-blue-500" />
-                <a href="#schedule-call" className="hover:text-blue-500">Schedule a meeting</a>
+                <Link href="#schedule-call" className="hover:text-blue-500">Schedule a meeting</Link>
               </div>
             </div>
           </div>

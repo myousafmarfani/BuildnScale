@@ -38,6 +38,7 @@ export default function BlogSidebar({
   resources,
   professionalCta,
 }: BlogSidebarProps) {
+  const isExternalHref = (href: string) => href.startsWith('http://') || href.startsWith('https://');
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -96,7 +97,11 @@ export default function BlogSidebar({
           No spam, ever.
         </p>
         <form onSubmit={handleSubscribe} className="space-y-3">
+          <label htmlFor="sidebar-newsletter-email" className="sr-only">
+            Email address
+          </label>
           <input
+            id="sidebar-newsletter-email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -208,24 +213,43 @@ export default function BlogSidebar({
             </p>
           </div>
           <div className="space-y-2">
-            <a
-              href={professionalCta.primaryHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1.5 w-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white py-2.5 rounded-xl font-semibold text-sm transition-colors"
-            >
-              {professionalCta.primaryLabel}
-              <ChevronRight size={14} />
-            </a>
-            {professionalCta.secondaryLabel && professionalCta.secondaryHref && (
+            {isExternalHref(professionalCta.primaryHref) ? (
               <a
-                href={professionalCta.secondaryHref}
+                href={professionalCta.primaryHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-1.5 w-full border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-blue-500 hover:text-blue-500 py-2.5 rounded-xl font-semibold text-sm transition-colors"
+                className="flex items-center justify-center gap-1.5 w-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white py-2.5 rounded-xl font-semibold text-sm transition-colors"
               >
-                {professionalCta.secondaryLabel}
+                {professionalCta.primaryLabel}
+                <ChevronRight size={14} />
               </a>
+            ) : (
+              <Link
+                href={professionalCta.primaryHref}
+                className="flex items-center justify-center gap-1.5 w-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white py-2.5 rounded-xl font-semibold text-sm transition-colors"
+              >
+                {professionalCta.primaryLabel}
+                <ChevronRight size={14} />
+              </Link>
+            )}
+            {professionalCta.secondaryLabel && professionalCta.secondaryHref && (
+              isExternalHref(professionalCta.secondaryHref) ? (
+                <a
+                  href={professionalCta.secondaryHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-1.5 w-full border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-blue-500 hover:text-blue-500 py-2.5 rounded-xl font-semibold text-sm transition-colors"
+                >
+                  {professionalCta.secondaryLabel}
+                </a>
+              ) : (
+                <Link
+                  href={professionalCta.secondaryHref}
+                  className="flex items-center justify-center gap-1.5 w-full border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-blue-500 hover:text-blue-500 py-2.5 rounded-xl font-semibold text-sm transition-colors"
+                >
+                  {professionalCta.secondaryLabel}
+                </Link>
+              )
             )}
           </div>
         </div>

@@ -67,6 +67,7 @@ export default function Navigation() {
     <>
       {/* ── Nav bar ─────────────────────────────────────────────── */}
       <nav
+        aria-label="Main navigation"
         className={`fixed z-50 transition-all duration-300 ease-in-out ${
           hidden
             ? '-translate-y-full opacity-0 pointer-events-none'
