@@ -22,7 +22,7 @@ export default function RoadmapBanner() {
 
   return (
     <div className="relative w-full bg-primary/10 py-2.5 px-4 pr-10 text-center text-sm text-foreground">
-      <p>Two roadmaps are now live: Full-Stack Web Developer and AI Engineer. Both are free.</p>
+      <p>Two roadmaps are now live: Full-Stack Web Developer and AI Engineer.</p>
       <button
         type="button"
         aria-label="Dismiss announcement"

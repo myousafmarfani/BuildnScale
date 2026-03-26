@@ -19,8 +19,8 @@ export interface Roadmap {
   description: string;
   modules: string;
   duration: string;
-  students: string;
-  slug: string;
+  status: 'published' | 'coming-soon';
+  slug?: string;
 }
 
 export interface Project {
@@ -38,7 +38,7 @@ export interface AffiliateResource {
   description: string;
   price: string;
   discount: string;
-  rating: number;
+  rating?: number;
   features: string[];
   link: string;
 }

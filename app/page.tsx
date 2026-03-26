@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ChevronRight, Clock, BookOpen, Users, Star, CheckCircle, Calendar, ArrowRight } from 'lucide-react';
+import { ChevronRight, Clock, BookOpen, CheckCircle, Calendar, ArrowRight } from 'lucide-react';
 import { getAllPosts, getHeroSectionPosts } from '@/lib/blog';
 import { roadmaps, projects, affiliateResources } from '@/lib/data';
 import HomepageSidebar from '@/components/homepage-sidebar';
 import ScrollAwareSidebar from '@/components/scroll-aware-sidebar';
+import RoadmapNotifyModal from '@/components/roadmaps/RoadmapNotifyModal';
 import { formatDate } from '@/lib/utils';
 
 export default function Home() {
@@ -184,20 +185,53 @@ export default function Home() {
           <section id="roadmaps" className="space-y-6">
             <h2 className="text-2xl font-bold">Learning Roadmaps</h2>
             <div className="space-y-4">
-              {roadmaps.map((roadmap, idx) => (
-                <div key={idx} className="p-6 bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/5 transition-all cursor-pointer group">
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-xl font-bold group-hover:text-blue-500 transition-colors">{roadmap.title}</h3>
-                    <ChevronRight size={20} className="text-blue-500 group-hover:translate-x-1 transition-transform shrink-0 mt-1" />
+              {roadmaps.map((roadmap, idx) => {
+                const badgeLabel =
+                  roadmap.slug === 'full-stack-developer'
+                    ? 'Beginners'
+                    : roadmap.slug === 'ai-engineer'
+                      ? 'Intermediate'
+                      : null;
+                const cardContent = (
+                  <>
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="text-xl font-bold group-hover:text-blue-500 transition-colors">{roadmap.title}</h3>
+                        {badgeLabel ? (
+                          <span className="text-xs uppercase tracking-[0.2em] px-2 py-1 rounded-full bg-blue-500/10 text-blue-700 dark:text-blue-300">
+                            {badgeLabel}
+                          </span>
+                        ) : null}
+                      </div>
+                      <ChevronRight size={20} className="text-blue-500 group-hover:translate-x-1 transition-transform shrink-0 mt-1" />
+                    </div>
+                    <p className="text-zinc-500 dark:text-zinc-400 mb-4 text-sm">{roadmap.description}</p>
+                    <div className="flex items-center gap-6 text-sm text-zinc-500 dark:text-zinc-400">
+                      <span className="flex items-center gap-1.5"><BookOpen size={14} />{roadmap.modules}</span>
+                      <span className="flex items-center gap-1.5"><Clock size={14} />{roadmap.duration}</span>
+                    </div>
+                  </>
+                );
+
+                if (roadmap.status === 'published' && roadmap.slug) {
+                  return (
+                    <Link
+                      key={idx}
+                      href={`/roadmaps/${roadmap.slug}`}
+                      className="p-6 bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/5 transition-all cursor-pointer group block"
+                    >
+                      {cardContent}
+                    </Link>
+                  );
+                }
+
+                return (
+                  <div key={idx} className="p-6 bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/5 transition-all cursor-pointer group">
+                    {cardContent}
+                    <RoadmapNotifyModal roadmapTitle={roadmap.title} />
                   </div>
-                  <p className="text-zinc-500 dark:text-zinc-400 mb-4 text-sm">{roadmap.description}</p>
-                  <div className="flex items-center gap-6 text-sm text-zinc-500 dark:text-zinc-400">
-                    <span className="flex items-center gap-1.5"><BookOpen size={14} />{roadmap.modules}</span>
-                    <span className="flex items-center gap-1.5"><Clock size={14} />{roadmap.duration}</span>
-                    <span className="flex items-center gap-1.5"><Users size={14} />{roadmap.students}</span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 
@@ -225,7 +259,7 @@ export default function Home() {
             </div>
           </section>
 
-          {/* Affiliate Resources */}
+          {/* Resources */}
           <section id="resources" className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold">Recommended Resources</h2>
@@ -269,10 +303,6 @@ export default function Home() {
                         </div>
                         <div className="text-right ml-4">
                           <div className="text-xl font-bold text-blue-500">{resource.price}</div>
-                          <div className="flex items-center gap-1 text-xs justify-end mt-0.5">
-                            <Star size={12} className="text-yellow-500 fill-yellow-500" />
-                            <span className="text-zinc-500">{resource.rating}</span>
-                          </div>
                         </div>
                       </div>
                       <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">{resource.description}</p>

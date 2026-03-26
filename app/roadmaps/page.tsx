@@ -81,13 +81,10 @@ export default async function RoadmapsPage() {
           </p>
           <div className="flex flex-wrap gap-2.5 pt-1 text-sm">
             <span className="rounded-full border border-border bg-background/80 px-3 py-1.5 font-medium">
-              {roadmaps.length} Career Paths
+              {roadmaps.length} Published Roadmaps
             </span>
             <span className="rounded-full border border-border bg-background/80 px-3 py-1.5 font-medium">
-              Updated March 2026
-            </span>
-            <span className="rounded-full border border-border bg-background/80 px-3 py-1.5 font-medium">
-              100% Free
+              More coming soon
             </span>
           </div>
         </div>
@@ -116,13 +113,13 @@ export default async function RoadmapsPage() {
               Coming Soon
             </span>
           </div>
-          <h3 className="text-lg font-semibold">DevOps & Cloud</h3>
+          <h3 className="text-lg font-semibold">DevOps</h3>
           <p className="mt-1 text-sm text-muted-foreground">Curriculum in progress. Get notified at launch.</p>
           <RoadmapNotifyModal roadmapTitle="DevOps & Cloud" />
         </article>
       </section>
 
-      <section className="rounded-2xl border border-blue-200/70 bg-gradient-to-br from-white to-blue-50/60 p-6 dark:border-blue-900/40 dark:from-zinc-900/60 dark:to-blue-950/20">
+      <section className="rounded-2xl border border-blue-200/70 bg-linear-to-br from-white to-blue-50/60 p-6 dark:border-blue-900/40 dark:from-zinc-900/60 dark:to-blue-950/20">
         <div className="space-y-2">
           <h2 className="text-2xl font-bold text-blue-900 dark:text-blue-100">
             Suggest a roadmap topic
