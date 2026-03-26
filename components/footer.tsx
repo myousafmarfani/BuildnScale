@@ -38,13 +38,18 @@ export default function Footer() {
 
           {/* Brand column (2 cols on lg) */}
           <div className="lg:col-span-2 space-y-5">
-            <Link href="/" className="text-2xl font-bold flex items-center gap-1.5">
-              <span className="text-blue-500">M.</span>
-              <span>Yousuf</span>
+            <Link
+              href="/"
+              className="flex items-center gap-0.5 shrink-0 tracking-tight select-none"
+              style={{ fontFamily: 'var(--font-space-grotesk)', fontWeight: 700, fontSize: '1.25rem' }}
+            >
+              <span className="text-blue-500">Build</span>
+              <span className="text-zinc-400 dark:text-zinc-500 font-medium text-base mx-0.5">n</span>
+              <span className="text-zinc-900 dark:text-white">Scale</span>
             </Link>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-xs">
-              Full-Stack Developer & AI Enthusiast. Writing about Next.js, FastAPI, and Agentic AI
-              from production experience.
+              A practical engineering blog for building production-ready apps with Next.js,
+              FastAPI, and modern AI systems.
             </p>
             <div className="flex items-center gap-2">
               <a
@@ -127,7 +132,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-zinc-200 dark:border-zinc-800 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-xs text-zinc-400">
-            © 2026 M. Yousuf. All rights reserved.
+            © 2026 Build n Scale. All rights reserved.
           </p>
           <div className="flex items-center gap-5">
             <a href="#" className="text-xs text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">

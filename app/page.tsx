@@ -12,6 +12,20 @@ export default function Home() {
   const heroPosts = getHeroSectionPosts();
   const heroPost = heroPosts[0];
   const heroSquarePosts = heroPosts.slice(1, 3);
+  const resourceCards = [
+    ...affiliateResources.slice(0, 5),
+    {
+      name: 'Explore all resources',
+      category: 'Directories',
+      description: 'Resources for learning, development, deployment, and AI tooling.',
+      price: 'View all',
+      discount: 'CTA',
+      rating: 5,
+      features: ['Learning', 'Development', 'Deployment', 'AI tooling'],
+      link: '/resources',
+      isCta: true,
+    },
+  ];
 
   // Feed posts: exclude the 3 hero posts to avoid duplication
   const heroSlugs = new Set(heroPosts.map((p) => p.slug));
@@ -24,13 +38,13 @@ export default function Home() {
       {/* ─── Hero Posts Grid: 1 Rectangle (60%) + 2 Squares (40%) ──── */}
       {heroPosts.length > 0 && (
         <section id="blog" className="pt-6 pb-20">
-          <div className="flex flex-col lg:flex-row gap-4 lg:h-[520px]">
+          <div className="flex flex-col lg:flex-row gap-4 lg:h-130">
 
             {/* Left — Rectangle (60% width, full height) */}
             {heroPost && (
               <Link
                 href={`/blog/${heroPost.slug}`}
-                className="group relative rounded-2xl overflow-hidden lg:w-[60%] h-72 lg:h-full flex-shrink-0 bg-zinc-900 block"
+                className="group relative rounded-2xl overflow-hidden lg:w-[60%] h-72 lg:h-full shrink-0 bg-zinc-900 block"
               >
                 <Image
                   src={heroPost.image}
@@ -39,7 +53,7 @@ export default function Home() {
                   priority
                   className="object-cover opacity-80 group-hover:opacity-90 group-hover:scale-[1.02] transition-all duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/30 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8 space-y-3">
                   <div className="flex items-center gap-2 flex-wrap">
                     {heroPost.tags.slice(0, 2).map((tag, i) => (
@@ -86,7 +100,7 @@ export default function Home() {
                       fill
                       className="object-cover opacity-75 group-hover:opacity-90 group-hover:scale-[1.03] transition-all duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-5 space-y-2">
                       <div className="flex items-center gap-2">
                         {post.tags.slice(0, 1).map((tag, i) => (
@@ -138,7 +152,7 @@ export default function Home() {
                     href={`/blog/${post.slug}`}
                     className="group block bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300"
                   >
-                    <div className="relative aspect-[16/9] overflow-hidden">
+                    <div className="relative aspect-video overflow-hidden">
                       <Image src={post.image} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
                     <div className="p-5 space-y-3">
@@ -174,7 +188,7 @@ export default function Home() {
                 <div key={idx} className="p-6 bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/5 transition-all cursor-pointer group">
                   <div className="flex items-start justify-between mb-3">
                     <h3 className="text-xl font-bold group-hover:text-blue-500 transition-colors">{roadmap.title}</h3>
-                    <ChevronRight size={20} className="text-blue-500 group-hover:translate-x-1 transition-transform flex-shrink-0 mt-1" />
+                    <ChevronRight size={20} className="text-blue-500 group-hover:translate-x-1 transition-transform shrink-0 mt-1" />
                   </div>
                   <p className="text-zinc-500 dark:text-zinc-400 mb-4 text-sm">{roadmap.description}</p>
                   <div className="flex items-center gap-6 text-sm text-zinc-500 dark:text-zinc-400">
@@ -218,34 +232,60 @@ export default function Home() {
               <span className="text-xs text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded-full">Affiliate Links</span>
             </div>
             <div className="space-y-4">
-              {affiliateResources.map((resource, idx) => (
-                <a key={idx} href={resource.link} target="_blank" rel="noopener noreferrer"
-                  className="block p-6 bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/5 transition-all group">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-1">
-                        <h3 className="text-lg font-bold group-hover:text-blue-500 transition-colors">{resource.name}</h3>
-                        <span className="bg-green-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">{resource.discount}</span>
+              {resourceCards.map((resource, idx) => (
+                // Keep CTA layout aligned with cards while centering content.
+                <a
+                  key={idx}
+                  href={resource.link}
+                  target={'isCta' in resource && resource.isCta ? undefined : '_blank'}
+                  rel={'isCta' in resource && resource.isCta ? undefined : 'noopener noreferrer'}
+                  className={`block p-6 bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/5 transition-all group ${'isCta' in resource && resource.isCta ? 'text-center' : ''}`}
+                >
+                  {'isCta' in resource && resource.isCta ? (
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="text-xs uppercase tracking-[0.2em] text-zinc-400">More resources</span>
+                      <h3 className="text-xl font-bold group-hover:text-blue-500 transition-colors">{resource.name}</h3>
+                      <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-md">{resource.description}</p>
+                      <div className="flex flex-wrap justify-center gap-2">
+                        {resource.features.map((feature, fi) => (
+                          <span key={fi} className="text-xs px-2.5 py-1 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
+                            {feature}
+                          </span>
+                        ))}
                       </div>
-                      <span className="text-xs text-zinc-400">{resource.category}</span>
-                    </div>
-                    <div className="text-right ml-4">
-                      <div className="text-xl font-bold text-blue-500">{resource.price}</div>
-                      <div className="flex items-center gap-1 text-xs justify-end mt-0.5">
-                        <Star size={12} className="text-yellow-500 fill-yellow-500" />
-                        <span className="text-zinc-500">{resource.rating}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">{resource.description}</p>
-                  <div className="flex flex-wrap gap-3">
-                    {resource.features.map((feature, fi) => (
-                      <span key={fi} className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
-                        <CheckCircle size={13} className="text-green-500" />
-                        {feature}
+                      <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500 text-white text-sm font-semibold shadow-sm group-hover:bg-blue-600 transition-colors">
+                        Explore all resources <ArrowRight size={14} />
                       </span>
-                    ))}
-                  </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-1">
+                            <h3 className="text-lg font-bold group-hover:text-blue-500 transition-colors">{resource.name}</h3>
+                            <span className="bg-green-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">{resource.discount}</span>
+                          </div>
+                          <span className="text-xs text-zinc-400">{resource.category}</span>
+                        </div>
+                        <div className="text-right ml-4">
+                          <div className="text-xl font-bold text-blue-500">{resource.price}</div>
+                          <div className="flex items-center gap-1 text-xs justify-end mt-0.5">
+                            <Star size={12} className="text-yellow-500 fill-yellow-500" />
+                            <span className="text-zinc-500">{resource.rating}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">{resource.description}</p>
+                      <div className="flex flex-wrap gap-3">
+                        {resource.features.map((feature, fi) => (
+                          <span key={fi} className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                            <CheckCircle size={13} className="text-green-500" />
+                            {feature}
+                          </span>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </a>
               ))}
             </div>

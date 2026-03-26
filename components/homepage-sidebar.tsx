@@ -18,7 +18,7 @@ export default function HomepageSidebar({ posts }: HomepageSidebarProps) {
       {/* ── Recommended Posts ── */}
       <div className="bg-zinc-50 dark:bg-zinc-900/70 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center gap-2 px-5 py-4 border-b border-zinc-200 dark:border-zinc-800 bg-gradient-to-r from-blue-500/10 to-cyan-500/5">
+        <div className="flex items-center gap-2 px-5 py-4 border-b border-zinc-200 dark:border-zinc-800 bg-linear-to-r from-blue-500/10 to-cyan-500/5">
           <TrendingUp size={16} className="text-blue-500" />
           <h3 className="font-bold text-sm tracking-wide">Recommended Posts</h3>
         </div>
@@ -32,7 +32,7 @@ export default function HomepageSidebar({ posts }: HomepageSidebarProps) {
               className="group flex items-start gap-3 px-5 py-4 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 transition-colors"
             >
               {/* Thumbnail */}
-              <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-zinc-200 dark:bg-zinc-800">
+              <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-zinc-200 dark:bg-zinc-800">
                 <Image
                   src={post.image}
                   alt={post.title}
@@ -54,7 +54,7 @@ export default function HomepageSidebar({ posts }: HomepageSidebarProps) {
 
               <ArrowRight
                 size={14}
-                className="text-zinc-300 dark:text-zinc-600 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all flex-shrink-0 mt-1"
+                className="text-zinc-300 dark:text-zinc-600 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all shrink-0 mt-1"
               />
             </Link>
           ))}
@@ -74,7 +74,7 @@ export default function HomepageSidebar({ posts }: HomepageSidebarProps) {
       {/* ── Also Read ── */}
       <div className="bg-zinc-50 dark:bg-zinc-900/70 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center gap-2 px-5 py-4 border-b border-zinc-200 dark:border-zinc-800 bg-gradient-to-r from-cyan-500/10 to-blue-500/5">
+        <div className="flex items-center gap-2 px-5 py-4 border-b border-zinc-200 dark:border-zinc-800 bg-linear-to-r from-cyan-500/10 to-blue-500/5">
           <BookOpen size={16} className="text-cyan-500" />
           <h3 className="font-bold text-sm tracking-wide">Also Read</h3>
         </div>
