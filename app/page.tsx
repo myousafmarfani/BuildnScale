@@ -263,7 +263,6 @@ export default function Home() {
           <section id="resources" className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold">Recommended Resources</h2>
-              <span className="text-xs text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded-full">Affiliate Links</span>
             </div>
             <div className="space-y-4">
               {resourceCards.map((resource, idx) => (
