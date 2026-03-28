@@ -18,6 +18,17 @@ const nextConfig: NextConfig = {
         has: [
           {
             type: 'host',
+            value: 'buildnscale.vercel.app',
+          },
+        ],
+        destination: 'https://www.buildnscale.dev/:path*',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
             value: 'buildnscale.dev',
           },
         ],
