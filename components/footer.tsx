@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Github, Linkedin, Twitter, Mail, Rss } from 'lucide-react';
+import ExternalLink from '@/components/external-link';
 
 const footerSections = [
   {
@@ -53,33 +54,27 @@ export default function Footer() {
               resources for modern web and AI systems.
             </p>
             <div className="flex items-center gap-2">
-              <a
+              <ExternalLink
                 href="https://github.com/myousafmarfani"
-                target="_blank"
-                rel="noopener noreferrer"
                 aria-label="GitHub"
                 className="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all"
               >
                 <Github size={16} />
-              </a>
-              <a
+              </ExternalLink>
+              <ExternalLink
                 href="https://linkedin.com/in/myousafmarfani"
-                target="_blank"
-                rel="noopener noreferrer"
                 aria-label="LinkedIn"
                 className="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all"
               >
                 <Linkedin size={16} />
-              </a>
-              <a
+              </ExternalLink>
+              <ExternalLink
                 href="https://x.com/myousafmarfani"
-                target="_blank"
-                rel="noopener noreferrer"
                 aria-label="X / Twitter"
                 className="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all"
               >
                 <Twitter size={16} />
-              </a>
+              </ExternalLink>
               <a
                 href="mailto:contact@myousaf.dev"
                 aria-label="Email"
@@ -107,14 +102,12 @@ export default function Footer() {
                 {section.links.map((link) => (
                   <li key={link.href}>
                     {'external' in link && link.external ? (
-                      <a
+                      <ExternalLink
                         href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
                       >
                         {link.label} ↗
-                      </a>
+                      </ExternalLink>
                     ) : (
                       <Link
                         href={link.href}

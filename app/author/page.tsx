@@ -128,7 +128,7 @@ export default function AuthorPage() {
             Full-Stack × AI
           </span>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.08] tracking-tight mb-4">
-            M. Yousuf
+            M. Yousaf Marfani
             <span className="block text-2xl md:text-3xl font-semibold text-zinc-500 dark:text-zinc-400 mt-2 tracking-normal">
               Building{' '}
             <span className="bg-linear-to-r from-blue-500 via-cyan-400 to-blue-600 text-transparent bg-clip-text">

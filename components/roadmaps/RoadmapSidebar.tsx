@@ -20,10 +20,10 @@ type RoadmapSidebarProps = {
 };
 
 export default function RoadmapSidebar({ meta, slug }: RoadmapSidebarProps) {
-  const pageUrl = `https://buildnscale.dev/roadmaps/${slug}`;
+  const pageUrl = `https://www.buildnscale.dev/roadmaps/${slug}`;
 
   return (
-    <aside className="rounded-2xl border border-blue-200/70 bg-gradient-to-b from-blue-50 to-cyan-50 p-4 dark:border-blue-900/50 dark:from-blue-950/30 dark:to-cyan-950/20">
+    <aside className="rounded-2xl border border-blue-200/70 bg-linear-to-b from-blue-50 to-cyan-50 p-4 dark:border-blue-900/50 dark:from-blue-950/30 dark:to-cyan-950/20">
       <section className="mb-6 space-y-3 rounded-xl border border-blue-200/70 bg-white/90 p-4 dark:border-blue-900/40 dark:bg-zinc-900/80">
         <div className="flex items-center gap-3">
           <p className="text-sm font-semibold text-foreground">{meta.title}</p>

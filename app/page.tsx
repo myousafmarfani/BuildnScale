@@ -50,7 +50,7 @@ export default function Home() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* <section className="pt-8 pb-2">
+      <section className="pt-8 pb-2">
         <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">
           Full-Stack Development and Agentic AI Engineering at BuildnScale
         </h1>
@@ -64,7 +64,7 @@ export default function Home() {
           {' '}<Link href="/resources" className="text-blue-500 hover:text-blue-600 font-medium">Resources</Link>
           {' '}to accelerate your learning and shipping velocity.
         </p>
-      </section> */}
+      </section>
 
       {/* ─── Hero Posts Grid: 1 Rectangle (60%) + 2 Squares (40%) ──── */}
       {heroPosts.length > 0 && (
@@ -88,9 +88,13 @@ export default function Home() {
                 <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8 space-y-3">
                   <div className="flex items-center gap-2 flex-wrap">
                     {heroPost.tags.slice(0, 2).map((tag, i) => (
-                      <span key={i} className="text-xs px-2.5 py-1 rounded-full bg-blue-500/90 text-white font-medium">
+                      <Link
+                        key={i}
+                        href={`/blog?tag=${encodeURIComponent(tag)}`}
+                        className="text-xs px-2.5 py-1 rounded-full bg-blue-500/90 text-white font-medium hover:bg-blue-600 transition-colors"
+                      >
                         {tag}
-                      </span>
+                      </Link>
                     ))}
                   </div>
                   <h2 className="text-2xl lg:text-3xl font-bold text-white leading-snug group-hover:text-blue-300 transition-colors line-clamp-2">
@@ -135,9 +139,13 @@ export default function Home() {
                     <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-5 space-y-2">
                       <div className="flex items-center gap-2">
                         {post.tags.slice(0, 1).map((tag, i) => (
-                          <span key={i} className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/80 text-white font-medium">
+                          <Link
+                            key={i}
+                            href={`/blog?tag=${encodeURIComponent(tag)}`}
+                            className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/80 text-white font-medium hover:bg-cyan-500 transition-colors"
+                          >
                             {tag}
-                          </span>
+                          </Link>
                         ))}
                       </div>
                       <h3 className="text-base lg:text-lg font-bold text-white leading-snug group-hover:text-blue-300 transition-colors line-clamp-2">

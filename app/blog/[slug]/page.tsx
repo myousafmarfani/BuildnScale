@@ -278,7 +278,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
           </div>
 
           {/* MDX Content */}
-          <div className="prose max-w-none md:prose-lg">
+          <div className="prose max-w-none text-base leading-relaxed md:prose-lg">
             <MDXRemote
               source={post.content}
               components={{ pre: CodeBlock }}

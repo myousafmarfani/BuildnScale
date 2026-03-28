@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Mail, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
+import ExternalLink from '@/components/external-link';
 
 type RoadmapSidebarItem = {
   title: string;
@@ -172,11 +173,9 @@ export default function BlogSidebar({
           </p>
           <div className="space-y-3">
             {resources.map((resource) => (
-              <a
+              <ExternalLink
                 key={resource.href}
                 href={resource.href}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="block border border-zinc-200 dark:border-zinc-700 rounded-xl p-3 hover:border-blue-500/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
               >
                 <div className="flex items-center justify-between gap-3">
@@ -192,7 +191,7 @@ export default function BlogSidebar({
                     {resource.tag || 'Open'}
                   </span>
                 </div>
-              </a>
+              </ExternalLink>
             ))}
           </div>
           <Link
@@ -214,15 +213,13 @@ export default function BlogSidebar({
           </div>
           <div className="space-y-2">
             {isExternalHref(professionalCta.primaryHref) ? (
-              <a
+              <ExternalLink
                 href={professionalCta.primaryHref}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="flex items-center justify-center gap-1.5 w-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white py-2.5 rounded-xl font-semibold text-sm transition-colors"
               >
                 {professionalCta.primaryLabel}
                 <ChevronRight size={14} />
-              </a>
+              </ExternalLink>
             ) : (
               <Link
                 href={professionalCta.primaryHref}
@@ -234,14 +231,12 @@ export default function BlogSidebar({
             )}
             {professionalCta.secondaryLabel && professionalCta.secondaryHref && (
               isExternalHref(professionalCta.secondaryHref) ? (
-                <a
+                <ExternalLink
                   href={professionalCta.secondaryHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="flex items-center justify-center gap-1.5 w-full border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-blue-500 hover:text-blue-500 py-2.5 rounded-xl font-semibold text-sm transition-colors"
                 >
                   {professionalCta.secondaryLabel}
-                </a>
+                </ExternalLink>
               ) : (
                 <Link
                   href={professionalCta.secondaryHref}

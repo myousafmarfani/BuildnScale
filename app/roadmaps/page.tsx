@@ -6,7 +6,7 @@ import RoadmapSuggestionForm from '@/components/roadmaps/RoadmapSuggestionForm';
 import { getAllRoadmaps } from '@/lib/roadmaps';
 
 const pageDescription =
-  'Free, opinionated learning roadmaps for 2026. Structured paths for Full-Stack Web Development and AI Engineering — written from real production experience by M. Yousuf.';
+  'Free, opinionated learning roadmaps for 2026. Structured paths for Full-Stack Web Development and AI Engineering — written from real production experience by M. Yousaf Marfani.';
 
 export const metadata: Metadata = {
   title: 'Learning Roadmaps - Full-Stack & AI Engineer Paths 2026',
@@ -32,7 +32,7 @@ export default async function RoadmapsPage() {
     description: pageDescription,
     url: 'https://www.buildnscale.dev/roadmaps',
     inLanguage: 'en',
-    author: { '@type': 'Person', name: 'M. Yousuf', url: 'https://www.buildnscale.dev/author' },
+    author: { '@type': 'Person', name: 'M. Yousaf Marfani', url: 'https://www.buildnscale.dev/author' },
     hasPart: [
       {
         '@type': 'LearningResource',

@@ -11,6 +11,21 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'buildnscale.dev',
+          },
+        ],
+        destination: 'https://www.buildnscale.dev/:path*',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

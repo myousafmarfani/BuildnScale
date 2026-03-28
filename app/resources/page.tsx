@@ -23,18 +23,34 @@ import ResourcesFilterBar from '@/components/resources/ResourcesFilterBar';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 
-export const metadata: Metadata = {
-  title: 'Developer Resources - Curated Tools, Platforms & References',
-  description:
-    'Curated developer resources for full-stack and AI engineers: learning platforms, deployment clouds, databases, and developer tools reviewed and recommended by BuildnScale.',
-  alternates: { canonical: 'https://www.buildnscale.dev/resources' },
-  openGraph: {
-    title: 'Developer Resources | BuildnScale',
-    description: 'Curated tools, platforms, and references to build and ship production apps faster.',
-    url: 'https://www.buildnscale.dev/resources',
-    type: 'website',
-  },
-};
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string | string[] }>;
+}): Promise<Metadata> {
+  const resolvedSearchParams = await searchParams;
+  const categoryParam = Array.isArray(resolvedSearchParams?.category)
+    ? resolvedSearchParams?.category[0]
+    : resolvedSearchParams?.category;
+  const shouldNoIndex = Boolean(categoryParam);
+
+  return {
+    title: 'Developer Resources - Curated Tools, Platforms & References',
+    description:
+      'Curated developer resources for full-stack and AI engineers: learning platforms, deployment clouds, databases, and developer tools reviewed and recommended by BuildnScale.',
+    alternates: { canonical: 'https://www.buildnscale.dev/resources' },
+    robots: {
+      index: !shouldNoIndex,
+      follow: true,
+    },
+    openGraph: {
+      title: 'Developer Resources | BuildnScale',
+      description: 'Curated tools, platforms, and references to build and ship production apps faster.',
+      url: 'https://www.buildnscale.dev/resources',
+      type: 'website',
+    },
+  };
+}
 
 const categoryIcons: Record<string, React.ReactNode> = {
   'Learning Platforms': <BookOpen size={14} />,
@@ -268,7 +284,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                   </span>
                 </h2>
 
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                   {categoryResources.map((resource, idx) => (
                     <div
                       key={idx}

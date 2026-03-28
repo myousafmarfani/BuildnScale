@@ -120,7 +120,7 @@ export default async function RoadmapPage({ params }: { params: Promise<PagePara
     dateModified: meta.lastUpdated,
     author: {
       '@type': 'Person',
-      name: 'M. Yousuf',
+      name: 'M. Yousaf Marfani',
       url: 'https://www.buildnscale.dev/author',
     },
     publisher: {

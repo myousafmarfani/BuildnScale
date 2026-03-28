@@ -88,12 +88,13 @@ export default function ProjectsPage() {
               Featured Project
             </h2>
 
-            <a
-              href={featuredProject.github || '#'}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group block bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/8 transition-all duration-300"
-            >
+            {featuredProject.github ? (
+              <a
+                href={featuredProject.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/8 transition-all duration-300"
+              >
               <div className="relative aspect-21/9 overflow-hidden">
                 <Image
                   src={featuredProject.image}
@@ -147,7 +148,42 @@ export default function ProjectsPage() {
                   </div>
                 )}
               </div>
-            </a>
+              </a>
+            ) : (
+              <article className="group block bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden transition-all duration-300">
+                <div className="relative aspect-21/9 overflow-hidden">
+                  <Image
+                    src={featuredProject.image}
+                    alt={featuredProject.title}
+                    fill
+                    priority
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/20 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-6 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs px-2.5 py-1 rounded-full bg-blue-500/90 text-white font-semibold">
+                        Featured
+                      </span>
+                    </div>
+                    <h3 className="text-xl md:text-2xl font-bold text-white">{featuredProject.title}</h3>
+                    <p className="text-sm text-zinc-300 line-clamp-2 max-w-xl">{featuredProject.description}</p>
+                  </div>
+                </div>
+                <div className="p-5 flex items-center justify-between gap-4 flex-wrap">
+                  <div className="flex flex-wrap gap-2">
+                    {featuredProject.tech.map((tech, i) => (
+                      <span
+                        key={i}
+                        className="text-xs px-2.5 py-1 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-medium"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </article>
+            )}
           </section>
 
           {/* All Projects */}
@@ -159,13 +195,14 @@ export default function ProjectsPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {projects.map((project, idx) => (
-                <a
-                  key={idx}
-                  href={project.github || '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group block bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300"
-                >
+                project.github ? (
+                  <a
+                    key={idx}
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group block bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300"
+                  >
                   <div className="relative aspect-video overflow-hidden">
                     <Image
                       src={project.image}
@@ -211,7 +248,39 @@ export default function ProjectsPage() {
                       </span>
                     </div>
                   </div>
-                </a>
+                  </a>
+                ) : (
+                  <article
+                    key={idx}
+                    className="group block bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden transition-all duration-300"
+                  >
+                    <div className="relative aspect-video overflow-hidden">
+                      <Image
+                        src={project.image}
+                        alt={project.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+
+                    <div className="p-5 space-y-3">
+                      <h3 className="font-bold leading-snug line-clamp-1">{project.title}</h3>
+                      <p className="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2 leading-relaxed">
+                        {project.description}
+                      </p>
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {project.tech.map((tech, ti) => (
+                          <span
+                            key={ti}
+                            className="text-xs px-2.5 py-0.5 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </article>
+                )
               ))}
             </div>
 

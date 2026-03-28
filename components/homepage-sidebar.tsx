@@ -113,12 +113,13 @@ export default function HomepageSidebar({ posts }: HomepageSidebarProps) {
         <h3 className="font-bold text-sm">Popular Topics</h3>
         <div className="flex flex-wrap gap-2">
           {Array.from(new Set(posts.flatMap((p) => p.tags))).slice(0, 12).map((tag, i) => (
-            <span
+            <Link
               key={i}
+              href={`/blog?tag=${encodeURIComponent(tag)}`}
               className="text-xs px-3 py-1.5 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-blue-500 hover:text-white transition-colors cursor-pointer"
             >
               {tag}
-            </span>
+            </Link>
           ))}
         </div>
       </div>

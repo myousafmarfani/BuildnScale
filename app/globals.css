@@ -42,7 +42,7 @@
   }
   
   .prose p {
-    @apply text-zinc-600 dark:text-zinc-400 leading-7 mb-4;
+    @apply text-zinc-600 dark:text-zinc-300 leading-7 mb-4;
   }
   
   .prose a {
@@ -54,7 +54,17 @@
   }
   
   .prose li {
-    @apply mb-2 text-zinc-600 dark:text-zinc-400;
+    @apply mb-2 text-zinc-600 dark:text-zinc-300;
+  }
+
+  .prose table {
+    @apply block w-full overflow-x-auto;
+  }
+
+  .prose thead,
+  .prose tbody,
+  .prose tr {
+    @apply w-full;
   }
   
   .prose code {
