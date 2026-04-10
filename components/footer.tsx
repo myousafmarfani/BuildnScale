@@ -24,9 +24,9 @@ const footerSections = [
   {
     title: 'Services',
     links: [
-      { href: 'https://www.fiverr.com/yousaf_codes', label: 'Fiverr Gigs', external: true },
-      { href: 'https://www.fiverr.com/yousaf_codes/develop-ai-powered-chatbot', label: 'AI Chatbots', external: true },
-      { href: 'https://www.fiverr.com/yousaf_codes/build-fullstack-web-app', label: 'Web Apps', external: true },
+      { href: 'https://www.fiverr.com/yousaf_codes', label: 'Fiverr Profile', external: true },
+      { href: 'https://www.fiverr.com/yousaf_codes', label: 'AI Chatbot Development', external: true },
+      { href: 'https://www.fiverr.com/yousaf_codes', label: 'Full-Stack Web Apps', external: true },
     ],
   },
 ];
