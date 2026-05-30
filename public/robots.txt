@@ -1,6 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /api/
-Disallow: /_next/
-Host: https://www.buildnscale.dev
-Sitemap: https://www.buildnscale.dev/sitemap.xml

@@ -1,134 +1,246 @@
-@import "tailwindcss";
-
-/* Tell Tailwind v4 to use class-based dark mode (for next-themes compatibility) */
-@variant dark (&:where(.dark, .dark *));
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
-  * {
-    @apply border-zinc-200 dark:border-zinc-800/70;
+  :root,
+  [data-theme="dark"] {
+    --color-bg: oklch(14% 0.005 250);
+    --color-surface: oklch(17% 0.005 250);
+    --color-raised: oklch(20% 0.005 250);
+    --color-overlay: oklch(22% 0.005 250);
+    --color-fg: oklch(95% 0.005 85);
+    --color-muted: oklch(60% 0.005 85);
+    --color-tertiary: oklch(40% 0.005 85);
+    --color-border: oklch(24% 0.005 250);
+    --color-border-strong: oklch(30% 0.005 250);
+    --color-teal: oklch(58% 0.16 165);
+    --color-teal-hover: oklch(65% 0.16 165);
+    --color-teal-subtle: oklch(25% 0.08 165);
+    --color-teal-muted: oklch(35% 0.1 165);
+    --color-amber: oklch(70% 0.18 75);
+    --color-amber-hover: oklch(75% 0.18 75);
+    --color-amber-subtle: oklch(25% 0.08 75);
+    --color-amber-muted: oklch(35% 0.1 75);
+    --color-danger: oklch(50% 0.18 25);
+    --color-info: oklch(55% 0.15 240);
+    --color-info-subtle: oklch(25% 0.08 240);
+    --color-info-muted: oklch(35% 0.1 240);
+    --cell-level-1: oklch(25% 0.08 165);
+    --cell-level-2: oklch(35% 0.1 165);
+    --cell-level-3: oklch(45% 0.12 165);
+    --cell-level-4: oklch(58% 0.16 165);
+    --habit-color-purple: oklch(55% 0.1 300);
   }
-  
-  body {
-    @apply bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100;
-    transition: background-color 0.25s ease, color 0.25s ease;
+
+  [data-theme="light"] {
+    --color-bg: oklch(98% 0.005 250);
+    --color-surface: oklch(95% 0.005 250);
+    --color-raised: oklch(92% 0.005 250);
+    --color-overlay: oklch(90% 0.005 250);
+    --color-fg: oklch(15% 0.005 85);
+    --color-muted: oklch(45% 0.005 85);
+    --color-tertiary: oklch(60% 0.005 85);
+    --color-border: oklch(85% 0.005 250);
+    --color-border-strong: oklch(75% 0.005 250);
+    --color-teal: oklch(58% 0.16 165);
+    --color-teal-hover: oklch(55% 0.16 165);
+    --color-teal-subtle: oklch(90% 0.08 165);
+    --color-teal-muted: oklch(80% 0.1 165);
+    --color-amber: oklch(70% 0.18 75);
+    --color-amber-hover: oklch(65% 0.18 75);
+    --color-amber-subtle: oklch(90% 0.08 75);
+    --color-amber-muted: oklch(80% 0.1 75);
+    --color-danger: oklch(50% 0.18 25);
+    --color-info: oklch(55% 0.15 240);
+    --color-info-subtle: oklch(90% 0.08 240);
+    --color-info-muted: oklch(80% 0.1 240);
+    --color-body-bg: var(--color-bg);
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
 
   html {
-    @apply scroll-smooth;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-bg text-fg font-body overflow-x-hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+  }
+
+  .font-display {
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  a {
+    @apply text-inherit no-underline;
+  }
+
+  button {
+    @apply font-body;
+  }
+
+  input,
+  textarea,
+  select {
+    @apply font-body;
+  }
+
+  *:focus-visible {
+    outline: 2px solid oklch(58% 0.16 165);
+    outline-offset: 2px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-surface;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-border-strong;
   }
 }
 
-@theme {
-  /* Custom theme configuration */
-  --font-family-inter: var(--font-inter);
-}
-
-/* Prose styles for blog content */
 @layer components {
-  .prose {
-    @apply text-zinc-900 dark:text-zinc-100;
-  }
-  
-  .prose h1, .prose h2, .prose h3, .prose h4 {
-    @apply text-zinc-900 dark:text-zinc-100 font-bold;
-  }
-  
-  .prose h2 {
-    @apply text-3xl mt-12 mb-4;
-  }
-  
-  .prose h3 {
-    @apply text-2xl mt-8 mb-3;
-  }
-  
-  .prose p {
-    @apply text-zinc-600 dark:text-zinc-300 leading-7 mb-4;
-  }
-  
-  .prose a {
-    @apply text-blue-500 hover:text-blue-600 transition-colors;
-  }
-  
-  .prose ul, .prose ol {
-    @apply my-6 ml-6;
-  }
-  
-  .prose li {
-    @apply mb-2 text-zinc-600 dark:text-zinc-300;
+  .container-site {
+    @apply max-w-site mx-auto px-5;
   }
 
-  .prose table {
-    @apply block w-full overflow-x-auto;
+  .container-narrow {
+    @apply max-w-narrow mx-auto px-5;
   }
 
-  .prose thead,
-  .prose tbody,
-  .prose tr {
-    @apply w-full;
-  }
-  
-  .prose code {
-    @apply px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-sm;
-  }
-  
-  .prose pre {
-    @apply bg-zinc-900 dark:bg-zinc-950 rounded-xl p-4 overflow-x-auto my-6;
-    color: rgb(228 228 231) !important; /* zinc-200 — always light text on dark bg */
-  }
-  
-  .prose pre code {
-    @apply bg-transparent p-0;
-    color: inherit !important;
+  .container-article {
+    @apply max-w-article mx-auto px-5;
   }
 
-  /* rehype-pretty-code wraps blocks in a figure — ensure text stays visible */
-  .prose [data-rehype-pretty-code-figure] pre {
-    color: rgb(228 228 231) !important;
-  }
-  
-  .prose blockquote {
-    @apply border-l-4 border-blue-500 pl-4 italic my-6;
-  }
-  
-  .prose img {
-    @apply rounded-xl my-6;
-  }
-  
-  .prose strong {
-    @apply font-bold text-zinc-900 dark:text-zinc-100;
-  }
-}
-
-/* Smooth transitions */
-@layer utilities {
-  .transition-smooth {
-    @apply transition-all duration-200 ease-in-out;
+  .text-hero {
+    font-size: clamp(36px, 5vw, 56px);
   }
 
-  /* Thin, unobtrusive scrollbar for sticky sidebars */
-  .sidebar-scroll {
+  .section-pad {
+    padding-top: clamp(40px, 8vw, 80px);
+    padding-bottom: clamp(40px, 8vw, 80px);
+  }
+
+  .scrollbar-x {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
-    scrollbar-color: rgb(212 212 216) transparent; /* zinc-300 */
+    white-space: nowrap;
   }
 
-  .sidebar-scroll::-webkit-scrollbar {
-    width: 4px;
+  .post-content h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 48px 0 20px;
+    color: var(--color-fg);
+    line-height: 1.3;
+    letter-spacing: -0.02em;
   }
 
-  .sidebar-scroll::-webkit-scrollbar-track {
-    background: transparent;
+  .post-content h2:first-child {
+    margin-top: 0;
   }
 
-  .sidebar-scroll::-webkit-scrollbar-thumb {
-    background-color: rgb(212 212 216); /* zinc-300 */
-    border-radius: 9999px;
+  .post-content p {
+    margin-bottom: 28px;
+    color: var(--color-muted);
   }
 
-  :is(.dark) .sidebar-scroll {
-    scrollbar-color: rgb(63 63 70) transparent; /* zinc-700 */
+  .post-content ul {
+    margin-bottom: 28px;
+    padding-left: 24px;
   }
 
-  :is(.dark) .sidebar-scroll::-webkit-scrollbar-thumb {
-    background-color: rgb(63 63 70); /* zinc-700 */
+  .post-content li {
+    margin-bottom: 12px;
+    line-height: 1.75;
+    color: var(--color-muted);
+  }
+
+  .post-content blockquote {
+    border-left: 3px solid var(--color-teal);
+    padding: 4px 0 4px 24px;
+    margin: 40px 0;
+    font-style: italic;
+    color: var(--color-muted);
+    font-size: 19px;
+  }
+
+  .post-content pre {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    margin-bottom: 28px;
+    overflow-x: auto;
+    color: var(--color-muted);
+  }
+
+  .post-content code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+  }
+
+  .post-content p code {
+    background: var(--color-raised);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .post-content strong {
+    font-weight: 600;
+    color: var(--color-fg);
+  }
+
+  .post-content a {
+    color: var(--color-teal);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  @keyframes slide-in-right {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--color-border);
+    border-top-color: var(--color-teal);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
   }
 }

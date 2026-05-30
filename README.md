@@ -1,106 +1,161 @@
-# Professional Content Platform
+<div align="center">
+  <img src="https://img.shields.io/badge/status-active-0d9488?style=flat-square" alt="Status" />
+  <img src="https://img.shields.io/badge/license-MIT-0d9488?style=flat-square" alt="License" />
+  <img src="https://img.shields.io/badge/PRs-welcome-0d9488?style=flat-square" alt="PRs Welcome" />
+  <img src="https://img.shields.io/github/stars/buildnscale/buildnscale?style=flat-square&color=0d9488" alt="GitHub Stars" />
+  <img src="https://img.shields.io/badge/stack-Next.js%2014%20·%20TypeScript%20·%20Prisma-0d9488?style=flat-square" alt="Stack" />
+  <br/><br/>
+  <a href="https://buildnscale.dev">buildnscale.dev</a>
+</div>
 
+<br/>
 
-A production-ready content platform built with Next.js 14, TypeScript, and Tailwind CSS. Features a minimal, Vercel-inspired design with comprehensive blog functionality, learning roadmaps, project portfolio, and affiliate resources.
+<p align="center">
+  <b>Six productivity tools for developers who ship.</b><br/>
+  Free. Open-source. No account required.
+</p>
 
-## Features
+<br/>
 
-- ✨ **Modern Design**: Clean, minimal aesthetic inspired by Vercel
-- 📝 **MDX Blog**: Full-featured blog with syntax highlighting and TOC
-- 🌓 **Dark Mode**: Persistent dark mode with smooth transitions
-- 🔍 **Search**: Real-time search across all content
-- 📱 **Responsive**: Mobile-first design that works everywhere
-- 🚀 **SEO Optimized**: Meta tags, sitemap, robots.txt, structured data
-- 📊 **Analytics Ready**: Google Analytics and Microsoft Clarity support
-- 💌 **Newsletter**: Built-in newsletter subscription API
-- 🎨 **Professional Images**: Aspect ratio maintained images throughout
-- 📚 **Learning Roadmaps**: Showcase educational content
-- 💼 **Portfolio**: Display projects with tech stack
-- 🤝 **Affiliate Resources**: Monetization-ready resource section
+## 🧰 Tools
 
-## Tech Stack
+| Tool | What it does | Tech notes |
+|---|---|---|
+| **Daily Focus Planner** | Drag tasks into 30-min time blocks on a vertical day grid | `localStorage`, keyboard-first, dark mode |
+| **Pomodoro + Task Log** | 25-min focus sessions with auto breaks and session history | Audio beep, streak tracking, task queue |
+| **Habit Streak Tracker** | Daily check-ins with contribution-style heatmap | GitHub-style year view, streak analytics |
+| **Markdown Notes** | Distraction-free editor with live preview | `marked` renderer, auto-save, search |
+| **Freelancer Rate Calculator** | Calculate hourly rate + generate PDF invoices | Sliders, profit margin, print-to-PDF |
+| **Weekly Review Dashboard** | Aggregate focus time, tasks, habits per week | Cross-tool stats, CSV export, reflections |
 
-- **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
-- **Content**: MDX with [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Theme**: [next-themes](https://github.com/pacocoursey/next-themes)
-- **Code Highlighting**: [rehype-pretty-code](https://rehype-pretty-code.netlify.app/)
+Every tool works **without signing up**. Data lives in your browser. Create an account to sync across devices — still free, still no credit card.
 
-## Getting Started
+<br/>
 
-### Installation
+## ✨ Features
 
-1. Install dependencies:
+- **No account required** — open any tool and start using it instantly
+- **100% free** — all features, no limits, no hidden tiers
+- **Local-first** — your data stays in your browser by default
+- **Dark mode** — respects your system preference
+- **Keyboard shortcuts** — power-user friendly
+- **Responsive** — works on desktop and mobile
+- **Streak tracking** — consistency across all tools
+- **CSV export** — take your data with you
+- **PDF invoices** — generate client-ready invoices in one click
+
+<br/>
+
+## 🚀 Getting Started
+
 ```bash
+# Clone the repo
+git clone https://github.com/buildnscale/buildnscale.git
+cd buildnscale/website
+
+# Install dependencies
 npm install
-```
 
-2. Create environment file:
-```bash
-cp .env.example .env.local
-```
+# Copy env and fill in your values
+cp .env.example .env
 
-3. Run development server:
-```bash
+# Run the dev server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the result.
+Open [http://localhost:3000](http://localhost:3000) — all tools work immediately without any setup.
 
-## Project Structure
+### Database setup (optional — only needed for accounts/sync)
+
+```bash
+# Push the Prisma schema to your Postgres instance
+npx prisma db push
+
+# Generate the Prisma client
+npx prisma generate
+```
+
+> Tools work fully without a database. Accounts and cloud sync require Postgres (we use [Neon](https://neon.tech)).
+
+<br/>
+
+## 🏗 Stack
+
+| Layer | Choice |
+|---|---|
+| **Framework** | [Next.js 14](https://nextjs.org) (App Router) |
+| **Language** | TypeScript |
+| **Styling** | Tailwind CSS + OKLCH design tokens |
+| **Database ORM** | Prisma |
+| **Database** | PostgreSQL ([Neon](https://neon.tech)) |
+| **Auth** | Next-Auth v4 (Credentials + Google OAuth) |
+| **Animation** | Framer Motion |
+| **Icons** | Tabler Icons + Lucide React |
+| **Markdown** | `marked` + `gray-matter` |
+| **Deployment** | Vercel (recommended) |
+
+<br/>
+
+## 🧱 Project Structure
 
 ```
 website/
-├── app/                      # Next.js app directory
-│   ├── api/                  # API routes
-│   ├── blog/[slug]/         # Dynamic blog post pages
-│   ├── search/              # Search page
-│   ├── layout.tsx           # Root layout
-│   └── page.tsx             # Homepage
-├── components/              # React components
-├── content/blog/           # MDX blog posts
-├── lib/                   # Utility functions
-└── types/                # TypeScript types
+├── app/
+│   ├── (main)/          # Public pages (home, blog, sign-in, etc.)
+│   └── tools/           # Tool pages (full-screen app layouts)
+├── components/
+│   ├── layout/          # Nav, Footer, MobileSheet
+│   ├── ui/              # Reusable UI (Button, Card, Toast, etc.)
+│   ├── tools/           # Tool-specific components
+│   └── blog/            # Blog card components
+├── lib/                 # Shared utilities (auth, prisma, utils)
+├── prisma/              # Database schema & migrations
+├── content/             # Blog posts (markdown)
+├── public/              # Static assets
+└── types/               # TypeScript declarations
 ```
 
-## Adding Blog Posts
+<br/>
 
-Create a new `.mdx` file in `content/blog/`:
+## 🤝 Contributing
 
-```mdx
----
-title: "Your Post Title"
-excerpt: "Brief description"
-date: "2026-02-25"
-readTime: "5 min read"
-tags: ["Next.js", "TypeScript"]
-image: "https://images.unsplash.com/photo-xxx"
----
+We welcome contributions of all sizes — a typo fix, a new tool idea, or a performance improvement.
 
-## Your Content Here
-```
+### Getting started
 
-## Deployment
+1. Fork the repository
+2. Create a branch: `git checkout -b feat/your-feature`
+3. Make your changes
+4. Run lint: `npm run lint`
+5. Push and open a PR
 
-Deploy on Vercel:
+### What needs help
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone)
+- **New tools** — have an idea for a productivity tool? Build it.
+- **i18n** — help translate the UI
+- **PWA / offline** — make tools work offline
+- **Mobile polish** — improve the mobile experience
+- **Tests** — add unit/integration tests
+- **Docs** — improve this README or add tool guides
 
-Or build locally:
-```bash
-npm run build
-npm start
-```
+> **Code style:** We don't add comments unless necessary. Match the existing patterns — `camelCase` for variables, `PascalCase` for components, and keep components small.
 
-## Author
+<br/>
 
-**M. Yousuf**
-- GitHub: [@myousafmarfani](https://github.com/myousafmarfani)
-- LinkedIn: [myousafmarfani](https://linkedin.com/in/myousafmarfani)
-- Twitter: [@myousaf_codes](https://x.com/myousaf_codes)
+## 📄 License
+
+[MIT](LICENSE) — use it, fork it, ship it.
+
+<br/>
 
 ---
 
-Built with ❤️ using Next.js, TypeScript, and Tailwind CSS
+<div align="center">
+  <sub>Built by developers, for developers. No bloat. Just tools.</sub>
+  <br/>
+  <sub>
+    <a href="https://buildnscale.dev">buildnscale.dev</a> ·
+    <a href="https://github.com/myousafmarfani/BuildnScale">GitHub</a>
+    <a href="https://buildnscale.dev/blog">Blog</a>
+  </sub>
+</div>
