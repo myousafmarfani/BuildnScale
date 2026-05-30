@@ -18,6 +18,7 @@ import { StreakPill } from "@/components/ui/StreakPill"
 import { SettingsDrawer } from "@/components/ui/SettingsDrawer"
 import { ToolBreadcrumbs } from "@/components/ui/ToolBreadcrumbs"
 import { UserGuideModal } from "@/components/ui/UserGuideModal"
+import { useSync } from "@/hooks/useSync"
 
 const CIRCUMFERENCE = 2 * Math.PI * 98
 const STORAGE_KEY = "bns_pomo_"
@@ -106,6 +107,19 @@ function playBeep() {
 
 export default function PomodoroPage() {
   const today = new Date().toLocaleDateString("en-CA")
+
+  useSync([
+    "bns_pomo_focusTime",
+    "bns_pomo_shortBreak",
+    "bns_pomo_longBreak",
+    "bns_pomo_longBreakInterval",
+    `bns_pomo_sessions_${today}`,
+    "bns_pomo_tasks",
+    "bns_pomo_currentTask",
+    `bns_pomo_totalFocus_${today}`,
+    "bns_streak",
+    "bns_streak_days",
+  ])
 
   const [focusTime, setFocusTime] = useState(() => loadJSON(STORAGE_KEY + "focusTime", 25) as number)
   const [shortBreak, setShortBreak] = useState(() => loadJSON(STORAGE_KEY + "shortBreak", 5) as number)

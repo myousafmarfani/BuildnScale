@@ -16,6 +16,7 @@ import { SettingsDrawer } from "@/components/ui/SettingsDrawer"
 import { Toast } from "@/components/ui/Toast"
 import { UserGuideModal } from "@/components/ui/UserGuideModal"
 import { ToolBreadcrumbs } from "@/components/ui/ToolBreadcrumbs"
+import { useSync } from "@/hooks/useSync"
 import { cn } from "@/lib/utils"
 
 const STORAGE_KEY = "bns_review_"
@@ -175,6 +176,8 @@ export default function WeeklyReviewPage() {
 
   const deltaFocus = weekData.totalFocus - lastWeekData.totalFocus
   const deltaTasks = weekData.totalTasks - lastWeekData.totalTasks
+
+  useSync(["bns_review_reflections", "bns_review_firstDay"])
 
   const isCurrentWeek = toISO(thisMonday) === selectedWeek
 

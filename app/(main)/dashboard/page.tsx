@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
+import { useSync } from "@/hooks/useSync"
 import {
   IconLayoutDashboard,
   IconCalendarEvent,
@@ -50,6 +51,8 @@ function toISO(d: Date) {
 const CELL_LEVELS = ['', 'oklch(25% 0.08 165)', 'oklch(35% 0.1 165)', 'oklch(45% 0.12 165)', 'oklch(58% 0.16 165)']
 
 export default function DashboardPage() {
+  useSync(["bns_streak", "bns_habits_habits", "bns_habits_checkins"])
+
   const [activeNav, setActiveNav] = useState('overview')
   const [mobileTab, setMobileTab] = useState('overview')
 

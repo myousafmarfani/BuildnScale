@@ -10,6 +10,7 @@ import { ToolBreadcrumbs } from "@/components/ui/ToolBreadcrumbs"
 import { SettingsDrawer } from "@/components/ui/SettingsDrawer"
 import { Toast } from "@/components/ui/Toast"
 import { UserGuideModal } from "@/components/ui/UserGuideModal"
+import { useSync } from "@/hooks/useSync"
 import { cn } from "@/lib/utils"
 
 const STORAGE_KEY = "bns_ratecalc_"
@@ -110,6 +111,16 @@ function generateInvoiceHTML(
 }
 
 export default function RateCalculatorPage() {
+  useSync([
+    "bns_ratecalc_income",
+    "bns_ratecalc_expenses",
+    "bns_ratecalc_hoursPerWeek",
+    "bns_ratecalc_weeksPerYear",
+    "bns_ratecalc_margin",
+    "bns_ratecalc_hoursBilled",
+    "bns_ratecalc_currency",
+  ])
+
   const [monthlyIncome, setMonthlyIncome] = useState(() => loadJSON<number>(STORAGE_KEY + "income", 8000))
   const [expenses, setExpenses] = useState(() => loadJSON<number>(STORAGE_KEY + "expenses", 2000))
   const [hoursPerWeek, setHoursPerWeek] = useState(() => loadJSON<number>(STORAGE_KEY + "hoursPerWeek", 32))

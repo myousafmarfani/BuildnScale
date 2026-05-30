@@ -28,7 +28,7 @@
 | **Freelancer Rate Calculator** | Calculate hourly rate + generate PDF invoices | Sliders, profit margin, print-to-PDF |
 | **Weekly Review Dashboard** | Aggregate focus time, tasks, habits per week | Cross-tool stats, CSV export, reflections |
 
-Every tool works **without signing up**. Data lives in your browser. Create an account to sync across devices — still free, still no credit card.
+Every tool works **without signing up**. Data lives in your browser. Create an account to **sync across devices** automatically — still free, still no credit card needed.
 
 <br/>
 
@@ -36,7 +36,8 @@ Every tool works **without signing up**. Data lives in your browser. Create an a
 
 - **No account required** — open any tool and start using it instantly
 - **100% free** — all features, no limits, no hidden tiers
-- **Local-first** — your data stays in your browser by default
+- **Multi-device sync** — create an account, your localStorage data syncs to the cloud automatically
+- **Local-first** — works offline, syncs in the background when signed in
 - **Dark mode** — respects your system preference
 - **Keyboard shortcuts** — power-user friendly
 - **Responsive** — works on desktop and mobile
@@ -75,7 +76,7 @@ npx prisma db push
 npx prisma generate
 ```
 
-> Tools work fully without a database. Accounts and cloud sync require Postgres (we use [Neon](https://neon.tech)).
+> Tools work fully without a database. Accounts and cross-device sync require Postgres (we use [Neon](https://neon.tech)). When a user signs in, all localStorage data is automatically synced to the backend — no manual import/export needed.
 
 <br/>
 

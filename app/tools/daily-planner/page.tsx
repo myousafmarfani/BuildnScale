@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import Link from "next/link"
 import {
   IconSettings,
@@ -20,6 +20,7 @@ import { KbdHint } from "@/components/ui/KbdHint"
 import { ToolBreadcrumbs } from "@/components/ui/ToolBreadcrumbs"
 import { SettingsDrawer } from "@/components/ui/SettingsDrawer"
 import { UserGuideModal } from "@/components/ui/UserGuideModal"
+import { useSync } from "@/hooks/useSync"
 
 const SLOT_HEIGHT = 28
 const TOTAL_HOURS = 24
@@ -246,6 +247,12 @@ export default function DailyPlannerPage() {
       gridRef.current.scrollTop = timeLineTop - 200
     }
   }
+
+  const syncKeys = useMemo(
+    () => ["bns_streak", "bns_streak_days", `bns_tasks_${dateStr}`],
+    [dateStr]
+  )
+  useSync(syncKeys)
 
   const selectedDate = getDayFromStr(dateStr)
   const isToday = dateStr === todayStr

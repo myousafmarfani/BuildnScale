@@ -21,6 +21,7 @@ import { ToolBreadcrumbs } from "@/components/ui/ToolBreadcrumbs"
 import { SettingsDrawer } from "@/components/ui/SettingsDrawer"
 import { Toast } from "@/components/ui/Toast"
 import { UserGuideModal } from "@/components/ui/UserGuideModal"
+import { useSync } from "@/hooks/useSync"
 import { cn } from "@/lib/utils"
 
 const STORAGE_KEY = "bns_habits_"
@@ -141,6 +142,8 @@ const MONTHS_SHORT = [
 
 export default function HabitTrackerPage() {
   const todayStr = toISO(new Date())
+
+  useSync(["bns_habits_habits", "bns_habits_checkins"])
 
   const [habits, setHabits] = useState<Habit[]>([])
   const [checkins, setCheckins] = useState<Checkins>({})

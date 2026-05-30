@@ -15,6 +15,7 @@ import {
 import { ToolBreadcrumbs } from "@/components/ui/ToolBreadcrumbs"
 import { SettingsDrawer } from "@/components/ui/SettingsDrawer"
 import { UserGuideModal } from "@/components/ui/UserGuideModal"
+import { useSync } from "@/hooks/useSync"
 import { cn } from "@/lib/utils"
 
 const STORAGE_KEY = "bns_notes_"
@@ -56,6 +57,8 @@ function getPreview(content: string): string {
 }
 
 export default function MarkdownNotesPage() {
+  useSync(["bns_notes_notes", "bns_notes_fontSize", "bns_notes_lineWidth"])
+
   const [notes, setNotes] = useState<Note[]>([])
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
