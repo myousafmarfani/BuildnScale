@@ -105,7 +105,7 @@ export default function Home() {
           <div className="grid items-center gap-16 md:grid-cols-[1.2fr_1fr]">
             <div className="hero-content">
               <span className="mb-4 flex items-center gap-2 font-display text-[11px] uppercase tracking-[0.1em] text-teal before:h-1.5 before:w-1.5 before:rounded-full before:bg-teal before:content-['']">
-                micro-saas · productivity tools
+                open-source · productivity tools
               </span>
               <h1 className="mb-6 font-display text-hero font-bold leading-[1.1] tracking-[-0.03em] text-fg">
                 Productivity tools for developers who actually{" "}

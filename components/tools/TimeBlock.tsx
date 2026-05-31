@@ -9,7 +9,7 @@ interface TimeBlockProps {
 export function TimeBlock({
   time,
   title,
-  color = "oklch(35% 0.1 165)",
+  color = "var(--color-teal-muted)",
   completed,
   height = "56px",
 }: TimeBlockProps) {

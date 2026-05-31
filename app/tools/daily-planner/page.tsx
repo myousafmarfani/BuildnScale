@@ -20,6 +20,7 @@ import { KbdHint } from "@/components/ui/KbdHint"
 import { ToolBreadcrumbs } from "@/components/ui/ToolBreadcrumbs"
 import { SettingsDrawer } from "@/components/ui/SettingsDrawer"
 import { UserGuideModal } from "@/components/ui/UserGuideModal"
+import { ThemeToggle } from "@/components/ui/ThemeToggle"
 import { useSync } from "@/hooks/useSync"
 
 const SLOT_HEIGHT = 28
@@ -287,6 +288,7 @@ export default function DailyPlannerPage() {
             <span className="hidden sm:inline">Guide</span>
           </button>
 
+          <ThemeToggle />
           <button onClick={() => setSettingsOpen(true)} className="text-tertiary hover:text-muted transition-colors">
             <IconSettings className="h-[18px] w-[18px]" />
           </button>
@@ -381,13 +383,15 @@ export default function DailyPlannerPage() {
               ? sidebarOpen
                 ? "fixed inset-y-0 right-0 z-30 w-[280px] shadow-lg"
                 : "hidden"
-              : "w-[260px] lg:w-[280px]"
+              : sidebarOpen
+                ? "w-[260px] lg:w-[280px]"
+                : "w-0 overflow-hidden border-l-0"
           }`}
         >
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
             <span className="text-xs uppercase tracking-[0.08em] text-muted">Tasks</span>
-            <button onClick={() => setSidebarOpen(false)} className="text-tertiary hover:text-muted transition-colors">
-              {isMobile ? <IconX className="h-4 w-4" /> : <IconLayoutSidebarRightCollapse className="h-4 w-4" />}
+            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-tertiary hover:text-muted transition-colors">
+              {isMobile ? <IconX className="h-4 w-4" /> : sidebarOpen ? <IconLayoutSidebarRightCollapse className="h-4 w-4" /> : <IconLayoutSidebarRightCollapse className="h-4 w-4 rotate-180" />}
             </button>
           </div>
 
@@ -478,6 +482,15 @@ export default function DailyPlannerPage() {
             )}
           </div>
         </aside>
+        {!isMobile && !sidebarOpen && (
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="shrink-0 border-l border-border bg-surface px-1 text-tertiary hover:text-muted transition-colors"
+            aria-label="Open tasks"
+          >
+            <IconLayoutSidebarRightCollapse className="h-4 w-4 rotate-180" />
+          </button>
+        )}
       </main>
 
       {/* Bottom Bar */}

@@ -168,7 +168,7 @@ export default function ToolsPage() {
                   <span className="text-[17px] font-medium text-fg">
                     {tool.name}
                   </span>
-                  <span className="rounded-full bg-[oklch(25%_0.08_165)] px-2 py-0.5 text-[10px] text-teal">
+                  <span className="rounded-full bg-teal-subtle px-2 py-0.5 text-[10px] text-teal">
                     {tool.badge}
                   </span>
                 </div>
@@ -234,7 +234,7 @@ export default function ToolsPage() {
               <span className="mt-3 block text-sm text-tertiary">
                 {item.name}
               </span>
-              <span className="text-xs text-[oklch(30%_0.005_250)]">
+                  <span className="text-xs text-tertiary">
                 {item.date}
               </span>
             </div>
@@ -253,7 +253,9 @@ export default function ToolsPage() {
           </p>
           <div className="flex items-center justify-center gap-3">
             <a
-              href="#"
+              href="https://github.com/myousafmarfani/BuildnScale"
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-2 rounded-md border border-border px-6 py-3 text-sm text-muted transition-all hover:text-fg"
             >
               <IconBrandGithub className="h-4 w-4" /> Star on GitHub

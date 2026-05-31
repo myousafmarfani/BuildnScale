@@ -6,9 +6,10 @@ export function generateStaticParams() {
   return posts.map(post => ({ slug: post.slug }))
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   try {
-    const post = getPostBySlug(params.slug)
+    const { slug } = await params
+    const post = getPostBySlug(slug)
     return {
       title: `${post.title} — buildnscale.dev`,
       description: post.excerpt,
@@ -18,9 +19,10 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   }
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   try {
-    const post = getPostBySlug(params.slug)
+    const { slug } = await params
+    const post = getPostBySlug(slug)
     const allPosts = getAllPosts()
     const relatedPosts = allPosts.filter(p => p.slug !== post.slug && p.category === post.category).slice(0, 3)
     return <PostContent post={post} relatedPosts={relatedPosts} />

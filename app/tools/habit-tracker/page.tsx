@@ -21,6 +21,7 @@ import { ToolBreadcrumbs } from "@/components/ui/ToolBreadcrumbs"
 import { SettingsDrawer } from "@/components/ui/SettingsDrawer"
 import { Toast } from "@/components/ui/Toast"
 import { UserGuideModal } from "@/components/ui/UserGuideModal"
+import { ThemeToggle } from "@/components/ui/ThemeToggle"
 import { useSync } from "@/hooks/useSync"
 import { cn } from "@/lib/utils"
 
@@ -36,7 +37,7 @@ interface Habit {
 type Checkins = Record<string, string[]>
 
 const CELL_LEVELS = [
-  "",
+  "var(--cell-level-0)",
   "var(--cell-level-1)",
   "var(--cell-level-2)",
   "var(--cell-level-3)",
@@ -364,6 +365,7 @@ export default function HabitTrackerPage() {
             <IconBook2 className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Guide</span>
           </button>
+          <ThemeToggle />
           <button onClick={() => setSettingsOpen(true)} className="text-tertiary hover:text-muted transition-colors">
             <IconSettings className="h-[18px] w-[18px]" />
           </button>
@@ -578,7 +580,7 @@ export default function HabitTrackerPage() {
                           <div
                             key={di}
                             className="relative h-[11px] w-[11px] rounded-[2px]"
-                            style={{ background: day.level < 0 ? "transparent" : CELL_LEVELS[day.level] }}
+                            style={{ background: day.level < 0 ? "transparent" : CELL_LEVELS[day.level], border: day.level < 0 ? "none" : "1px solid var(--color-border)" }}
                             onMouseEnter={(e) => {
                               if (day.level >= 0) {
                                 const rect = (e.target as HTMLElement).getBoundingClientRect()
@@ -598,25 +600,9 @@ export default function HabitTrackerPage() {
                   <div className="flex items-center gap-2">
                     <span>Less</span>
                     {[0, 1, 2, 3, 4].map((l) => (
-                      <div key={l} className="h-[11px] w-[11px] rounded-[2px]" style={{ background: CELL_LEVELS[l] }} />
+                      <div key={l} className="h-[11px] w-[11px] rounded-[2px]" style={{ background: CELL_LEVELS[l], border: "1px solid var(--color-border)" }} />
                     ))}
                     <span>More</span>
-                  </div>
-                </div>
-
-                {/* Stats Row */}
-                <div className="mt-8 grid grid-cols-3 gap-4">
-                  <div className="rounded-lg border border-border bg-raised p-4 lg:p-5 text-center">
-                    <span className="block font-display text-2xl lg:text-[28px] text-teal">{longestStreak}</span>
-                    <span className="text-xs text-tertiary">Longest streak</span>
-                  </div>
-                  <div className="rounded-lg border border-border bg-raised p-4 lg:p-5 text-center">
-                    <span className="block font-display text-2xl lg:text-[28px] text-teal">{monthCompletion}%</span>
-                    <span className="text-xs text-tertiary">Month completion</span>
-                  </div>
-                  <div className="rounded-lg border border-border bg-raised p-4 lg:p-5 text-center">
-                    <span className="block font-display text-2xl lg:text-[28px] text-teal">{todayCheckedCount}/{habits.length}</span>
-                    <span className="text-xs text-tertiary">Today&apos;s habits</span>
                   </div>
                 </div>
               </section>
@@ -651,19 +637,12 @@ export default function HabitTrackerPage() {
                         {heatmapData.map((week, wi) => (
                           <div key={wi} className="flex flex-col gap-[3px]">
                             {week.map((day, di) => (
-                              <div key={di} className="h-[11px] w-[11px] rounded-[2px]" style={{ background: day.level < 0 ? "transparent" : CELL_LEVELS[day.level] }} />
+                              <div key={di} className="h-[11px] w-[11px] rounded-[2px]" style={{ background: day.level < 0 ? "transparent" : CELL_LEVELS[day.level], border: day.level < 0 ? "none" : "1px solid var(--color-border)" }} />
                             ))}
                           </div>
                         ))}
                       </div>
                     </div>
-                  </div>
-                  <div className="mt-3 flex items-center gap-2 font-mono text-[10px] text-tertiary">
-                    <span>Less</span>
-                    {[0, 1, 2, 3, 4].map((l) => (
-                      <div key={l} className="h-[11px] w-[11px] rounded-[2px]" style={{ background: CELL_LEVELS[l] }} />
-                    ))}
-                    <span>More</span>
                   </div>
                 </section>
               )}

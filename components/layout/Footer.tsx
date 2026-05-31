@@ -14,7 +14,7 @@ export function Footer() {
               Tools for developers who ship.
             </span>
             <div className="mt-4 flex gap-3">
-              <a href="#" className="text-tertiary transition-colors hover:text-fg" aria-label="GitHub">
+              <a href="https://github.com/myousafmarfani/BuildnScale" target="_blank" rel="noopener noreferrer" className="text-tertiary transition-colors hover:text-fg" aria-label="GitHub">
                 <IconBrandGithub className="h-5 w-5" />
               </a>
               <a href="#" className="text-tertiary transition-colors hover:text-fg" aria-label="X">
@@ -85,8 +85,11 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col justify-between border-t border-border pt-6 text-xs text-tertiary md:flex-row">
-          <span>© 2026 buildnscale.dev</span>
-          <span>All tools free.</span>
+          <span>© 2026 buildnscale.dev · Built by <a href="https://github.com/myousafmarfani" target="_blank" rel="noopener noreferrer" className="text-muted hover:text-fg transition-colors">Muhammad Yousaf</a></span>
+          <div className="flex gap-4">
+            <a href="https://github.com/myousafmarfani/BuildnScale/graphs/contributors" target="_blank" rel="noopener noreferrer" className="hover:text-muted transition-colors">Contributors</a>
+            <span>All tools free.</span>
+          </div>
         </div>
       </div>
     </footer>

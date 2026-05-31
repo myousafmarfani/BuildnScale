@@ -6,7 +6,7 @@ interface TaskItemProps {
 
 export function TaskItem({
   title,
-  color = "oklch(35% 0.1 165)",
+  color = "var(--color-teal-muted)",
   onDragStart,
 }: TaskItemProps) {
   return (

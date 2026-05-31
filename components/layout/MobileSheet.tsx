@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { useTheme } from "next-themes"
 import { useSession, signOut } from "next-auth/react"
-import { IconX, IconSun, IconMoon, IconCalendarEvent, IconPlayerPlay, IconFlame, IconMarkdown, IconCalculator, IconChartBar } from "@tabler/icons-react"
+import { IconX, IconSun, IconMoon, IconBrandGithub, IconCalendarEvent, IconPlayerPlay, IconFlame, IconMarkdown, IconCalculator, IconChartBar } from "@tabler/icons-react"
 
 interface MobileSheetProps {
   open: boolean
@@ -102,6 +102,14 @@ export function MobileSheet({ open, onOpenChange }: MobileSheetProps) {
         <div className="h-px bg-border" />
 
         <div className="mt-auto mb-6 flex flex-col gap-3 pb-6">
+          <a
+            href="https://github.com/myousafmarfani/BuildnScale"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-12 items-center justify-center gap-2 rounded-md text-[15px] font-medium text-tertiary"
+          >
+            <IconBrandGithub className="h-4 w-4" /> GitHub
+          </a>
           {mounted && (
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}

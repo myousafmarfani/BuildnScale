@@ -15,6 +15,7 @@ import {
 import { SettingsDrawer } from "@/components/ui/SettingsDrawer"
 import { Toast } from "@/components/ui/Toast"
 import { UserGuideModal } from "@/components/ui/UserGuideModal"
+import { ThemeToggle } from "@/components/ui/ThemeToggle"
 import { ToolBreadcrumbs } from "@/components/ui/ToolBreadcrumbs"
 import { useSync } from "@/hooks/useSync"
 import { cn } from "@/lib/utils"
@@ -240,6 +241,7 @@ export default function WeeklyReviewPage() {
             <span className="hidden sm:inline">Guide</span>
           </button>
 
+          <ThemeToggle />
           <button onClick={() => setSettingsOpen(true)} className="text-tertiary hover:text-muted transition-colors">
             <IconSettings className="h-[18px] w-[18px]" />
           </button>

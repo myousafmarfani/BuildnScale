@@ -104,7 +104,7 @@ export default function PostContent({ post: currentPost, relatedPosts = [] }: { 
             <span className="font-display text-2xs text-teal tracking-[0.12em] uppercase">
               {currentPost.category} · {formatDate(currentPost.date)}
             </span>
-            <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight text-[oklch(100%_0_0)] mt-4 mb-6 leading-tight">
+            <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight text-fg mt-4 mb-6 leading-tight">
               {currentPost.title}
             </h1>
             <div className="flex gap-5 text-sm font-display text-tertiary">

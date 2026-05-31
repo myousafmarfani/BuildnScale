@@ -13,11 +13,13 @@ import {
   IconCalendarEvent,
   IconCircle,
   IconBook2,
+  IconLayoutSidebarRightCollapse,
 } from "@tabler/icons-react"
 import { StreakPill } from "@/components/ui/StreakPill"
 import { SettingsDrawer } from "@/components/ui/SettingsDrawer"
 import { ToolBreadcrumbs } from "@/components/ui/ToolBreadcrumbs"
 import { UserGuideModal } from "@/components/ui/UserGuideModal"
+import { ThemeToggle } from "@/components/ui/ThemeToggle"
 import { useSync } from "@/hooks/useSync"
 
 const CIRCUMFERENCE = 2 * Math.PI * 98
@@ -144,6 +146,7 @@ export default function PomodoroPage() {
   } | null>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [mobileTab, setMobileTab] = useState<"timer" | "log" | "tasks">("timer")
+  const [sidebarOpen, setSidebarOpen] = useState(true)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [userGuideOpen, setUserGuideOpen] = useState(false)
@@ -443,6 +446,7 @@ export default function PomodoroPage() {
             <IconBook2 className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Guide</span>
           </button>
+          <ThemeToggle />
           <button onClick={() => setSettingsOpen(true)} className="text-tertiary hover:text-muted transition-colors">
             <IconSettings className="h-[18px] w-[18px]" />
           </button>
@@ -630,8 +634,21 @@ export default function PomodoroPage() {
         </div>
 
         {/* Sidebar */}
-        <aside className={`shrink-0 border-l border-border bg-surface p-5 overflow-y-auto ${isMobile ? "hidden" : "w-[220px] lg:w-[240px]"}`}>
-          <h3 className="mb-4 text-xs uppercase tracking-[0.08em] text-muted">Queue</h3>
+        <aside className={`shrink-0 border-l border-border bg-surface overflow-y-auto transition-all duration-280 ${
+          isMobile
+            ? "hidden"
+            : sidebarOpen
+              ? "w-[220px] lg:w-[240px] p-5"
+              : "w-0 overflow-hidden border-l-0"
+        }`}>
+          {sidebarOpen && (
+          <>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xs uppercase tracking-[0.08em] text-muted">Queue</h3>
+            <button onClick={() => setSidebarOpen(false)} className="text-tertiary hover:text-muted transition-colors">
+              <IconLayoutSidebarRightCollapse className="h-4 w-4" />
+            </button>
+          </div>
 
           <div className="mb-4 flex items-center rounded-md border border-border bg-raised px-3 py-2">
             <input
@@ -682,8 +699,18 @@ export default function PomodoroPage() {
             ))}
           </div>
 
-
+          </>
+          )}
         </aside>
+        {!isMobile && !sidebarOpen && (
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="shrink-0 border-l border-border bg-surface px-1 text-tertiary hover:text-muted transition-colors"
+            aria-label="Open queue"
+          >
+            <IconLayoutSidebarRightCollapse className="h-4 w-4 rotate-180" />
+          </button>
+        )}
       </main>
 
       {/* Mobile Tab Bar */}

@@ -16,6 +16,7 @@ import {
   IconMenu2,
   IconSun,
   IconMoon,
+  IconBrandGithub,
 } from "@tabler/icons-react"
 import { MobileSheet } from "./MobileSheet"
 
@@ -115,6 +116,15 @@ export function Nav() {
           </div>
 
           <div className="ml-auto hidden items-center gap-5 md:flex">
+            <a
+              href="https://github.com/myousafmarfani/BuildnScale"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-tertiary transition-colors duration-150 hover:text-muted"
+              aria-label="GitHub"
+            >
+              <IconBrandGithub className="h-[18px] w-[18px]" />
+            </a>
             {mounted && (
               <button
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
