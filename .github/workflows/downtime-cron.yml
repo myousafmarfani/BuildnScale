@@ -1,0 +1,17 @@
+name: Downtime Monitor Cron
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  run-checks:
+    name: Run uptime checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call downtime cron endpoint
+        run: |
+          curl -s -X POST "https://buildnscale.dev/api/downtime/cron" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -w "\nHTTP %{http_code}"
