@@ -12,6 +12,7 @@ import {
   IconMarkdown,
   IconCalculator,
   IconChartBar,
+  IconActivity,
   IconChevronDown,
   IconMenu2,
   IconSun,
@@ -21,6 +22,7 @@ import {
 import { MobileSheet } from "./MobileSheet"
 
 const tools = [
+  { icon: IconActivity, name: "Downtime Detector", desc: "Monitor uptime", href: "/tools/downtime-detector" },
   { icon: IconCalendarEvent, name: "Daily Focus Planner", desc: "Time-block your day", href: "/tools/daily-planner" },
   { icon: IconPlayerPlay, name: "Pomodoro + Task Log", desc: "Track sessions", href: "/tools/pomodoro" },
   { icon: IconFlame, name: "Habit Tracker", desc: "Build daily streaks", href: "/tools/habit-tracker" },
@@ -158,7 +160,7 @@ export function Nav() {
                   Sign in
                 </Link>
                 <Link
-                  href="/tools/daily-planner"
+                  href="/tools/downtime-detector"
                   className="rounded-[6px] bg-teal px-3.5 py-[7px] text-xs font-medium text-bg transition-opacity hover:opacity-90"
                 >
                   Try free →

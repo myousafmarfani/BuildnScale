@@ -4,6 +4,7 @@ import Link from "next/link"
 export const metadata: Metadata = {
   title: "Terms of Service — buildnscale.dev",
   description: "Terms and conditions for using buildnscale.dev products and services.",
+  robots: { index: false, follow: true },
 }
 
 export default function TermsPage() {

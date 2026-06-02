@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { useTheme } from "next-themes"
 import { useSession, signOut } from "next-auth/react"
-import { IconX, IconSun, IconMoon, IconBrandGithub, IconCalendarEvent, IconPlayerPlay, IconFlame, IconMarkdown, IconCalculator, IconChartBar } from "@tabler/icons-react"
+import { IconX, IconSun, IconMoon, IconBrandGithub, IconCalendarEvent, IconPlayerPlay, IconFlame, IconMarkdown, IconCalculator, IconChartBar, IconActivity } from "@tabler/icons-react"
 
 interface MobileSheetProps {
   open: boolean
@@ -12,6 +12,7 @@ interface MobileSheetProps {
 }
 
 const tools = [
+  { icon: IconActivity, name: "Downtime Detector", href: "/tools/downtime-detector" },
   { icon: IconCalendarEvent, name: "Daily Focus Planner", href: "/tools/daily-planner" },
   { icon: IconPlayerPlay, name: "Pomodoro + Task Log", href: "/tools/pomodoro" },
   { icon: IconFlame, name: "Habit Tracker", href: "/tools/habit-tracker" },
@@ -144,7 +145,7 @@ export function MobileSheet({ open, onOpenChange }: MobileSheetProps) {
                 Sign in
               </Link>
               <Link
-                href="/tools/daily-planner"
+                href="/tools/downtime-detector"
                 className="flex h-12 items-center justify-center rounded-md bg-teal text-[15px] font-medium text-bg"
                 onClick={() => onOpenChange(false)}
               >

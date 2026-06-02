@@ -7,6 +7,7 @@ const TOOL_NAMES: Record<string, string> = {
   "markdown-notes": "Markdown Notes",
   "rate-calculator": "Freelancer Rate Calculator",
   "weekly-review": "Weekly Review",
+  "downtime-detector": "Downtime Detector",
 }
 
 interface ToolBreadcrumbsProps {

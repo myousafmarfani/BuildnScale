@@ -6,15 +6,101 @@ import {
   IconMarkdown,
   IconCalculator,
   IconChartBar,
+  IconActivity,
 } from "@tabler/icons-react"
+import { TOOLS, toolCountWord } from "@/lib/tools-registry"
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "buildnscale.dev",
+  url: "https://buildnscale.dev",
+  description:
+    "Free productivity tools for developers. Daily planner, Pomodoro timer, habit tracker, and more. No account required.",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: "https://buildnscale.dev/search?q={search_term_string}",
+    },
+    "query-input": "required name=search_term_string",
+  },
+}
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "buildnscale.dev",
+  url: "https://buildnscale.dev",
+  logo: "https://buildnscale.dev/og-image.png",
+  description:
+    "Free productivity tools for developers. Daily planner, Pomodoro timer, habit tracker, and more.",
+  founder: {
+    "@type": "Person",
+    name: "Marc Jenkins",
+  },
+}
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Are these productivity tools really free?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes, all tools on buildnscale.dev are completely free. No credit card required, no usage limits, no hidden upgrades.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do I need to create an account to use the tools?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. All tools work without an account. Your data is stored locally in your browser. Sign up only if you want to sync data across devices.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is my data private and secure?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Tool data stays in your browser's localStorage by default. If you sign up, it's encrypted in transit and at rest. We never sell your data.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can I use the tools offline?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Since data is stored locally in your browser, most tools work offline after the initial page load.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is buildnscale.dev open source?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes, the entire platform is open source. You can view, fork, and contribute on GitHub at github.com/myousafmarfani/BuildnScale.",
+      },
+    },
+  ],
+}
 
 const tools = [
+  {
+    icon: IconActivity,
+    name: "Downtime Detector",
+    desc: "Check if any site is up now. Monitor your domains with real-time uptime graphs.",
+    href: "/tools/downtime-detector",
+    featured: true,
+  },
   {
     icon: IconCalendarEvent,
     name: "Daily Focus Planner",
     desc: "Drag tasks into 30-min blocks. Your day, structured.",
     href: "/tools/daily-planner",
-    featured: true,
   },
   {
     icon: IconPlayerPlay,
@@ -100,6 +186,18 @@ const posts = [
 export default function Home() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <header className="relative py-[100px] md:py-[100px]">
         <div className="container-site">
           <div className="grid items-center gap-16 md:grid-cols-[1.2fr_1fr]">
@@ -116,10 +214,10 @@ export default function Home() {
               </p>
               <div className="mb-8 flex gap-3">
                 <Link
-                  href="/tools/daily-planner"
+                  href="/tools/downtime-detector"
                   className="rounded-md bg-teal px-6 py-3 text-[15px] font-medium text-bg transition-all duration-180 hover:opacity-90"
                 >
-                  Open Daily Planner →
+                  Open Downtime Detector →
                 </Link>
                 <Link
                   href="/tools"
@@ -224,7 +322,7 @@ export default function Home() {
               THE TOOL SUITE
             </span>
             <h2 className="mb-3 font-display text-4xl text-fg">
-              Six tools. One habit.
+              {toolCountWord()} tools. One habit.
             </h2>
             <p className="text-base text-muted">
               Each one designed to be opened daily and closed fast.

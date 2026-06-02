@@ -20,6 +20,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   data          UserData[]
+  monitoredSites MonitoredSite[]
 }
 
 model UserData {
@@ -67,4 +68,40 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model MonitoredSite {
+  id                   String        @id @default(uuid()) @db.Uuid
+  userId               String
+  url                  String
+  displayName          String?       @map("display_name")
+  checkIntervalMinutes Int           @default(5) @map("check_interval_minutes")
+  isActive             Boolean       @default(true) @map("is_active")
+  createdAt            DateTime      @default(now()) @map("created_at")
+
+  uptimeChecks UptimeCheck[]
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, url])
+  @@map("monitored_sites")
+}
+
+model UptimeCheck {
+  id               String         @id @default(uuid()) @db.Uuid
+  siteId           String?        @map("site_id") @db.Uuid
+  url              String
+  checkedAt        DateTime       @default(now()) @map("checked_at")
+  isUp             Boolean        @map("is_up")
+  statusCode       Int?           @map("status_code")
+  responseMs       Int?           @map("response_ms")
+  region           String?
+  sslValid         Boolean?       @map("ssl_valid")
+  sslDaysRemaining Int?           @map("ssl_days_remaining")
+  errorMessage     String?        @map("error_message")
+
+  site MonitoredSite? @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId, checkedAt(sort: Desc)])
+  @@index([url, checkedAt(sort: Desc)])
+  @@map("uptime_checks")
 }

@@ -3,7 +3,8 @@ import Link from "next/link"
 
 export const metadata: Metadata = {
   title: "Privacy Policy — buildnscale.dev",
-  description: "How buildnscale.dev collects, uses, and protects your personal data.",
+  description: "How buildnscale.dev collects, uses, and protects your personal data. We never sell your data.",
+  robots: { index: false, follow: true },
 }
 
 export default function PrivacyPage() {

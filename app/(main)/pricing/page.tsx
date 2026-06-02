@@ -1,4 +1,23 @@
+import type { Metadata } from "next"
 import Link from "next/link"
+
+export const metadata: Metadata = {
+  title: "Free for everyone — buildnscale.dev",
+  description:
+    "All tools, all features, no upgrade needed. Daily planner, Pomodoro timer, habit tracker, and more. No credit card, no limits.",
+  openGraph: {
+    title: "Free for everyone — buildnscale.dev",
+    description:
+      "Every tool, every feature — free forever. No credit card needed.",
+    url: "https://buildnscale.dev/pricing",
+    images: ["/opengraph-image"],
+  },
+  twitter: {
+    title: "Free for everyone — buildnscale.dev",
+    description:
+      "Every tool, every feature — free forever. No credit card needed.",
+  },
+}
 
 export default function PricingPage() {
   return (

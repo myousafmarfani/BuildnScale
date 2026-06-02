@@ -9,6 +9,7 @@ import {
   IconFileText,
   IconCurrencyDollar,
   IconChartBar,
+  IconActivity,
   IconBrandGithub,
   IconGitBranch,
   IconMail,
@@ -28,6 +29,17 @@ const FILTERS = [
 type FilterKey = (typeof FILTERS)[number]["key"]
 
 const TOOLS = [
+  {
+    id: "downtime-detector",
+    name: "Downtime Detector",
+    href: "/tools/downtime-detector",
+    icon: IconActivity,
+    category: "devs" as const,
+    badge: "For Devs",
+    description:
+      "Check if any site is up right now. Monitor your own domains with real-time uptime graphs and multi-region checks.",
+    tags: ["Multi-region", "SSL check", "Response time"],
+  },
   {
     id: "daily-planner",
     name: "Daily Focus Planner",
@@ -117,10 +129,10 @@ export default function ToolsPage() {
             Tools that work daily.
           </h1>
           <p className="mx-auto mt-4 max-w-[520px] text-[17px] leading-[1.65] text-muted">
-            Six free productivity tools for developers and remote workers. No account required. No bloat. Just open and use.
+            Seven free productivity tools for developers and remote workers. No account required. No bloat. Just open and use.
           </p>
           <div className="mt-6 flex items-center justify-center gap-8 text-xs text-tertiary">
-            <span>6 tools</span>
+            <span>7 tools</span>
             <span className="text-border">•</span>
             <span>Free forever</span>
             <span className="text-border">•</span>

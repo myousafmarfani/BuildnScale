@@ -3,7 +3,17 @@ import Link from "next/link"
 
 export const metadata: Metadata = {
   title: "Changelog — buildnscale.dev",
-  description: "Release notes and updates for buildnscale.dev.",
+  description: "Release notes and updates for buildnscale.dev. Track every version from pre-release to launch.",
+  openGraph: {
+    title: "Changelog — buildnscale.dev",
+    description: "Release notes and updates for buildnscale.dev.",
+    url: "https://buildnscale.dev/changelog",
+    images: ["/opengraph-image"],
+  },
+  twitter: {
+    title: "Changelog — buildnscale.dev",
+    description: "Release notes and updates for buildnscale.dev.",
+  },
 }
 
 const releases = [
@@ -15,7 +25,7 @@ const releases = [
     changes: [
       "Full theme system with dark and light mode",
       "User authentication with email/password and Google OAuth",
-      "Six productivity tools: Daily Planner, Pomodoro Timer, Habit Tracker, Markdown Notes, Rate Calculator, Weekly Review",
+      "Seven productivity tools: Daily Planner, Pomodoro Timer, Habit Tracker, Markdown Notes, Rate Calculator, Weekly Review, Downtime Detector",
       "Dashboard for authenticated users",
       "Privacy Policy, Terms of Service, Roadmap, and Changelog pages",
       "Responsive design with mobile navigation sheet",

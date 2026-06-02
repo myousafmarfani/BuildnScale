@@ -22,6 +22,7 @@ import {
   IconClock,
   IconTarget,
   IconTrendingUp,
+  IconActivity,
 } from '@tabler/icons-react'
 
 interface NavItem {
@@ -33,8 +34,9 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { id: 'overview', label: 'Overview', icon: IconLayoutDashboard },
+  { id: 'downtime-detector', label: 'Downtime Detector', icon: IconActivity, href: '/tools/downtime-detector' },
   { id: 'weekly-review', label: 'Weekly Review', icon: IconCalendarEvent, href: '/tools/weekly-review' },
-  { id: 'habits', label: 'Habits', icon: IconFlame, href: '/tools/habit-tracker' },
+  { id: 'habits', label: 'Habits Tracker', icon: IconFlame, href: '/tools/habit-tracker' },
   { id: 'planner-history', label: 'Planner History', icon: IconHistory, href: '/tools/daily-planner' },
   { id: 'pomodoro-log', label: 'Pomodoro Log', icon: IconPlayerPlay, href: '/tools/pomodoro' },
   { id: 'notes-archive', label: 'Notes Archive', icon: IconMarkdown, href: '/tools/markdown-notes' },
@@ -227,12 +229,9 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen flex">
+      <style>{`footer { display: none }`}</style>
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex md:flex-col w-[220px] shrink-0 bg-surface border-r border-border h-screen sticky top-0 p-6">
-        <Link href="/" className="font-display text-sm font-semibold text-fg no-underline mb-10">
-          build<span className="text-teal">n</span>scale
-        </Link>
-
         <Link href="/dashboard/settings" className="flex items-center gap-3 mb-10 pb-6 border-b border-border group">
           <div className="w-8 h-8 rounded-full bg-teal flex items-center justify-center text-bg text-xs font-semibold shrink-0">
             {initials}
