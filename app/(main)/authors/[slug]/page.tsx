@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title: `${author.name} — buildnscale.dev`,
       description: author.bio,
-      url: `https://buildnscale.dev/authors/${slug}`,
+      url: `https://www.buildnscale.dev/authors/${slug}`,
       type: 'profile',
       images: ['/opengraph-image'],
     },
@@ -49,8 +49,8 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
     "@type": "Person",
     name: author.name,
     description: author.bio,
-    image: `https://buildnscale.dev${author.avatar}`,
-    url: `https://buildnscale.dev/authors/${slug}`,
+    image: `https://www.buildnscale.dev${author.avatar}`,
+    url: `https://www.buildnscale.dev/authors/${slug}`,
     ...(author.github && { sameAs: [author.github, author.twitter, author.website].filter(Boolean) }),
   }
 
@@ -60,9 +60,9 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(breadcrumbJsonLd([
-            { name: 'Home', url: 'https://buildnscale.dev' },
-            { name: 'Authors', url: 'https://buildnscale.dev/authors' },
-            { name: author.name, url: `https://buildnscale.dev/authors/${slug}` },
+            { name: 'Home', url: 'https://www.buildnscale.dev' },
+            { name: 'Authors', url: 'https://www.buildnscale.dev/authors' },
+            { name: author.name, url: `https://www.buildnscale.dev/authors/${slug}` },
           ]))
         }}
       />

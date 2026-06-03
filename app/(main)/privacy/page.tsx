@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Privacy Policy — buildnscale.dev",
     description: "How buildnscale.dev collects, uses, and protects your personal data. We never sell your data.",
-    url: "https://buildnscale.dev/privacy",
+    url: "https://www.buildnscale.dev/privacy",
     type: "website",
     images: ["/opengraph-image"],
   },
@@ -27,8 +27,8 @@ export default function PrivacyPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(breadcrumbJsonLd([
-            { name: "Home", url: "https://buildnscale.dev" },
-            { name: "Privacy Policy", url: "https://buildnscale.dev/privacy" },
+            { name: "Home", url: "https://www.buildnscale.dev" },
+            { name: "Privacy Policy", url: "https://www.buildnscale.dev/privacy" },
           ]))
         }}
       />

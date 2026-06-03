@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     title: "Free for everyone — buildnscale.dev",
     description:
       "Every tool, every feature — free forever. No credit card needed.",
-    url: "https://buildnscale.dev/pricing",
+    url: "https://www.buildnscale.dev/pricing",
     type: "website",
     images: ["/opengraph-image"],
   },
@@ -30,8 +30,8 @@ export default function PricingPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(breadcrumbJsonLd([
-            { name: "Home", url: "https://buildnscale.dev" },
-            { name: "Pricing", url: "https://buildnscale.dev/pricing" },
+            { name: "Home", url: "https://www.buildnscale.dev" },
+            { name: "Pricing", url: "https://www.buildnscale.dev/pricing" },
           ]))
         }}
       />

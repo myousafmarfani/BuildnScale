@@ -4,7 +4,7 @@ import { getAllAuthors } from "@/lib/authors"
 import { TOOLS } from "@/lib/tools-registry"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://buildnscale.dev"
+  const baseUrl = "https://www.buildnscale.dev"
 
   const posts = getAllPosts()
   const authors = getAllAuthors()

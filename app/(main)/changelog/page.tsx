@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Changelog — buildnscale.dev",
     description: "Release notes and updates for buildnscale.dev.",
-    url: "https://buildnscale.dev/changelog",
+    url: "https://www.buildnscale.dev/changelog",
     type: "website",
     images: ["/opengraph-image"],
   },

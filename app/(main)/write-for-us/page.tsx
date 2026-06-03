@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: "Write for Us — buildnscale.dev",
     description:
       "Contribute to BuildnScale. Share your engineering tactics, productivity systems, and AI tooling lessons with developers who ship.",
-    url: "https://buildnscale.dev/write-for-us",
+    url: "https://www.buildnscale.dev/write-for-us",
     type: "website",
     images: ["/opengraph-image"],
   },
@@ -38,8 +38,8 @@ export default function WriteForUsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(breadcrumbJsonLd([
-            { name: "Home", url: "https://buildnscale.dev" },
-            { name: "Write for Us", url: "https://buildnscale.dev/write-for-us" },
+            { name: "Home", url: "https://www.buildnscale.dev" },
+            { name: "Write for Us", url: "https://www.buildnscale.dev/write-for-us" },
           ]))
         }}
       />

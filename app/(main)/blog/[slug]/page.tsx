@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       openGraph: {
         title: `${post.title} — buildnscale.dev`,
         description: post.excerpt,
-        url: `https://buildnscale.dev/blog/${slug}`,
+        url: `https://www.buildnscale.dev/blog/${slug}`,
         type: 'article',
         publishedTime: post.date,
         authors: ['Muhammad Yousaf'],
@@ -50,11 +50,11 @@ function blogPostJsonLd(post: { title: string; excerpt: string; date: string; sl
     publisher: {
       "@type": "Organization",
       name: "buildnscale.dev",
-      logo: { "@type": "ImageObject", url: "https://buildnscale.dev/og-image.png" },
+      logo: { "@type": "ImageObject", url: "https://www.buildnscale.dev/og-image.png" },
     },
-    url: `https://buildnscale.dev/blog/${post.slug}`,
-    mainEntityOfPage: { "@type": "WebPage", "@id": `https://buildnscale.dev/blog/${post.slug}` },
-    image: "https://buildnscale.dev/og-image.png",
+    url: `https://www.buildnscale.dev/blog/${post.slug}`,
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.buildnscale.dev/blog/${post.slug}` },
+    image: "https://www.buildnscale.dev/og-image.png",
     articleSection: post.category,
   }
 }

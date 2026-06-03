@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Authors — buildnscale.dev',
     description: 'Meet the developers and engineers writing about productivity, AI, and open-source tooling at BuildnScale.',
-    url: 'https://buildnscale.dev/authors',
+    url: 'https://www.buildnscale.dev/authors',
     type: 'website',
     images: ['/opengraph-image'],
   },
@@ -31,8 +31,8 @@ export default function AuthorsIndexPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(breadcrumbJsonLd([
-            { name: 'Home', url: 'https://buildnscale.dev' },
-            { name: 'Authors', url: 'https://buildnscale.dev/authors' },
+            { name: 'Home', url: 'https://www.buildnscale.dev' },
+            { name: 'Authors', url: 'https://www.buildnscale.dev/authors' },
           ]))
         }}
       />

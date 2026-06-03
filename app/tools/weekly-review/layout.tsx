@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     title: 'Weekly Review Dashboard — Free reflection tool | buildnscale.dev',
     description:
       'Aggregate focus time, task completions, and habit scores. Free weekly review.',
-    url: 'https://buildnscale.dev/tools/weekly-review',
+    url: 'https://www.buildnscale.dev/tools/weekly-review',
     images: ['/opengraph-image'],
   },
   twitter: {
@@ -24,7 +24,7 @@ const softwareJsonLd = {
   "@type": "SoftwareApplication",
   name: "Weekly Review Dashboard",
   description: "Aggregate focus time, task completions, and habit scores. Free reflection tool for developers.",
-  url: "https://buildnscale.dev/tools/weekly-review",
+  url: "https://www.buildnscale.dev/tools/weekly-review",
   applicationCategory: "Productivity",
   operatingSystem: "Web",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
@@ -34,9 +34,9 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://buildnscale.dev" },
-    { "@type": "ListItem", position: 2, name: "Tools", item: "https://buildnscale.dev/tools" },
-    { "@type": "ListItem", position: 3, name: "Weekly Review Dashboard", item: "https://buildnscale.dev/tools/weekly-review" },
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://www.buildnscale.dev" },
+    { "@type": "ListItem", position: 2, name: "Tools", item: "https://www.buildnscale.dev/tools" },
+    { "@type": "ListItem", position: 3, name: "Weekly Review Dashboard", item: "https://www.buildnscale.dev/tools/weekly-review" },
   ],
 }
 

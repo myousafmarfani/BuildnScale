@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: 'Blog — Writing while building | buildnscale.dev',
     description:
       'Tactics, lessons, and tool updates for developers who actually ship.',
-    url: 'https://buildnscale.dev/blog',
+    url: 'https://www.buildnscale.dev/blog',
     images: ['/opengraph-image'],
   },
   twitter: {

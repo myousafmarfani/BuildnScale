@@ -17,6 +17,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: "/",
       },
     ],
-    sitemap: "https://buildnscale.dev/sitemap.xml",
+    sitemap: "https://www.buildnscale.dev/sitemap.xml",
   }
 }

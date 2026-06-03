@@ -3,14 +3,14 @@ export function websiteJsonLd() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "buildnscale.dev",
-    url: "https://buildnscale.dev",
+    url: "https://www.buildnscale.dev",
     description:
       "Free productivity tools for developers. Daily planner, Pomodoro timer, habit tracker, and more. No account required.",
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: "https://buildnscale.dev/search?q={search_term_string}",
+        urlTemplate: "https://www.buildnscale.dev/search?q={search_term_string}",
       },
       "query-input": "required name=search_term_string",
     },
@@ -22,8 +22,8 @@ export function organizationJsonLd() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "buildnscale.dev",
-    url: "https://buildnscale.dev",
-    logo: "https://buildnscale.dev/og-image.png",
+    url: "https://www.buildnscale.dev",
+    logo: "https://www.buildnscale.dev/og-image.png",
     description:
       "Free productivity tools for developers. Daily planner, Pomodoro timer, habit tracker, and more.",
     founder: {
@@ -63,22 +63,22 @@ export function blogPostingJsonLd(post: {
     author: {
       "@type": "Person",
       name: "Muhammad Yousaf",
-      url: "https://buildnscale.dev",
+      url: "https://www.buildnscale.dev",
     },
     publisher: {
       "@type": "Organization",
       name: "buildnscale.dev",
       logo: {
         "@type": "ImageObject",
-        url: "https://buildnscale.dev/og-image.png",
+        url: "https://www.buildnscale.dev/og-image.png",
       },
     },
-    url: `https://buildnscale.dev/blog/${post.slug}`,
+    url: `https://www.buildnscale.dev/blog/${post.slug}`,
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://buildnscale.dev/blog/${post.slug}`,
+      "@id": `https://www.buildnscale.dev/blog/${post.slug}`,
     },
-    image: "https://buildnscale.dev/og-image.png",
+    image: "https://www.buildnscale.dev/og-image.png",
     articleSection: post.category,
   }
 }
@@ -93,7 +93,7 @@ export function softwareApplicationJsonLd(tool: {
     "@type": "SoftwareApplication",
     name: tool.name,
     description: tool.description,
-    url: `https://buildnscale.dev/tools/${tool.slug}`,
+    url: `https://www.buildnscale.dev/tools/${tool.slug}`,
     applicationCategory: "Productivity",
     operatingSystem: "Web",
     offers: {

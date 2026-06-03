@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     title: 'Free productivity tools for developers | buildnscale.dev',
     description:
       'Browse 7 free productivity tools built for developers. No signup, no bloat, just open and use.',
-    url: 'https://buildnscale.dev/tools',
+    url: 'https://www.buildnscale.dev/tools',
     type: 'website',
     images: ['/opengraph-image'],
   },
@@ -24,8 +24,8 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://buildnscale.dev" },
-    { "@type": "ListItem", position: 2, name: "Tools", item: "https://buildnscale.dev/tools" },
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://www.buildnscale.dev" },
+    { "@type": "ListItem", position: 2, name: "Tools", item: "https://www.buildnscale.dev/tools" },
   ],
 }
 

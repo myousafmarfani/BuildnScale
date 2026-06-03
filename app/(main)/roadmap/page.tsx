@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Roadmap — buildnscale.dev",
     description: "What we're building next at buildnscale.dev.",
-    url: "https://buildnscale.dev/roadmap",
+    url: "https://www.buildnscale.dev/roadmap",
     type: "website",
     images: ["/opengraph-image"],
   },

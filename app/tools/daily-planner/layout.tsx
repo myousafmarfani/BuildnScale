@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     title: 'Daily Focus Planner — Free time-blocking tool | buildnscale.dev',
     description:
       'Plan your day in 30-min blocks. Free, no signup, local-first.',
-    url: 'https://buildnscale.dev/tools/daily-planner',
+    url: 'https://www.buildnscale.dev/tools/daily-planner',
     images: ['/opengraph-image'],
   },
   twitter: {
@@ -24,7 +24,7 @@ const softwareJsonLd = {
   "@type": "SoftwareApplication",
   name: "Daily Focus Planner",
   description: "Drag tasks into 30-min time blocks on a vertical day grid. Free time-blocking tool for developers.",
-  url: "https://buildnscale.dev/tools/daily-planner",
+  url: "https://www.buildnscale.dev/tools/daily-planner",
   applicationCategory: "Productivity",
   operatingSystem: "Web",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
@@ -34,9 +34,9 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://buildnscale.dev" },
-    { "@type": "ListItem", position: 2, name: "Tools", item: "https://buildnscale.dev/tools" },
-    { "@type": "ListItem", position: 3, name: "Daily Focus Planner", item: "https://buildnscale.dev/tools/daily-planner" },
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://www.buildnscale.dev" },
+    { "@type": "ListItem", position: 2, name: "Tools", item: "https://www.buildnscale.dev/tools" },
+    { "@type": "ListItem", position: 3, name: "Daily Focus Planner", item: "https://www.buildnscale.dev/tools/daily-planner" },
   ],
 }
 

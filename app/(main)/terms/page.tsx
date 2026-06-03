@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Terms of Service — buildnscale.dev",
     description: "Terms and conditions for using buildnscale.dev products and services.",
-    url: "https://buildnscale.dev/terms",
+    url: "https://www.buildnscale.dev/terms",
     type: "website",
     images: ["/opengraph-image"],
   },
@@ -27,8 +27,8 @@ export default function TermsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(breadcrumbJsonLd([
-            { name: "Home", url: "https://buildnscale.dev" },
-            { name: "Terms of Service", url: "https://buildnscale.dev/terms" },
+            { name: "Home", url: "https://www.buildnscale.dev" },
+            { name: "Terms of Service", url: "https://www.buildnscale.dev/terms" },
           ]))
         }}
       />

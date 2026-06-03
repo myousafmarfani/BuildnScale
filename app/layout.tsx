@@ -24,7 +24,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://buildnscale.dev"),
+  metadataBase: new URL("https://www.buildnscale.dev"),
   title: "buildnscale.dev — Productivity tools for developers who ship",
   description:
     "Free productivity tools for developers. Daily planner, Pomodoro timer, habit tracker, and more. No account required. Open-source, local-first, privacy-respecting.",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     "no signup tools",
     "local first apps",
   ],
-  authors: [{ name: "Muhammad Yousaf", url: "https://buildnscale.dev" }],
+  authors: [{ name: "Muhammad Yousaf", url: "https://www.buildnscale.dev" }],
   creator: "buildnscale.dev",
   publisher: "buildnscale.dev",
   robots: {
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://buildnscale.dev",
+    url: "https://www.buildnscale.dev",
     siteName: "buildnscale.dev",
     title: "buildnscale.dev — Productivity tools for developers who ship",
     description:

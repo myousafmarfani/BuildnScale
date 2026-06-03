@@ -14,14 +14,14 @@ const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "buildnscale.dev",
-  url: "https://buildnscale.dev",
+  url: "https://www.buildnscale.dev",
   description:
     "Free productivity tools for developers. Daily planner, Pomodoro timer, habit tracker, and more. No account required.",
   potentialAction: {
     "@type": "SearchAction",
     target: {
       "@type": "EntryPoint",
-      urlTemplate: "https://buildnscale.dev/search?q={search_term_string}",
+      urlTemplate: "https://www.buildnscale.dev/search?q={search_term_string}",
     },
     "query-input": "required name=search_term_string",
   },
@@ -31,8 +31,8 @@ const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "buildnscale.dev",
-  url: "https://buildnscale.dev",
-  logo: "https://buildnscale.dev/og-image.png",
+  url: "https://www.buildnscale.dev",
+  logo: "https://www.buildnscale.dev/og-image.png",
   description:
     "Free productivity tools for developers. Daily planner, Pomodoro timer, habit tracker, and more.",
   founder: {

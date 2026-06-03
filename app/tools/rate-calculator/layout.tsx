@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     title: 'Freelancer Rate Calculator — Free pricing tool | buildnscale.dev',
     description:
       'Calculate your ideal hourly rate and generate PDF invoices. Free for freelancers.',
-    url: 'https://buildnscale.dev/tools/rate-calculator',
+    url: 'https://www.buildnscale.dev/tools/rate-calculator',
     images: ['/opengraph-image'],
   },
   twitter: {
@@ -24,7 +24,7 @@ const softwareJsonLd = {
   "@type": "SoftwareApplication",
   name: "Freelancer Rate Calculator",
   description: "Calculate your ideal hourly rate and generate PDF invoices. Free pricing tool for freelancers.",
-  url: "https://buildnscale.dev/tools/rate-calculator",
+  url: "https://www.buildnscale.dev/tools/rate-calculator",
   applicationCategory: "Productivity",
   operatingSystem: "Web",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
@@ -34,9 +34,9 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://buildnscale.dev" },
-    { "@type": "ListItem", position: 2, name: "Tools", item: "https://buildnscale.dev/tools" },
-    { "@type": "ListItem", position: 3, name: "Freelancer Rate Calculator", item: "https://buildnscale.dev/tools/rate-calculator" },
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://www.buildnscale.dev" },
+    { "@type": "ListItem", position: 2, name: "Tools", item: "https://www.buildnscale.dev/tools" },
+    { "@type": "ListItem", position: 3, name: "Freelancer Rate Calculator", item: "https://www.buildnscale.dev/tools/rate-calculator" },
   ],
 }
 
