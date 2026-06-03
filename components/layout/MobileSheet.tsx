@@ -12,13 +12,13 @@ interface MobileSheetProps {
 }
 
 const tools = [
-  { icon: IconActivity, name: "Downtime Detector", href: "/tools/downtime-detector" },
-  { icon: IconCalendarEvent, name: "Daily Focus Planner", href: "/tools/daily-planner" },
-  { icon: IconPlayerPlay, name: "Pomodoro + Task Log", href: "/tools/pomodoro" },
-  { icon: IconFlame, name: "Habit Tracker", href: "/tools/habit-tracker" },
-  { icon: IconMarkdown, name: "Markdown Notes", href: "/tools/markdown-notes" },
-  { icon: IconCalculator, name: "Freelancer Calculator", href: "/tools/rate-calculator" },
-  { icon: IconChartBar, name: "Weekly Review", href: "/tools/weekly-review" },
+  { icon: IconActivity, name: "Downtime Detector", href: "/tools/downtime-detector", desc: "Monitor uptime" },
+  { icon: IconCalendarEvent, name: "Daily Focus Planner", href: "/tools/daily-planner", desc: "Time-block your day" },
+  { icon: IconPlayerPlay, name: "Pomodoro + Task Log", href: "/tools/pomodoro", desc: "Track sessions" },
+  { icon: IconFlame, name: "Habit Tracker", href: "/tools/habit-tracker", desc: "Build daily streaks" },
+  { icon: IconMarkdown, name: "Markdown Notes", href: "/tools/markdown-notes", desc: "Capture fast" },
+  { icon: IconCalculator, name: "Freelancer Calculator", href: "/tools/rate-calculator", desc: "Price your time" },
+  { icon: IconChartBar, name: "Weekly Review", href: "/tools/weekly-review", desc: "Reflect and reset" },
 ]
 
 export function MobileSheet({ open, onOpenChange }: MobileSheetProps) {
@@ -86,18 +86,31 @@ export function MobileSheet({ open, onOpenChange }: MobileSheetProps) {
 
         <div className="h-px bg-border" />
 
-        <div className="mt-6 mb-6 flex flex-col gap-5">
+        <div className="mt-6 mb-6 flex flex-col gap-3">
           {tools.map((tool) => (
             <Link
               key={tool.href}
               href={tool.href}
-              className="flex items-center gap-4 text-[15px] text-muted"
+              className="flex items-start gap-4 rounded-lg p-3 -mx-3 transition-colors hover:bg-raised"
               onClick={() => onOpenChange(false)}
             >
-              <tool.icon className="h-[18px] w-[18px] shrink-0 text-teal" />
-              {tool.name}
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-raised text-teal">
+                <tool.icon className="h-[18px] w-[18px]" />
+              </div>
+              <div className="flex min-w-0 flex-col">
+                <span className="text-[15px] font-medium text-fg">{tool.name}</span>
+                <span className="text-xs text-tertiary">{tool.desc}</span>
+              </div>
             </Link>
           ))}
+          <Link
+            href="/tools"
+            className="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium text-teal -mx-3 transition-colors hover:bg-raised"
+            onClick={() => onOpenChange(false)}
+          >
+            Browse all tools
+            <span>→</span>
+          </Link>
         </div>
 
         <div className="h-px bg-border" />

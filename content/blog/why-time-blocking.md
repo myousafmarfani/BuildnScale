@@ -2,6 +2,7 @@
 title: "Why time-blocking beats to-do lists for senior developers"
 category: "Productivity"
 date: "2026-05-16"
+author: muhammad-yousaf
 readTime: 12
 excerpt: "Most developer to-do lists are graveyards of half-finished ideas. Here's how we implemented the 30-minute block method to reclaim 12 hours of deep work per week."
 ---

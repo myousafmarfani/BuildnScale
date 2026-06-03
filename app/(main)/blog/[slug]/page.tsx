@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         url: `https://buildnscale.dev/blog/${slug}`,
         type: 'article',
         publishedTime: post.date,
-        authors: ['Marc Jenkins'],
+        authors: ['Muhammad Yousaf'],
         tags: [post.category],
         images: ['/opengraph-image'],
       },
@@ -46,7 +46,7 @@ function blogPostJsonLd(post: { title: string; excerpt: string; date: string; sl
     description: post.excerpt,
     datePublished: post.date,
     dateModified: post.date,
-    author: { "@type": "Person", name: "Marc Jenkins" },
+    author: { "@type": "Person", name: "Muhammad Yousaf" },
     publisher: {
       "@type": "Organization",
       name: "buildnscale.dev",

@@ -2,6 +2,7 @@
 title: "How to set your freelance rate in 2026"
 category: "Freelancing"
 date: "2026-05-10"
+author: muhammad-yousaf
 readTime: 10
 excerpt: "A deep dive into the math of billable hours, expenses, and profit margins for developer freelancing in 2026."
 ---

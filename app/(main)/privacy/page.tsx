@@ -1,15 +1,37 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { breadcrumbJsonLd } from "@/lib/json-ld"
 
 export const metadata: Metadata = {
   title: "Privacy Policy — buildnscale.dev",
   description: "How buildnscale.dev collects, uses, and protects your personal data. We never sell your data.",
-  robots: { index: false, follow: true },
+  openGraph: {
+    title: "Privacy Policy — buildnscale.dev",
+    description: "How buildnscale.dev collects, uses, and protects your personal data. We never sell your data.",
+    url: "https://buildnscale.dev/privacy",
+    type: "website",
+    images: ["/opengraph-image"],
+  },
+  twitter: {
+    title: "Privacy Policy — buildnscale.dev",
+    description: "How buildnscale.dev collects, uses, and protects your personal data. We never sell your data.",
+    images: ["/twitter-image"],
+  },
+  robots: { index: false, follow: false },
 }
 
 export default function PrivacyPage() {
   return (
     <main className="mx-auto max-w-3xl px-5 py-16 sm:py-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: "Home", url: "https://buildnscale.dev" },
+            { name: "Privacy Policy", url: "https://buildnscale.dev/privacy" },
+          ]))
+        }}
+      />
       <Link
         href="/"
         className="font-display mx-auto mb-12 block w-fit text-base font-semibold text-fg no-underline"
@@ -77,7 +99,7 @@ export default function PrivacyPage() {
           <h2 className="font-display text-lg font-semibold text-fg mb-3">6. Your Rights</h2>
           <p>
             You can request a copy of your data or ask us to delete your account and all associated
-            data by emailing <span className="text-teal">privacy@buildnscale.dev</span>. We will
+            data by emailing <span className="text-teal">hello@buildnscale.dev</span>. We will
             respond within 30 days.
           </p>
         </section>
@@ -93,7 +115,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="font-display text-lg font-semibold text-fg mb-3">8. Contact</h2>
           <p>
-            Questions? Email <span className="text-teal">privacy@buildnscale.dev</span> or open an
+            Questions? Email <span className="text-teal">hello@buildnscale.dev</span> or open an
             issue on our GitHub repository.
           </p>
         </section>

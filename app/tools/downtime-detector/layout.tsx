@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
+  robots: { index: true, follow: true },
   title: 'Downtime Detector — Free uptime monitoring tool | buildnscale.dev',
   description:
     'Free website downtime detector and uptime monitoring tool. Check if any site is up right now. Monitor your domains with real-time uptime graphs, SSL checks, and multi-region pings. No signup for basic checks.',

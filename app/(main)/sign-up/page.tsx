@@ -111,7 +111,7 @@ export default function SignUpPage() {
               <input
                 type="text"
                 name="name"
-                placeholder="Marc Jenkins"
+                placeholder="Muhammad Yousaf"
                 className="w-full h-11 bg-raised border border-border rounded-md px-4 text-sm text-fg outline-none focus:border-teal transition-colors"
               />
             </div>

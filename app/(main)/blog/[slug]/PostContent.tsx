@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { IconArrowLeft, IconTools } from '@tabler/icons-react'
 import type { Post } from '@/lib/posts'
@@ -137,13 +138,22 @@ export default function PostContent({ post: currentPost, relatedPosts = [] }: { 
                 </div>
               )}
 
-              <div className="border-t border-border pt-10 mt-16 flex gap-5 items-center">
-                <div className="w-14 h-14 rounded-full bg-raised border border-border shrink-0" />
+              <Link
+                href={`/authors/${currentPost.authorSlug}`}
+                className="border-t border-border pt-10 mt-16 flex gap-5 items-center no-underline group"
+              >
+                <Image
+                  src="/author.avif"
+                  alt="Muhammad Yousaf"
+                  width={56}
+                  height={56}
+                  className="rounded-full shrink-0 object-cover"
+                />
                 <div>
-                  <span className="block text-base font-medium text-fg">Marc Jenkins</span>
-                  <span className="block text-sm text-tertiary">Founder at buildnscale.dev · ex-Linear engineer</span>
+                  <span className="block text-base font-medium text-fg group-hover:text-teal transition-colors">Muhammad Yousaf</span>
+                  <span className="block text-sm text-tertiary">Founder at BuildnScale · Full-Stack and AI Engineer</span>
                 </div>
-              </div>
+              </Link>
             </div>
 
             <aside className="w-full md:w-[280px] shrink-0 md:sticky md:top-[80px] md:self-start md:pt-[48px] pb-10 md:pb-20">

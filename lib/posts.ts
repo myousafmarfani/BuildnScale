@@ -12,6 +12,7 @@ export type Post = {
   excerpt: string
   contentHtml: string
   headings: { id: string; text: string }[]
+  authorSlug: string
 }
 
 const postsDirectory = path.join(process.cwd(), 'content', 'blog')
@@ -68,5 +69,6 @@ export function getPostBySlug(slug: string): Post {
     excerpt: data.excerpt || '',
     contentHtml,
     headings,
+    authorSlug: data.author || 'muhammad-yousaf',
   }
 }

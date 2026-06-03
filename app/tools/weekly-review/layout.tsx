@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
+  robots: { index: true, follow: true },
   title: 'Weekly Review Dashboard — Free reflection tool for developers | buildnscale.dev',
   description:
     'Free weekly review dashboard for developers. Aggregate focus time, task completions, and habit scores. Export CSV. Reflect on output every week.',

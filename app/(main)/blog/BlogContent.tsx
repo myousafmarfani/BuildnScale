@@ -68,17 +68,17 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
         </div>
       </header>
 
-      <div className="sticky top-0 z-10 border-b border-border bg-bg h-12 flex items-center">
-        <div className="container-site">
-          <div className="flex gap-3 scrollbar-x">
+      <div className="sticky top-[52px] z-20 border-b border-border bg-bg">
+        <div className="mx-auto flex max-w-[1000px] items-center px-5 py-2.5">
+          <div className="flex gap-2 scrollbar-x">
             {categories.map(cat => (
               <button
                 key={cat}
                 onClick={() => { setActiveFilter(cat); setPage(1) }}
-                className={`text-xs px-3 py-1 rounded-pill border transition-all duration-150 ${
+                className={`rounded-full px-3 py-1.5 text-xs transition-all ${
                   activeFilter === cat
-                    ? 'bg-teal text-bg border-teal font-medium'
-                    : 'border-border text-muted hover:text-fg hover:border-muted'
+                    ? 'bg-teal font-medium text-bg'
+                    : 'border border-border bg-raised text-muted hover:text-fg'
                 }`}
               >
                 {cat}
@@ -181,7 +181,7 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
             Get the build log in your inbox
           </h2>
           <p className="mt-3 text-sm text-muted max-w-md mx-auto">
-            One email per month. Only technical lessons and new tool releases.
+            One email per week. Only technical lessons and new tool releases.
           </p>
           <div className="mt-6 flex max-w-sm mx-auto gap-2">
             <input
@@ -190,7 +190,7 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
               className="flex-1 bg-bg border border-border rounded-md px-4 py-2.5 text-sm text-fg outline-none focus:border-teal transition-colors"
             />
             <button className="bg-teal text-bg text-sm font-semibold px-5 rounded-md hover:bg-teal-hover transition-colors whitespace-nowrap">
-              Join 2.8k devs →
+              Subscribe →
             </button>
           </div>
         </section>

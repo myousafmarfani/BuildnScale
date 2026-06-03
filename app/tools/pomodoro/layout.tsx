@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
+  robots: { index: true, follow: true },
   title: 'Pomodoro Timer + Task Log — Free focus tool for developers | buildnscale.dev',
   description:
     'Free Pomodoro timer for developers with automatic breaks and session logging. 25-minute focus sessions. Track output, not activity. Export CSV.',

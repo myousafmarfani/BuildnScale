@@ -4,15 +4,18 @@ import Link from "next/link"
 export const metadata: Metadata = {
   title: "Changelog — buildnscale.dev",
   description: "Release notes and updates for buildnscale.dev. Track every version from pre-release to launch.",
+  robots: { index: true, follow: true },
   openGraph: {
     title: "Changelog — buildnscale.dev",
     description: "Release notes and updates for buildnscale.dev.",
     url: "https://buildnscale.dev/changelog",
+    type: "website",
     images: ["/opengraph-image"],
   },
   twitter: {
     title: "Changelog — buildnscale.dev",
     description: "Release notes and updates for buildnscale.dev.",
+    images: ["/twitter-image"],
   },
 }
 

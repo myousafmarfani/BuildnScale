@@ -1,27 +1,40 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { breadcrumbJsonLd } from "@/lib/json-ld"
 
 export const metadata: Metadata = {
   title: "Free for everyone — buildnscale.dev",
   description:
     "All tools, all features, no upgrade needed. Daily planner, Pomodoro timer, habit tracker, and more. No credit card, no limits.",
+  robots: { index: true, follow: true },
   openGraph: {
     title: "Free for everyone — buildnscale.dev",
     description:
       "Every tool, every feature — free forever. No credit card needed.",
     url: "https://buildnscale.dev/pricing",
+    type: "website",
     images: ["/opengraph-image"],
   },
   twitter: {
     title: "Free for everyone — buildnscale.dev",
     description:
       "Every tool, every feature — free forever. No credit card needed.",
+    images: ["/twitter-image"],
   },
 }
 
 export default function PricingPage() {
   return (
     <section className="px-5 section-pad text-center">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: "Home", url: "https://buildnscale.dev" },
+            { name: "Pricing", url: "https://buildnscale.dev/pricing" },
+          ]))
+        }}
+      />
       <div className="mx-auto max-w-[600px]">
         <span className="mb-3 block font-display text-[11px] uppercase tracking-[0.12em] text-teal">
           PRICING

@@ -4,11 +4,13 @@ export const metadata: Metadata = {
   title: 'Free productivity tools for developers',
   description:
     'Browse 7 free productivity tools built for developers who ship. Daily planner, Pomodoro timer, habit tracker, markdown notes, rate calculator, weekly review, and downtime detector. No signup required.',
+  robots: { index: true, follow: true },
   openGraph: {
     title: 'Free productivity tools for developers | buildnscale.dev',
     description:
       'Browse 7 free productivity tools built for developers. No signup, no bloat, just open and use.',
     url: 'https://buildnscale.dev/tools',
+    type: 'website',
     images: ['/opengraph-image'],
   },
   twitter: {

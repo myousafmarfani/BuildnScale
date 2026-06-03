@@ -28,7 +28,7 @@ export function organizationJsonLd() {
       "Free productivity tools for developers. Daily planner, Pomodoro timer, habit tracker, and more.",
     founder: {
       "@type": "Person",
-      name: "Marc Jenkins",
+      name: "Muhammad Yousaf",
     },
   }
 }
@@ -62,7 +62,7 @@ export function blogPostingJsonLd(post: {
     dateModified: post.date,
     author: {
       "@type": "Person",
-      name: "Marc Jenkins",
+      name: "Muhammad Yousaf",
       url: "https://buildnscale.dev",
     },
     publisher: {

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
+  robots: { index: true, follow: true },
   title: 'Freelancer Rate Calculator — Free pricing tool for developers | buildnscale.dev',
   description:
     'Calculate your ideal hourly freelance rate based on income goals, expenses, and billable weeks. Generate client-ready PDF invoices. Free, no signup.',

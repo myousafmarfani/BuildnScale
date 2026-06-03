@@ -1,15 +1,37 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { breadcrumbJsonLd } from "@/lib/json-ld"
 
 export const metadata: Metadata = {
   title: "Terms of Service — buildnscale.dev",
   description: "Terms and conditions for using buildnscale.dev products and services.",
-  robots: { index: false, follow: true },
+  robots: { index: false, follow: false },
+  openGraph: {
+    title: "Terms of Service — buildnscale.dev",
+    description: "Terms and conditions for using buildnscale.dev products and services.",
+    url: "https://buildnscale.dev/terms",
+    type: "website",
+    images: ["/opengraph-image"],
+  },
+  twitter: {
+    title: "Terms of Service — buildnscale.dev",
+    description: "Terms and conditions for using buildnscale.dev products and services.",
+    images: ["/twitter-image"],
+  },
 }
 
 export default function TermsPage() {
   return (
     <main className="mx-auto max-w-3xl px-5 py-16 sm:py-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: "Home", url: "https://buildnscale.dev" },
+            { name: "Terms of Service", url: "https://buildnscale.dev/terms" },
+          ]))
+        }}
+      />
       <Link
         href="/"
         className="font-display mx-auto mb-12 block w-fit text-base font-semibold text-fg no-underline"
@@ -24,80 +46,69 @@ export default function TermsPage() {
         <section>
           <h2 className="font-display text-lg font-semibold text-fg mb-3">1. Acceptance</h2>
           <p>
-            By creating an account or using any tool on buildnscale.dev, you agree to these Terms.
-            If you do not agree, do not use the service.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="font-display text-lg font-semibold text-fg mb-3">2. Description of Service</h2>
-          <p>
-            buildnscale.dev provides web-based productivity tools including a daily planner, Pomodoro
-            timer, habit tracker, markdown notes, freelance rate calculator, and weekly review. Tools
-            are available at no cost.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="font-display text-lg font-semibold text-fg mb-3">3. Accounts</h2>
-          <p>
-            You are responsible for safeguarding your password and for all activity under your
-            account. You must be at least 13 years old to use the service. You may not use the
-            service for any illegal or unauthorized purpose.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="font-display text-lg font-semibold text-fg mb-3">4. Acceptable Use</h2>
-          <ul className="list-disc pl-5 space-y-1.5">
-            <li>Do not attempt to bypass authentication or access another user&apos;s data</li>
-            <li>Do not submit content that is unlawful, harmful, or infringes on others&apos; rights</li>
-            <li>Do not use automated scripts to scrape or overload the service</li>
-            <li>Do not reverse-engineer, decompile, or attempt to extract the source code</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="font-display text-lg font-semibold text-fg mb-3">5. Data Ownership</h2>
-          <p>
-            You retain full ownership of the data you enter into the tools. We claim no intellectual
-            property rights over your content. We may use aggregated, anonymized data to improve the
+            By using buildnscale.dev, you agree to these terms. If you do not agree, do not use the
             service.
           </p>
         </section>
 
         <section>
-          <h2 className="font-display text-lg font-semibold text-fg mb-3">6. Service Availability</h2>
+          <h2 className="font-display text-lg font-semibold text-fg mb-3">2. Service Description</h2>
           <p>
-            We strive for 99.9% uptime but make no guarantees. The service is provided &ldquo;as
-            is&rdquo; without warranty of any kind. We may temporarily suspend access for maintenance
-            or security reasons.
+            buildnscale.dev provides a set of web-based productivity tools including a Daily Focus
+            Planner, Pomodoro Timer, Habit Tracker, Markdown Notes, Freelancer Rate Calculator,
+            Weekly Review Dashboard, and Downtime Detector. Tools are provided free of charge and
+            may change or be removed at any time.
           </p>
         </section>
 
         <section>
-          <h2 className="font-display text-lg font-semibold text-fg mb-3">7. Limitation of Liability</h2>
+          <h2 className="font-display text-lg font-semibold text-fg mb-3">3. User Accounts</h2>
           <p>
-            buildnscale.dev and its operators shall not be liable for any indirect, incidental, or
-            consequential damages arising from your use of the service. Your sole remedy is to stop
-            using the service.
+            You are responsible for maintaining the confidentiality of your account credentials and
+            for all activity under your account. You must notify us immediately of any unauthorized
+            use.
           </p>
         </section>
 
         <section>
-          <h2 className="font-display text-lg font-semibold text-fg mb-3">8. Termination</h2>
+          <h2 className="font-display text-lg font-semibold text-fg mb-3">4. Acceptable Use</h2>
+          <p>You agree not to:</p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li>Use the service for any unlawful purpose</li>
+            <li>Attempt to gain unauthorized access to any part of the service</li>
+            <li>Use the service to distribute malware or harmful content</li>
+            <li>Submit excessive automated requests that degrade service for others</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="font-display text-lg font-semibold text-fg mb-3">5. Data & Privacy</h2>
           <p>
-            We reserve the right to suspend or terminate accounts that violate these Terms. You may
-            delete your account at any time by contacting us. Upon termination, your data will be
-            deleted within 30 days.
+            Your use of the service is also governed by our Privacy Policy, which explains how we
+            collect, store, and process your personal data.
           </p>
         </section>
 
         <section>
-          <h2 className="font-display text-lg font-semibold text-fg mb-3">9. Changes</h2>
+          <h2 className="font-display text-lg font-semibold text-fg mb-3">6. Limitation of Liability</h2>
           <p>
-            We may update these Terms. Material changes will be notified via email. Continued use
-            after changes take effect constitutes acceptance.
+            buildnscale.dev is provided &ldquo;as is&rdquo; without any warranty, express or implied.
+            We are not liable for any damages arising from your use of the service.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="font-display text-lg font-semibold text-fg mb-3">7. Changes</h2>
+          <p>
+            We reserve the right to update these terms at any time. Continued use after changes
+            constitutes acceptance of the new terms.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="font-display text-lg font-semibold text-fg mb-3">8. Contact</h2>
+          <p>
+            Questions? Email <span className="text-teal">hello@buildnscale.dev</span>.
           </p>
         </section>
       </div>

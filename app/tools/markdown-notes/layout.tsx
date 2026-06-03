@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
+  robots: { index: true, follow: true },
   title: 'Markdown Notes — Free distraction-free note-taking for developers | buildnscale.dev',
   description:
     'Free distraction-free markdown editor with live preview. Syntax highlighting, auto-save, and fast capture for developer notes and build logs. No signup.',

@@ -135,8 +135,6 @@ export default function ToolsPage() {
             <span>7 tools</span>
             <span className="text-border">•</span>
             <span>Free forever</span>
-            <span className="text-border">•</span>
-            <span>2,841 active users</span>
           </div>
         </div>
       </section>
@@ -164,47 +162,56 @@ export default function ToolsPage() {
       </div>
 
       {/* Tool Grid */}
-      <section className="mx-auto max-w-[1000px] px-5 section-pad">
-        <div className="grid gap-5 md:grid-cols-2">
-          {filteredTools.map((tool) => (
-            <Link
-              key={tool.id}
-              href={tool.href}
-              className="group flex gap-4 rounded-lg border border-border bg-surface p-6 transition-all duration-180 hover:-translate-y-[3px] hover:border-neutral-700 hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)]"
-            >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] bg-raised text-teal">
-                <tool.icon className="h-[22px] w-[22px]" />
-              </div>
-              <div className="flex flex-1 flex-col">
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-[17px] font-medium text-fg">
-                    {tool.name}
-                  </span>
-                  <span className="rounded-full bg-teal-subtle px-2 py-0.5 text-[10px] text-teal">
-                    {tool.badge}
-                  </span>
+      <section className="mx-auto max-w-[1060px] px-5 section-pad">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          {filteredTools.map((tool, i) => {
+            const pairIndex = Math.floor(i / 2)
+            const isRect = pairIndex % 2 === 0 ? i % 2 === 0 : i % 2 !== 0
+            return (
+              <Link
+                key={tool.id}
+                href={tool.href}
+                className={`group relative rounded-xl border border-border bg-surface transition-all duration-200 hover:border-teal/50 hover:outline hover:outline-1 hover:outline-teal/20 ${
+                  isRect ? "md:col-span-2" : "md:col-span-1"
+                } flex-col p-6 sm:p-8`}
+              >
+                <div className={`mb-5 flex ${isRect ? "h-14 w-14" : "h-12 w-12"} shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-teal/20 to-teal/5 text-teal ring-1 ring-teal/10`}>
+                  <tool.icon className={`${isRect ? "h-6 w-6" : "h-5 w-5"}`} />
                 </div>
-                <p className="mb-3 text-sm leading-[1.55] text-muted">
-                  {tool.description}
-                </p>
-                <div className="mb-4 flex flex-wrap gap-2">
-                  {tool.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-sm border border-border bg-raised px-[7px] py-[2px] text-[11px] text-tertiary"
-                    >
-                      {tag}
+                <div className="flex min-w-0 flex-1 flex-col gap-3">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <span className="text-lg font-semibold text-fg">
+                        {tool.name}
+                      </span>
+                      <span className="ml-3 inline-block rounded-full bg-teal/10 px-2.5 py-0.5 text-[11px] font-medium text-teal">
+                        {tool.badge}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-sm leading-relaxed text-muted">
+                    {tool.description}
+                  </p>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex flex-wrap gap-2">
+                      {tool.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-md border border-border bg-raised px-2.5 py-1 text-[11px] font-medium text-tertiary"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <span className="inline-flex items-center gap-1 text-sm font-medium text-teal opacity-0 transition-all duration-200 group-hover:opacity-100">
+                      Try free
+                      <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
                     </span>
-                  ))}
+                  </div>
                 </div>
-                <div className="mt-auto flex items-center justify-between">
-                  <span className="text-sm font-medium text-teal group-hover:underline">
-                    Try free →
-                  </span>
-                </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            )
+          })}
         </div>
 
         {filteredTools.length === 0 && (

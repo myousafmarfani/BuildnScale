@@ -37,7 +37,7 @@ const organizationJsonLd = {
     "Free productivity tools for developers. Daily planner, Pomodoro timer, habit tracker, and more.",
   founder: {
     "@type": "Person",
-    name: "Marc Jenkins",
+    name: "Muhammad Yousaf",
   },
 }
 
@@ -150,13 +150,6 @@ const steps = [
     title: "Come back tomorrow",
     desc: "The planner resets each day. Unfinished tasks surface at the top.",
   },
-]
-
-const stats = [
-  { num: "2,841", label: "developers using daily" },
-  { num: "94%", label: "return after day 3" },
-  { num: "4.8/5", label: "avg rating on ProductHunt" },
-  { num: "0", label: "required fields to start" },
 ]
 
 const posts = [
@@ -329,26 +322,36 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid gap-4 pb-20 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            {tools.map((tool) => (
-              <Link
-                key={tool.name}
-                href={tool.href}
-                className="block rounded-lg border border-border bg-surface p-5 transition-all duration-180 hover:-translate-y-0.5 hover:border-border-strong"
-                style={tool.featured ? { borderColor: "var(--color-teal)" } : undefined}
-              >
-                <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-[8px] bg-raised text-teal">
-                  <tool.icon className="h-[18px] w-[18px]" />
-                </div>
-                <span className="mb-1.5 block text-[15px] font-medium text-fg">
-                  {tool.name}
-                </span>
-                <span className="mb-4 block text-sm leading-relaxed text-tertiary">
-                  {tool.desc}
-                </span>
-                <span className="text-sm text-teal">Try free →</span>
-              </Link>
-            ))}
+          <div className="grid gap-5 pb-20 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            {tools.map((tool, i) => {
+              const pairIndex = Math.floor(i / 2)
+              const isRect = pairIndex % 2 === 0 ? i % 2 === 0 : i % 2 !== 0
+              return (
+                <Link
+                  key={tool.name}
+                  href={tool.href}
+                  className={`group relative rounded-xl border bg-surface transition-all duration-200 hover:border-teal/50 hover:outline hover:outline-1 hover:outline-teal/20 ${
+                    isRect ? "lg:col-span-2" : "lg:col-span-1"
+                  } col-span-1 flex-col border-border p-6 sm:p-8`}
+                >
+                  <div className={`mb-5 flex ${isRect ? "h-14 w-14" : "h-12 w-12"} items-center justify-center rounded-xl bg-gradient-to-br from-teal/20 to-teal/5 text-teal ring-1 ring-teal/10`}>
+                    <tool.icon className={`${isRect ? "h-6 w-6" : "h-5 w-5"}`} />
+                  </div>
+                  <div className="flex min-w-0 flex-1 flex-col gap-3">
+                    <span className="text-lg font-semibold text-fg">
+                      {tool.name}
+                    </span>
+                    <p className="text-sm leading-relaxed text-muted">
+                      {tool.desc}
+                    </p>
+                    <span className="mt-auto inline-flex items-center gap-1 text-sm font-medium text-teal opacity-0 transition-all duration-200 group-hover:opacity-100">
+                      Try free
+                      <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                    </span>
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -375,21 +378,6 @@ export default function Home() {
                 <p className="relative text-sm leading-relaxed text-muted">
                   {step.desc}
                 </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-border bg-surface py-12">
-        <div className="container-site">
-          <div className="grid grid-cols-2 text-center md:grid-cols-4">
-            {stats.map((stat) => (
-              <div key={stat.num}>
-                <span className="block font-display text-[32px] text-teal">
-                  {stat.num}
-                </span>
-                <span className="text-sm text-tertiary">{stat.label}</span>
               </div>
             ))}
           </div>
@@ -436,6 +424,37 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="border-t border-border bg-surface">
+        <div className="container-site section-pad text-center">
+          <span className="mb-3 block font-display text-[11px] uppercase tracking-[0.12em] text-teal">
+            SHIP FASTER
+          </span>
+          <h2 className="mb-4 font-display text-3xl font-bold tracking-tight text-fg sm:text-4xl">
+            Open-source. Free forever.{" "}
+            <span className="text-teal">Your data stays yours.</span>
+          </h2>
+          <p className="mx-auto mb-8 max-w-lg text-base text-muted">
+            No signup walls, no data mining, no hidden tiers. Just productivity tools that respect your time and privacy.
+          </p>
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <Link
+              href="/tools"
+              className="inline-flex h-11 items-center gap-2 rounded-md bg-teal px-8 text-sm font-medium text-bg transition-all hover:brightness-110"
+            >
+              Browse all tools →
+            </Link>
+            <Link
+              href="https://github.com/myousafmarfani/BuildnScale"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-11 items-center gap-2 rounded-md border border-border px-8 text-sm font-medium text-muted transition-all hover:border-neutral-700 hover:text-fg"
+            >
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              Star on GitHub
+            </Link>
+          </div>
+        </div>
+      </section>
 
     </>
   )

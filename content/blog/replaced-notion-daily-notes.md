@@ -2,6 +2,7 @@
 title: "I replaced Notion with local-first Markdown notes"
 category: "Tools"
 date: "2026-05-14"
+author: muhammad-yousaf
 readTime: 8
 excerpt: "After three years of daily Notion use, I switched to local Markdown files synced via Git. Here's what I gained and what I lost."
 ---

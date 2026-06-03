@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     "no signup tools",
     "local first apps",
   ],
-  authors: [{ name: "Marc Jenkins", url: "https://buildnscale.dev" }],
+  authors: [{ name: "Muhammad Yousaf", url: "https://buildnscale.dev" }],
   creator: "buildnscale.dev",
   publisher: "buildnscale.dev",
   robots: {

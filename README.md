@@ -99,7 +99,7 @@ Every tool works **without signing up** — data lives in your browser. Create a
   </table>
 </div>
 
-> **40+ badges across all tools** · **94% return rate after day 3** · **Used by 2,841 developers daily**
+> **40+ badges across all tools** · **Free forever** · **Open source, privacy-first**
 
 <br/>
 

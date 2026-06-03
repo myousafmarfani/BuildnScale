@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
+  robots: { index: true, follow: true },
   title: 'Habit Streak Tracker — Free consistency tool for developers | buildnscale.dev',
   description:
     'Free habit tracker with contribution-style heatmap. Build streaks that stick. Unlimited habits, daily check-ins, streak alerts. No signup required.',

@@ -4,15 +4,18 @@ import Link from "next/link"
 export const metadata: Metadata = {
   title: "Roadmap — buildnscale.dev",
   description: "What we're building next at buildnscale.dev. See upcoming features, mobile apps, API, and more.",
+  robots: { index: true, follow: true },
   openGraph: {
     title: "Roadmap — buildnscale.dev",
     description: "What we're building next at buildnscale.dev.",
     url: "https://buildnscale.dev/roadmap",
+    type: "website",
     images: ["/opengraph-image"],
   },
   twitter: {
     title: "Roadmap — buildnscale.dev",
     description: "What we're building next at buildnscale.dev.",
+    images: ["/twitter-image"],
   },
 }
 

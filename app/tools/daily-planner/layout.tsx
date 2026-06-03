@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
+  robots: { index: true, follow: true },
   title: 'Daily Focus Planner — Free time-blocking tool for developers | buildnscale.dev',
   description:
     'Free daily focus planner for developers. Drag tasks into 30-min time blocks on a vertical day grid. No signup required. Local-first with optional cloud sync.',

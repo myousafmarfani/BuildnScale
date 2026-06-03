@@ -28,6 +28,9 @@ export function Footer() {
               Tools
             </span>
             <div className="flex flex-col gap-2.5">
+              <Link href="/tools/downtime-detector" className="text-sm text-muted transition-colors duration-150 hover:text-fg">
+                Downtime Detector
+              </Link>
               <Link href="/tools/daily-planner" className="text-sm text-muted transition-colors duration-150 hover:text-fg">
                 Daily Planner
               </Link>
@@ -62,6 +65,9 @@ export function Footer() {
               </Link>
               <Link href="/changelog" className="text-sm text-muted transition-colors duration-150 hover:text-fg">
                 Changelog
+              </Link>
+              <Link href="/write-for-us" className="text-sm text-muted transition-colors duration-150 hover:text-fg">
+                Write for Us
               </Link>
             </div>
           </div>

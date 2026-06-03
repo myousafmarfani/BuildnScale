@@ -77,31 +77,35 @@ export function Nav() {
               </button>
 
               {dropdownOpen && (
-                <div className="absolute right-0 top-[44px] w-[280px] rounded-lg border border-border-strong bg-overlay p-2 shadow-[0_8px_24px_rgba(0,0,0,0.5)]">
-                  {tools.map((tool) => (
+                <div className="absolute left-0 top-[44px] w-[640px] rounded-xl border border-border-strong bg-bg p-5">
+                  <div className="grid grid-cols-2 gap-2">
+                    {tools.map((tool) => (
+                      <Link
+                        key={tool.href}
+                        href={tool.href}
+                        className="flex items-start gap-4 rounded-lg p-3.5 transition-colors hover:bg-raised group"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-raised text-teal group-hover:bg-teal/10 transition-colors">
+                          <tool.icon className="h-5 w-5" />
+                        </div>
+                        <div className="flex min-w-0 flex-col">
+                          <span className="text-sm font-medium text-fg group-hover:text-teal transition-colors">{tool.name}</span>
+                          <span className="mt-0.5 text-xs text-tertiary leading-relaxed">{tool.desc}</span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="mt-3 border-t border-border pt-3">
                     <Link
-                      key={tool.href}
-                      href={tool.href}
-                      className="flex items-start gap-3 rounded-md p-2.5 transition-colors hover:bg-raised"
+                      href="/tools"
+                      className="flex items-center justify-between rounded-lg px-3.5 py-2.5 text-sm font-medium text-teal transition-colors hover:bg-raised"
                       onClick={() => setDropdownOpen(false)}
                     >
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-raised text-teal">
-                        <tool.icon className="h-[18px] w-[18px]" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium text-fg">{tool.name}</span>
-                        <span className="text-xs text-tertiary">{tool.desc}</span>
-                      </div>
+                      Browse all tools
+                      <span className="text-base leading-none">→</span>
                     </Link>
-                  ))}
-                  <Link
-                    href="/tools"
-                    className="mt-1 flex items-center justify-between rounded-md px-2.5 py-2 text-sm text-teal transition-colors hover:bg-raised"
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    View all tools
-                    <span>→</span>
-                  </Link>
+                  </div>
                 </div>
               )}
             </div>
