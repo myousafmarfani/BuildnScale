@@ -49,9 +49,16 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  manifest: "/manifest.json",
   icons: {
-    icon: "/favicon.ico",
-  },
+  icon: [
+    { url: "/favicon.ico", sizes: "any" },
+    { url: "/web-app-manifest-192x192.png", type: "image/png", sizes: "192x192" },
+  ],
+  apple: [
+    { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+  ],
+},
   openGraph: {
     type: "website",
     locale: "en_US",
