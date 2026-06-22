@@ -1,29 +1,60 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { IconCode } from '@tabler/icons-react'
+import { BlogFilterBar } from '@/components/blog/BlogFilterBar'
 import type { Post } from '@/lib/posts'
 
-const categories = ['All', 'Productivity', 'Tools', 'Freelancing', 'Indie Dev']
+const heroImageMap: Record<string, { src: string; alt: string }> = {
+  'why-time-blocking': {
+    src: '/images/time-blocking-for-developers.png',
+    alt: 'Time blocking for developers shown as 30-minute focus blocks on a daily calendar grid',
+  },
+  'focus-planning-tool': {
+    src: '/images/focus-planning-tool.png',
+    alt: 'Focus planning tool showing a single time-blocked daily priority on a vertical day grid',
+  },
+}
 
 function formatDate(dateStr: string) {
   const d = new Date(dateStr)
   return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
 }
 
-function ThumbnailPlaceholder({ category, featured }: { category: string; featured?: boolean }) {
+function ThumbnailImage({ slug, featured }: { slug: string; featured?: boolean }) {
+  const entry = heroImageMap[slug]
+  if (!entry) return null
+  return (
+    <Image
+      src={entry.src}
+      alt={entry.alt}
+      fill
+      sizes={featured ? '(max-width: 768px) 100vw, 60vw' : '(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw'}
+      className="object-cover"
+      priority={featured}
+    />
+  )
+}
+
+function ThumbnailPlaceholder({ slug, category, featured }: { slug: string; category: string; featured?: boolean }) {
+  const hero = heroImageMap[slug]
   return (
     <div
       className="relative w-full overflow-hidden rounded-lg border border-border"
       style={{ aspectRatio: featured ? '16 / 10' : '16 / 9' }}
     >
-      <div
-        className="absolute inset-0 flex items-center justify-center"
-        style={{ background: 'linear-gradient(45deg, var(--color-info-subtle), var(--color-surface))' }}
-      >
-        <IconCode className="h-16 w-16 text-teal opacity-50" />
-      </div>
+      {hero ? (
+        <ThumbnailImage slug={slug} featured={featured} />
+      ) : (
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          style={{ background: 'linear-gradient(45deg, var(--color-info-subtle), var(--color-surface))' }}
+        >
+          <IconCode className="h-16 w-16 text-teal opacity-50" />
+        </div>
+      )}
       {featured && (
         <span className="absolute bottom-3 left-3 z-10 text-2xs font-display bg-bg text-teal px-2 py-0.5 rounded-sm border border-border">
           FEATURED
@@ -68,25 +99,10 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
         </div>
       </header>
 
-      <div className="sticky top-[52px] z-20 border-b border-border bg-bg">
-        <div className="mx-auto flex max-w-[1000px] items-center px-5 py-2.5">
-          <div className="flex gap-2 scrollbar-x">
-            {categories.map(cat => (
-              <button
-                key={cat}
-                onClick={() => { setActiveFilter(cat); setPage(1) }}
-                className={`rounded-full px-3 py-1.5 text-xs transition-all ${
-                  activeFilter === cat
-                    ? 'bg-teal font-medium text-bg'
-                    : 'border border-border bg-raised text-muted hover:text-fg'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+      <BlogFilterBar
+        activeCategory={activeFilter}
+        onCategoryChange={(cat) => { setActiveFilter(cat); setPage(1) }}
+      />
 
       <main className="container-site pb-20">
         {featured && (
@@ -94,7 +110,7 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
             href={`/blog/${featured.slug}`}
             className="mt-10 grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-6 md:gap-12 items-center bg-surface border border-border rounded-lg p-6 md:p-10 no-underline group"
           >
-            <ThumbnailPlaceholder category={featured.category} featured />
+            <ThumbnailPlaceholder slug={featured.slug} category={featured.category} featured />
             <div>
               <span className="font-display text-2xs text-teal tracking-widest uppercase">
                 {featured.category}
@@ -106,7 +122,7 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
                 {featured.excerpt}
               </p>
               <div className="flex gap-5 text-xs font-display text-tertiary">
-                <span>{formatDate(featured.date)}</span>
+                <time dateTime={featured.date}>{formatDate(featured.date)}</time>
                 <span>{featured.readTime} min read</span>
               </div>
             </div>
@@ -121,7 +137,7 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
                 href={`/blog/${post.slug}`}
                 className="flex flex-col no-underline group"
               >
-                <ThumbnailPlaceholder category={post.category} />
+                <ThumbnailPlaceholder slug={post.slug} category={post.category} />
                 <div className="mt-5 flex-1 flex flex-col">
                   <span className="text-2xs font-display text-teal">{post.title}</span>
                   <h3 className="text-lg font-medium text-fg mt-2 mb-2 leading-snug group-hover:text-teal transition-colors">
@@ -131,7 +147,7 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
                     {post.excerpt}
                   </p>
                   <div className="flex gap-5 text-xs font-display text-tertiary mt-auto">
-                    <span>{formatDate(post.date)}</span>
+                    <time dateTime={post.date}>{formatDate(post.date)}</time>
                     <span>{post.readTime} min read</span>
                   </div>
                 </div>
@@ -183,16 +199,18 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
           <p className="mt-3 text-sm text-muted max-w-md mx-auto">
             One email per week. Only technical lessons and new tool releases.
           </p>
-          <div className="mt-6 flex max-w-sm mx-auto gap-2">
+          <form onSubmit={(e) => e.preventDefault()} className="mt-6 flex max-w-sm mx-auto gap-2">
+            <label htmlFor="subscribe-email-listing" className="sr-only">Email address</label>
             <input
+              id="subscribe-email-listing"
               type="email"
               placeholder="dev@company.com"
               className="flex-1 bg-bg border border-border rounded-md px-4 py-2.5 text-sm text-fg outline-none focus:border-teal transition-colors"
             />
-            <button className="bg-teal text-bg text-sm font-semibold px-5 rounded-md hover:bg-teal-hover transition-colors whitespace-nowrap">
+            <button type="submit" className="bg-teal text-bg text-sm font-semibold px-5 rounded-md hover:bg-teal-hover transition-colors whitespace-nowrap">
               Subscribe →
             </button>
-          </div>
+          </form>
         </section>
       </main>
     </div>

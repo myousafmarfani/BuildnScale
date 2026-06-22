@@ -15,7 +15,7 @@ const toolMap: Record<string, { name: string; href: string; description: string 
   'why-time-blocking': {
     name: 'Daily Focus Planner',
     href: '/tools/daily-planner',
-    description: 'Open our Daily Focus Planner and drag your 3 biggest tasks into 60-minute blocks. Don\'t check email until the first block is green.',
+    description: 'Open the Daily Focus Planner and drag your one priority into a 30-minute time block. Set a hard start and end — treat it like a meeting with yourself.',
   },
   'replaced-notion-daily-notes': {
     name: 'Markdown Notes',
@@ -26,6 +26,11 @@ const toolMap: Record<string, { name: string; href: string; description: string 
     name: 'Freelancer Rate Calculator',
     href: '/tools/rate-calculator',
     description: 'Run the numbers on your hourly rate with expense tracking, profit margins, and invoice PDF generation.',
+  },
+  'focus-planning-tool': {
+    name: 'Daily Focus Planner',
+    href: '/tools/daily-planner',
+    description: 'Open the Daily Focus Planner, set your one priority in the top slot, and drag supporting tasks into 30-minute blocks below. Start with a 2-minute close-out at day\'s end.',
   },
 }
 
@@ -57,7 +62,19 @@ function TocItem({
 export default function PostContent({ post: currentPost, relatedPosts = [] }: { post: Post; relatedPosts?: Post[] }) {
   const [activeId, setActiveId] = useState('')
 
+  const [scrollProgress, setScrollProgress] = useState(0)
   const tool = toolMap[currentPost.slug]
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight
+      setScrollProgress(docHeight > 0 ? Math.min(scrollTop / docHeight, 1) : 0)
+    }
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   useEffect(() => {
     setActiveId('')
@@ -87,23 +104,40 @@ export default function PostContent({ post: currentPost, relatedPosts = [] }: { 
 
   return (
     <div>
-      <div className="border-b border-border">
-        <div className="container-site flex items-center h-[52px]">
+      <nav className="sticky top-[52px] z-20 border-b border-border bg-bg relative">
+        <div className="mx-auto flex max-w-[1000px] items-center px-5 py-2.5">
           <Link
             href="/blog"
-            className="flex items-center gap-1.5 text-sm text-tertiary hover:text-muted transition-colors"
+            className="flex items-center gap-1.5 text-sm text-tertiary hover:text-fg transition-colors"
           >
             <IconArrowLeft className="h-4 w-4" />
-            All posts
+            All Posts
           </Link>
         </div>
-      </div>
+        <div
+          className="absolute bottom-0 left-0 h-[2px] bg-teal"
+          role="progressbar"
+          aria-valuenow={Math.round(scrollProgress * 100)}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label="Reading progress"
+          style={{ width: `${scrollProgress * 100}%` }}
+        />
+      </nav>
 
+      <main>
       <article>
         <header className="border-b border-border">
           <div className="container-site py-12 md:py-[60px]">
+            <nav className="flex items-center gap-1.5 text-xs text-tertiary mb-5">
+              <Link href="/" className="hover:text-fg transition-colors">Home</Link>
+              <span>/</span>
+              <Link href="/blog" className="hover:text-fg transition-colors">Blog</Link>
+              <span>/</span>
+              <span className="text-muted">{currentPost.category}</span>
+            </nav>
             <span className="font-display text-2xs text-teal tracking-[0.12em] uppercase">
-              {currentPost.category} · {formatDate(currentPost.date)}
+              {currentPost.category} · <time dateTime={currentPost.date}>{formatDate(currentPost.date)}</time>
             </span>
             <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight text-fg mt-4 mb-6 leading-tight">
               {currentPost.title}
@@ -201,19 +235,24 @@ export default function PostContent({ post: currentPost, relatedPosts = [] }: { 
                 <p className="text-xs text-muted leading-relaxed mb-3">
                                    New tools, engineering lessons, and productivity tactics.
                 </p>
-                <input
-                  type="email"
-                  placeholder="dev@company.com"
-                  className="w-full bg-bg border border-border rounded-md px-3 py-2 text-xs text-fg outline-none mb-2 focus:border-teal transition-colors"
-                />
-                <button className="w-full bg-teal text-bg text-xs font-semibold py-2 rounded-md hover:bg-teal-hover transition-colors">
-                  Subscribe
-                </button>
+                <form onSubmit={(e) => e.preventDefault()}>
+                  <label htmlFor="subscribe-email-sidebar" className="sr-only">Email address</label>
+                  <input
+                    id="subscribe-email-sidebar"
+                    type="email"
+                    placeholder="dev@company.com"
+                    className="w-full bg-bg border border-border rounded-md px-3 py-2 text-xs text-fg outline-none mb-2 focus:border-teal transition-colors"
+                  />
+                  <button type="submit" className="w-full bg-teal text-bg text-xs font-semibold py-2 rounded-md hover:bg-teal-hover transition-colors">
+                    Subscribe
+                  </button>
+                </form>
               </div>
             </aside>
           </div>
         </div>
       </article>
+      </main>
 
       {relatedPosts.length > 0 && (
         <section className="border-t border-border">
@@ -236,7 +275,7 @@ export default function PostContent({ post: currentPost, relatedPosts = [] }: { 
                     {rp.excerpt.length > 100 ? rp.excerpt.slice(0, 100) + '…' : rp.excerpt}
                   </p>
                   <div className="flex gap-4 text-2xs font-display text-tertiary mt-4">
-                    <span>{formatDate(rp.date)}</span>
+                    <time dateTime={rp.date}>{formatDate(rp.date)}</time>
                     <span>{rp.readTime} min read</span>
                   </div>
                 </Link>

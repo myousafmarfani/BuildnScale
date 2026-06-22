@@ -13,6 +13,7 @@ export type Post = {
   contentHtml: string
   headings: { id: string; text: string }[]
   authorSlug: string
+  faq: { question: string; answer: string }[]
 }
 
 const postsDirectory = path.join(process.cwd(), 'content', 'blog')
@@ -28,6 +29,23 @@ export function getAllPosts(): Post[] {
 
 function slugify(text: string) {
   return text.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+}
+
+function extractFAQ(content: string): { question: string; answer: string }[] {
+  const faqMatch = content.match(/## FAQ\n([\s\S]*?)(?=\n## |$)/)
+  if (!faqMatch) return []
+
+  const faqContent = faqMatch[1]
+  const pairs: { question: string; answer: string }[] = []
+  const questionRegex = /^### (.+)$\n([\s\S]*?)(?=\n### |$)/gm
+  let match
+  while ((match = questionRegex.exec(faqContent)) !== null) {
+    pairs.push({
+      question: match[1].trim(),
+      answer: match[2].trim(),
+    })
+  }
+  return pairs
 }
 
 function extractHeadings(raw: string) {
@@ -57,6 +75,7 @@ export function getPostBySlug(slug: string): Post {
   const { data, content } = matter(fileContents)
 
   const headings = extractHeadings(content)
+  const faq = extractFAQ(content)
   const parsed = marked.parse(content, { gfm: true }) as string
   const contentHtml = addHeadingIds(parsed, headings)
 
@@ -70,5 +89,6 @@ export function getPostBySlug(slug: string): Post {
     contentHtml,
     headings,
     authorSlug: data.author || 'muhammad-yousaf',
+    faq,
   }
 }

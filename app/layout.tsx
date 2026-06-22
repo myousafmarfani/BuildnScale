@@ -1,18 +1,18 @@
 import type { Metadata, Viewport } from "next"
-import { DM_Sans, JetBrains_Mono } from "next/font/google"
+import localFont from "next/font/local"
 import { Providers } from "@/components/providers"
 import "./globals.css"
 
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+const dmSans = localFont({
+  src: "../public/fonts/DM_Sans.woff2",
+  weight: "300 600",
   variable: "--font-dm-sans",
   display: "swap",
 })
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+const jetbrainsMono = localFont({
+  src: "../public/fonts/JetBrains_Mono.woff2",
+  weight: "400 700",
   variable: "--font-jetbrains-mono",
   display: "swap",
 })

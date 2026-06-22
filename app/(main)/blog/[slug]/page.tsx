@@ -1,4 +1,5 @@
 import { getAllPosts, getPostBySlug } from '@/lib/posts'
+import { faqPageJsonLd } from '@/lib/json-ld'
 import PostContent from './PostContent'
 
 export function generateStaticParams() {
@@ -70,6 +71,27 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostJsonLd(post)) }}
+        />
+        {post.faq.length > 0 && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageJsonLd(post.faq)) }}
+          />
+        )}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Home", item: "https://www.buildnscale.dev" },
+                { "@type": "ListItem", position: 2, name: "Blog", item: "https://www.buildnscale.dev/blog" },
+                { "@type": "ListItem", position: 3, name: post.category, item: `https://www.buildnscale.dev/blog` },
+                { "@type": "ListItem", position: 4, name: post.title, item: `https://www.buildnscale.dev/blog/${post.slug}` },
+              ],
+            }),
+          }}
         />
         <PostContent post={post} relatedPosts={relatedPosts} />
       </>

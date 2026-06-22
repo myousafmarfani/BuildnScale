@@ -19,14 +19,19 @@
 # misc
 .DS_Store
 *.pem
+*.log
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.history/
 
-# local env files
-.env*
+# local env files (track .env.example, ignore the rest)
+.env
+.env.*
+!.env.example
 
 # vercel
 .vercel

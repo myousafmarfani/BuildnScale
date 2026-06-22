@@ -163,6 +163,14 @@
     margin-top: 0;
   }
 
+  .post-content h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 36px 0 12px;
+    color: var(--color-fg);
+    line-height: 1.5;
+  }
+
   .post-content p {
     margin-bottom: 28px;
     color: var(--color-muted);
@@ -215,6 +223,12 @@
   .post-content strong {
     font-weight: 600;
     color: var(--color-fg);
+  }
+
+  .post-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
   }
 
   .post-content a {
