@@ -95,6 +95,17 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-VN79377ERT" />
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-VN79377ERT');
+          `,
+        }}
+      />
       <body className={`${dmSans.variable} ${jetbrainsMono.variable} font-body`}>
         <Providers>{children}</Providers>
       </body>
