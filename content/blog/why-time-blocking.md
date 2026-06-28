@@ -11,7 +11,7 @@ Most developer to-do lists are graveyards of half-finished tickets. You start th
 
 **Time blocking for developers** works differently. Instead of listing everything you might do, you commit to one thing at a time inside a scheduled window. This guide covers why to-do lists specifically fail engineering work, how long a block should actually be, and how to build the routine — including where a tool like [Daily Focus Planner](https://www.buildnscale.dev/tools/daily-planner) fits in.
 
-<img src="/images/time-blocking-for-developers.png" alt="Time blocking for developers shown as 30-minute focus blocks on a daily calendar grid" width="1200" height="675" style="width:100%;height:auto;border-radius:8px;margin:32px 0" />
+<img src="/images/time-blocking-for-developers.webp" alt="Time blocking for developers shown as 30-minute focus blocks on a daily calendar grid" width="1200" height="675" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;margin:32px 0" />
 
 ## What is time blocking, and how is it different from a to-do list?
 

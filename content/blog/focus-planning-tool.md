@@ -13,7 +13,7 @@ A **focus planning tool** is a different category. Instead of managing everythin
 
 This guide covers what actually makes a focus planning tool work, the criteria to evaluate one against, and a simple routine you can run daily — including where [Daily Focus Planner](https://www.buildnscale.dev/tools/daily-planner) fits if you want something ready to use today.
 
-<img src="/images/focus-planning-tool.png" alt="Focus planning tool showing a single time-blocked daily priority on a vertical day grid" width="1200" height="675" style="width:100%;height:auto;border-radius:8px;margin:32px 0" />
+<img src="/images/focus-planning-tool.webp" alt="Focus planning tool showing a single time-blocked daily priority on a vertical day grid" width="1200" height="675" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;margin:32px 0" />
 
 ## What is a focus planning tool?
 

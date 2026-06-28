@@ -9,12 +9,20 @@ import type { Post } from '@/lib/posts'
 
 const heroImageMap: Record<string, { src: string; alt: string }> = {
   'why-time-blocking': {
-    src: '/images/time-blocking-for-developers.png',
+    src: '/images/time-blocking-for-developers.webp',
     alt: 'Time blocking for developers shown as 30-minute focus blocks on a daily calendar grid',
   },
   'focus-planning-tool': {
-    src: '/images/focus-planning-tool.png',
+    src: '/images/focus-planning-tool.webp',
     alt: 'Focus planning tool showing a single time-blocked daily priority on a vertical day grid',
+  },
+  'replaced-notion-daily-notes': {
+    src: '/images/notion-to-md.webp',
+    alt: 'Local-first Markdown notes interface showing folder structure and plain text files replacing a Notion workspace',
+  },
+  'freelance-rate-2026': {
+    src: '/images/freelancer-rate.webp',
+    alt: 'Freelance rate calculator showing dollar figures, billable hours, and profit margin breakdown for developer freelancing',
   },
 }
 

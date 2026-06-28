@@ -179,12 +179,21 @@
   .post-content ul {
     margin-bottom: 28px;
     padding-left: 24px;
+    list-style-type: disc;
+  }
+
+  .post-content ul ul {
+    list-style-type: circle;
   }
 
   .post-content li {
     margin-bottom: 12px;
     line-height: 1.75;
     color: var(--color-muted);
+  }
+
+  .post-content li::marker {
+    color: var(--color-teal);
   }
 
   .post-content blockquote {
@@ -235,6 +244,40 @@
     color: var(--color-teal);
     text-decoration: underline;
     text-underline-offset: 2px;
+  }
+
+  .post-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 28px;
+    font-size: 15px;
+  }
+
+  .post-content th {
+    background: var(--color-surface);
+    color: var(--color-fg);
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 16px;
+    border: 1px solid var(--color-border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+  }
+
+  .post-content td {
+    padding: 10px 16px;
+    border: 1px solid var(--color-border);
+    color: var(--color-muted);
+    vertical-align: top;
+  }
+
+  .post-content tr:nth-child(even) td {
+    background: var(--color-surface);
+  }
+
+  .post-content tr:hover td {
+    background: var(--color-raised);
   }
 
   @keyframes slide-in-right {

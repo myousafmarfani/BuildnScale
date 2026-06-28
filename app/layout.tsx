@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next"
 import localFont from "next/font/local"
+import Script from "next/script"
 import { Providers } from "@/components/providers"
 import "./globals.css"
 
@@ -96,18 +97,19 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="google-site-verification" content="Ue1LwsRs0zqtVTyE9A5ZoptmSGY55i2c8GnNAPJFXMI" />
-      </head>
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-VN79377ERT" />
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-VN79377ERT"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'G-VN79377ERT');
-          `,
-        }}
-      />
+          `}
+        </Script>
+      </head>
       <body className={`${dmSans.variable} ${jetbrainsMono.variable} font-body`}>
         <Providers>{children}</Providers>
       </body>
