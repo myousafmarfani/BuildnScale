@@ -1,8 +1,8 @@
 ---
 title: "Freelance Hourly Rate Calculator: Set Your 2026 Rate"
 category: "Freelancing"
-date: "2026-06-28"
-lastmod: "2026-06-28"
+date: "2026-06-22"
+lastmod: "2026-06-22"
 author: muhammad-yousaf
 readTime: 9
 excerpt: "Calculate your ideal freelance hourly rate for 2026 with our free calculator. No signup, no download. Get your rate, day rate, and a PDF invoice instantly."

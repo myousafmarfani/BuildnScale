@@ -1,7 +1,7 @@
 ---
 title: "Time Blocking for Developers: Why It Beats To-Do Lists"
 category: "Productivity"
-date: "2026-05-16"
+date: "2026-06-07"
 author: muhammad-yousaf
 readTime: 9
 excerpt: "To-do lists grow forever and ship nothing. Here's why time blocking works better for developers, what the research says about context switching, and how to build the routine yourself."

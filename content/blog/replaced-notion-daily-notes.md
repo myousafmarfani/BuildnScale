@@ -1,8 +1,8 @@
 ---
 title: "I Replaced Notion With Local-First Markdown Notes"
 category: "Tools"
-date: "2026-06-28"
-lastmod: "2026-06-28"
+date: "2026-06-15"
+lastmod: "2026-06-15"
 author: muhammad-yousaf
 readTime: 8
 excerpt: "After three years in Notion, I switched to local-first Markdown notes. Here is what actually got faster, what broke, and how to tell if it fits you best."
