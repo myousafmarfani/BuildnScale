@@ -109,8 +109,8 @@ export default async function Image() {
           }}
         >
           <span>buildnscale.dev</span>
-          <span>✓ No account required</span>
-          <span>✓ Free forever</span>
+          <span>&gt; No account required</span>
+          <span>&gt; Free forever</span>
         </div>
       </div>
     ),

@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export const runtime = "edge";
-
 const ipRequests = new Map<string, { count: number; resetAt: number }>();
 
 function isPrivateIP(hostname: string): boolean {

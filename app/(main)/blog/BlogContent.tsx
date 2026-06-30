@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { IconCode } from '@tabler/icons-react'
 import { BlogFilterBar } from '@/components/blog/BlogFilterBar'
+import BuildLogCTA from '@/components/BuildLogCTA'
 import type { Post } from '@/lib/posts'
 
 const heroImageMap: Record<string, { src: string; alt: string }> = {
@@ -200,26 +201,7 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
           </div>
         )}
 
-        <section className="mt-16 mb-20 bg-surface border border-border rounded-lg py-12 px-6 text-center">
-          <h2 className="font-display text-2xl font-bold text-fg">
-            Get the build log in your inbox
-          </h2>
-          <p className="mt-3 text-sm text-muted max-w-md mx-auto">
-            One email per week. Only technical lessons and new tool releases.
-          </p>
-          <form onSubmit={(e) => e.preventDefault()} className="mt-6 flex max-w-sm mx-auto gap-2">
-            <label htmlFor="subscribe-email-listing" className="sr-only">Email address</label>
-            <input
-              id="subscribe-email-listing"
-              type="email"
-              placeholder="dev@company.com"
-              className="flex-1 bg-bg border border-border rounded-md px-4 py-2.5 text-sm text-fg outline-none focus:border-teal transition-colors"
-            />
-            <button type="submit" className="bg-teal text-bg text-sm font-semibold px-5 rounded-md hover:bg-teal-hover transition-colors whitespace-nowrap">
-              Subscribe →
-            </button>
-          </form>
-        </section>
+        <BuildLogCTA variant="default" />
       </main>
     </div>
   )

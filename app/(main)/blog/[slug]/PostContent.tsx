@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { IconArrowLeft, IconTools } from '@tabler/icons-react'
 import type { Post } from '@/lib/posts'
+import BuildLogCTA from '@/components/BuildLogCTA'
 
 function formatDate(dateStr: string) {
   const d = new Date(dateStr)
@@ -228,26 +229,7 @@ export default function PostContent({ post: currentPost, relatedPosts = [] }: { 
                 </Link>
               </div>
 
-              <div className="bg-surface border border-border rounded-lg p-5">
-                <h3 className="font-display text-sm font-semibold text-fg mb-1">
-                  Get weekly updates
-                </h3>
-                <p className="text-xs text-muted leading-relaxed mb-3">
-                                   New tools, engineering lessons, and productivity tactics.
-                </p>
-                <form onSubmit={(e) => e.preventDefault()}>
-                  <label htmlFor="subscribe-email-sidebar" className="sr-only">Email address</label>
-                  <input
-                    id="subscribe-email-sidebar"
-                    type="email"
-                    placeholder="dev@company.com"
-                    className="w-full bg-bg border border-border rounded-md px-3 py-2 text-xs text-fg outline-none mb-2 focus:border-teal transition-colors"
-                  />
-                  <button type="submit" className="w-full bg-teal text-bg text-xs font-semibold py-2 rounded-md hover:bg-teal-hover transition-colors">
-                    Subscribe
-                  </button>
-                </form>
-              </div>
+              <BuildLogCTA variant="sidebar" />
             </aside>
           </div>
         </div>
