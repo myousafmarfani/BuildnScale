@@ -17,7 +17,7 @@ export function Footer() {
               <a href="https://github.com/myousafmarfani/BuildnScale" target="_blank" rel="noopener noreferrer" className="text-tertiary transition-colors hover:text-fg" aria-label="GitHub">
                 <IconBrandGithub className="h-5 w-5" />
               </a>
-              <a href="#" className="text-tertiary transition-colors hover:text-fg" aria-label="X">
+              <a href="https://x.com/buildnscale_dev" className="text-tertiary transition-colors hover:text-fg" aria-label="X">
                 <IconBrandX className="h-5 w-5" />
               </a>
             </div>
@@ -68,6 +68,9 @@ export function Footer() {
               </Link>
               <Link href="/write-for-us" className="text-sm text-muted transition-colors duration-150 hover:text-fg">
                 Write for Us
+              </Link>
+              <Link href="/authors" className="text-sm text-muted transition-colors duration-150 hover:text-fg">
+                Authors
               </Link>
             </div>
           </div>

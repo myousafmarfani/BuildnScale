@@ -9,6 +9,8 @@ import {
   IconActivity,
 } from "@tabler/icons-react"
 import { TOOLS, toolCountWord } from "@/lib/tools-registry"
+import { getAllPosts } from "@/lib/posts"
+import { PostCard } from "@/components/blog/PostCard"
 
 const websiteJsonLd = {
   "@context": "https://schema.org",
@@ -152,29 +154,7 @@ const steps = [
   },
 ]
 
-const posts = [
-  {
-    tag: "Productivity",
-    title: "Why time-blocking beats to-do lists for developers",
-    excerpt: "Most dev to-do lists are graveyards. Here's why blocking time works.",
-    date: "May 2026",
-    read: "7 min read",
-  },
-  {
-    tag: "Tools",
-    title: "We replaced Notion daily notes with a 200-line tool",
-    excerpt: "Notion is powerful. It's also overkill for a morning planning session.",
-    date: "May 2026",
-    read: "5 min read",
-  },
-  {
-    tag: "Freelancing",
-    title: "How to set your freelance rate in 2026",
-    excerpt: "The calculator we built to answer this for ourselves — and every dev we know.",
-    date: "May 2026",
-    read: "9 min read",
-  },
-]
+const posts = getAllPosts().slice(0, 3)
 
 export default function Home() {
   return (
@@ -398,27 +378,9 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => (
-              <Link
-                key={post.title}
-                href="#"
-                className="block rounded-[10px] border border-border bg-surface p-6 transition-all duration-180 hover:-translate-y-0.5 hover:border-border-strong"
-              >
-                <span className="mb-4 inline-block rounded-full bg-teal-subtle px-2 py-0.5 text-[10px] text-teal">
-                  {post.tag}
-                </span>
-                <span className="mb-2 block text-[17px] font-medium leading-snug text-fg">
-                  {post.title}
-                </span>
-                <span className="mb-5 block text-sm leading-relaxed text-tertiary">
-                  {post.excerpt}
-                </span>
-                <div className="flex justify-between font-display text-xs text-tertiary">
-                  <span>{post.date}</span>
-                  <span>{post.read}</span>
-                </div>
-              </Link>
+              <PostCard key={post.slug} post={post} />
             ))}
           </div>
         </div>

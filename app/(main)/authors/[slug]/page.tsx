@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getAuthorBySlug, getAllAuthors } from '@/lib/authors'
 import { getAllPosts } from '@/lib/posts'
+import { PostCard } from '@/components/blog/PostCard'
 import { breadcrumbJsonLd } from '@/lib/json-ld'
 import { IconArrowLeft, IconBrandGithub, IconBrandX, IconWorld } from '@tabler/icons-react'
 
@@ -139,23 +140,7 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
         {posts.length > 0 ? (
           <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map(post => (
-              <Link
-                key={post.slug}
-                href={`/blog/${post.slug}`}
-                className="flex flex-col bg-surface border border-border rounded-lg p-5 no-underline group hover:border-muted transition-colors"
-              >
-                <span className="text-2xs font-display text-teal uppercase">{post.category}</span>
-                <h2 className="text-base font-medium text-fg mt-2 mb-2 group-hover:text-teal transition-colors">
-                  {post.title}
-                </h2>
-                <p className="text-xs text-muted leading-relaxed flex-1">
-                  {post.excerpt.length > 100 ? post.excerpt.slice(0, 100) + '…' : post.excerpt}
-                </p>
-                <div className="flex gap-4 text-2xs font-display text-tertiary mt-4">
-                  <span>{new Date(post.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-                  <span>{post.readTime} min read</span>
-                </div>
-              </Link>
+              <PostCard key={post.slug} post={post} />
             ))}
           </div>
         ) : (
