@@ -11,7 +11,7 @@
 <br/>
 
 <p align="center">
-  <b>Seven productivity tools for developers who ship.</b><br/>
+  <b>Eight productivity and developer tools for developers who ship.</b><br/>
   Free. Open-source. No account required.
 </p>
 
@@ -19,7 +19,7 @@
 
 ## 🧰 Tools
 
-Every tool works **without signing up** — data lives in your browser. Create an account to **sync across devices** automatically (still free, no credit card).
+All tools can be started without an account. Personal productivity data stays in your browser; JSON input stays only in the current tab. Website checks contact the server. Sign in for saved website monitors and optional cloud backup/sync. Local data takes precedence when two devices have conflicting values.
 
 ```text
                   ⚡ Ready in 0 seconds · No install · No signup
@@ -29,13 +29,13 @@ Every tool works **without signing up** — data lives in your browser. Create a
   <tr>
     <td width="24" align="center">🟢</td>
     <td width="160"><b>Downtime Detector</b></td>
-    <td>Check if any site is up right now. Monitor your own domains with multi-region uptime graphs, SSL checks, and response time tracking.</td>
-    <td width="140"><code>Multi-region</code> <code>SSL</code> <code>REST API</code></td>
+    <td>Check if any site is up right now. Monitor your own domains with server-location HTTP checks, uptime history, and response time tracking.</td>
+    <td width="140"><code>HTTP status</code> <code>Response time</code> <code>REST API</code></td>
   </tr>
   <tr>
     <td width="24" align="center">🗓</td>
     <td width="160"><b>Daily Focus Planner</b></td>
-    <td>Drag tasks into 30-min time blocks on a vertical day grid. Keyboard-first, resets daily, surfaces unfinished tasks.</td>
+    <td>Drag tasks into 30-min time blocks on a vertical day grid. Schedule by dragging or choosing a time; switch dates and export a day as CSV.</td>
     <td width="140"><code>localStorage</code> <code>Drag & drop</code> <code>Sync</code></td>
   </tr>
   <tr>
@@ -47,13 +47,13 @@ Every tool works **without signing up** — data lives in your browser. Create a
   <tr>
     <td width="24" align="center">🔥</td>
     <td width="160"><b>Habit Streak Tracker</b></td>
-    <td>Daily check-ins with a GitHub-style contribution heatmap. Unlimited habits, streak alerts, and yearly overview.</td>
+    <td>Daily check-ins with a GitHub-style contribution heatmap. Habit streaks, completion rates, and configurable 13/26/52-week heatmaps.</td>
     <td width="140"><code>Heatmap</code> <code>Analytics</code> <code>Year view</code></td>
   </tr>
   <tr>
     <td width="24" align="center">📝</td>
     <td width="160"><b>Markdown Notes</b></td>
-    <td>Distraction-free editor with live preview. Auto-save, syntax highlighting, word count, and full-screen mode.</td>
+    <td>Distraction-free editor with live preview. Auto-save, sanitized preview, word count, and Markdown export.</td>
     <td width="140"><code>marked</code> <code>Auto-save</code> <code>Search</code></td>
   </tr>
   <tr>
@@ -67,6 +67,12 @@ Every tool works **without signing up** — data lives in your browser. Create a
     <td width="160"><b>Weekly Review Dashboard</b></td>
     <td>Aggregate focus time, task completions, and habit scores. Cross-tool stats, bar charts, CSV export, guided reflections.</td>
     <td width="140"><code>Stats</code> <code>Charts</code> <code>CSV</code></td>
+  </tr>
+  <tr>
+    <td align="center">{ }</td>
+    <td><b>JSON Toolkit</b></td>
+    <td>Format, validate, minify, copy, and download JSON locally. Import a file up to 1 MB. Unsafe numeric identifiers are rejected rather than silently rounded.</td>
+    <td><code>Browser-only</code> <code>No saved input</code></td>
   </tr>
 </table>
 
@@ -244,3 +250,20 @@ We welcome contributions of all sizes — a typo fix, a new tool idea, or a perf
     <a href="https://buildnscale.dev/blog">Blog</a>
   </sub>
 </div>
+
+## Workspace upgrade
+
+The homepage, catalog, navigation, footer, tool switcher, and sitemap use `lib/tools-registry.ts` as the source of truth. The catalog supports search (including `/tools?q=json`), task-based categories, favorites, and recent tools. Export/import browser data from `/tools#workspace-data` before clearing site data or moving browsers.
+
+### Validation
+
+```bash
+pnpm install --frozen-lockfile
+pnpm exec prisma generate
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+```
+
+See [upgrade review](docs/workspace-upgrade.md) for findings, product reasoning, and remaining validation.

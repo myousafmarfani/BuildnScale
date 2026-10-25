@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
@@ -8,11 +10,15 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "url query parameter is required" }, { status: 400 });
   }
 
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return NextResponse.json({ url, uptimePercent: null, totalChecks: 0, days: [] });
+
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
   const checks = await prisma.uptimeCheck.findMany({
     where: {
       url,
+      site: { userId: session.user.id },
       checkedAt: { gte: thirtyDaysAgo },
     },
     orderBy: { checkedAt: "desc" },

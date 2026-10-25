@@ -1,25 +1,19 @@
 "use client"
 
+import { TOOLS } from "@/lib/tools-registry"
+import { ToolIcon } from "@/components/workspace/ToolIcon"
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { useTheme } from "next-themes"
 import { useSession, signOut } from "next-auth/react"
-import { IconX, IconSun, IconMoon, IconBrandGithub, IconCalendarEvent, IconPlayerPlay, IconFlame, IconMarkdown, IconCalculator, IconChartBar, IconActivity } from "@tabler/icons-react"
+import { IconX, IconSun, IconMoon, IconBrandGithub } from "@tabler/icons-react"
 
 interface MobileSheetProps {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-const tools = [
-  { icon: IconActivity, name: "Downtime Detector", href: "/tools/downtime-detector", desc: "Monitor uptime" },
-  { icon: IconCalendarEvent, name: "Daily Focus Planner", href: "/tools/daily-planner", desc: "Time-block your day" },
-  { icon: IconPlayerPlay, name: "Pomodoro + Task Log", href: "/tools/pomodoro", desc: "Track sessions" },
-  { icon: IconFlame, name: "Habit Tracker", href: "/tools/habit-tracker", desc: "Build daily streaks" },
-  { icon: IconMarkdown, name: "Markdown Notes", href: "/tools/markdown-notes", desc: "Capture fast" },
-  { icon: IconCalculator, name: "Freelancer Calculator", href: "/tools/rate-calculator", desc: "Price your time" },
-  { icon: IconChartBar, name: "Weekly Review", href: "/tools/weekly-review", desc: "Reflect and reset" },
-]
+const tools = TOOLS.map(tool => ({ ...tool, href: `/tools/${tool.slug}`, desc: tool.description }))
 
 export function MobileSheet({ open, onOpenChange }: MobileSheetProps) {
   const [mounted, setMounted] = useState(false)
@@ -95,7 +89,7 @@ export function MobileSheet({ open, onOpenChange }: MobileSheetProps) {
               onClick={() => onOpenChange(false)}
             >
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-raised text-teal">
-                <tool.icon className="h-[18px] w-[18px]" />
+                <ToolIcon slug={tool.slug} className="h-[18px] w-[18px]" />
               </div>
               <div className="flex min-w-0 flex-col">
                 <span className="text-[15px] font-medium text-fg">{tool.name}</span>

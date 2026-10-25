@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { checkWebsite } from "@/lib/http-check";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(
@@ -21,27 +22,23 @@ export async function POST(
 
   const start = Date.now();
   try {
-    const res = await fetch(site.url, {
-      method: "HEAD",
-      signal: AbortSignal.timeout(10000),
-      redirect: "follow",
-    });
-    const responseMs = Date.now() - start;
+    const result = await checkWebsite(site.url);
+    const responseMs = result.responseMs;
 
     await prisma.uptimeCheck.create({
       data: {
         siteId: site.id,
         url: site.url,
-        isUp: res.ok || res.status < 500,
-        statusCode: res.status,
+        isUp: result.isUp,
+        statusCode: result.statusCode,
         responseMs,
         region: process.env.VERCEL_REGION ?? "us-east",
       },
     });
 
     return NextResponse.json({
-      isUp: res.ok || res.status < 500,
-      statusCode: res.status,
+      isUp: result.isUp,
+      statusCode: result.statusCode,
       responseMs,
       checkedAt: new Date().toISOString(),
     });

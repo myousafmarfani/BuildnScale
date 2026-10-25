@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react"
-import Link from "next/link"
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import Link from 'next/link'
 import {
   IconSettings,
   IconGripVertical,
@@ -14,25 +14,26 @@ import {
   IconLayoutSidebarRightCollapse,
   IconX,
   IconBook2,
-} from "@tabler/icons-react"
-import { StreakPill } from "@/components/ui/StreakPill"
-import { KbdHint } from "@/components/ui/KbdHint"
-import { ToolBreadcrumbs } from "@/components/ui/ToolBreadcrumbs"
-import { SettingsDrawer } from "@/components/ui/SettingsDrawer"
-import { UserGuideModal } from "@/components/ui/UserGuideModal"
-import { ThemeToggle } from "@/components/ui/ThemeToggle"
-import { useSync } from "@/hooks/useSync"
+} from '@tabler/icons-react'
+import { StreakPill } from '@/components/ui/StreakPill'
+import { KbdHint } from '@/components/ui/KbdHint'
+import { ToolBreadcrumbs } from '@/components/ui/ToolBreadcrumbs'
+import { SettingsDrawer } from '@/components/ui/SettingsDrawer'
+import { UserGuideModal } from '@/components/ui/UserGuideModal'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { downloadFile, csvCell } from '@/lib/download'
+import { useSync } from '@/hooks/useSync'
 
 const SLOT_HEIGHT = 28
 const TOTAL_HOURS = 24
 
 const COLORS = [
-  { name: "blue", value: "var(--color-info)" },
-  { name: "purple", value: "var(--habit-color-purple)" },
-  { name: "teal", value: "var(--color-teal)" },
-  { name: "amber", value: "var(--color-amber)" },
-  { name: "coral", value: "var(--color-danger)" },
-  { name: "gray", value: "var(--color-tertiary)" },
+  { name: 'blue', value: 'var(--color-info)' },
+  { name: 'purple', value: 'var(--habit-color-purple)' },
+  { name: 'teal', value: 'var(--color-teal)' },
+  { name: 'amber', value: 'var(--color-amber)' },
+  { name: 'coral', value: 'var(--color-danger)' },
+  { name: 'gray', value: 'var(--color-tertiary)' },
 ]
 
 const HOURS = Array.from({ length: TOTAL_HOURS }, (_, i) => i)
@@ -47,15 +48,15 @@ interface Task {
 }
 
 function formatDate(date: Date): string {
-  return date.toLocaleDateString("en-US", {
-    weekday: "short",
-    day: "2-digit",
-    month: "short",
+  return date.toLocaleDateString('en-US', {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
   })
 }
 
 function toISO(d: Date): string {
-  return d.toLocaleDateString("en-CA")
+  return d.toLocaleDateString('en-CA')
 }
 
 function getToday(): Date {
@@ -65,24 +66,26 @@ function getToday(): Date {
 }
 
 function getDayFromStr(str: string): Date {
-  const [y, m, d] = str.split("-").map(Number)
+  const [y, m, d] = str.split('-').map(Number)
   return new Date(y, m - 1, d)
 }
 
 function loadStreak(): { streak: number; days: string[] } {
-  if (typeof window === "undefined") return { streak: 0, days: [] }
-  const s = parseInt(localStorage.getItem("bns_streak") || "0", 10) || 0
-  const d: string[] = JSON.parse(localStorage.getItem("bns_streak_days") || "[]")
+  if (typeof window === 'undefined') return { streak: 0, days: [] }
+  const s = parseInt(localStorage.getItem('bns_streak') || '0', 10) || 0
+  const d: string[] = JSON.parse(
+    localStorage.getItem('bns_streak_days') || '[]'
+  )
   return { streak: s, days: d }
 }
 
 function saveStreak(streak: number, days: string[]) {
-  localStorage.setItem("bns_streak", String(streak))
-  localStorage.setItem("bns_streak_days", JSON.stringify(days))
+  localStorage.setItem('bns_streak', String(streak))
+  localStorage.setItem('bns_streak_days', JSON.stringify(days))
 }
 
 function loadTasks(dateStr: string): Task[] {
-  if (typeof window === "undefined") return []
+  if (typeof window === 'undefined') return []
   const data = localStorage.getItem(`bns_tasks_${dateStr}`)
   return data ? JSON.parse(data) : []
 }
@@ -97,7 +100,8 @@ function updateStreak(): { streak: number; days: string[] } {
   if (days.includes(today)) return { streak, days }
   const yesterday = toISO(new Date(Date.now() - 86400000))
   const newDays = [...days, today]
-  const newStreak = days.length === 0 || days[days.length - 1] === yesterday ? streak + 1 : 1
+  const newStreak =
+    days.length === 0 || days[days.length - 1] === yesterday ? streak + 1 : 1
   saveStreak(newStreak, newDays)
   return { streak: newStreak, days: newDays }
 }
@@ -105,16 +109,21 @@ function updateStreak(): { streak: number; days: string[] } {
 export default function DailyPlannerPage() {
   const todayStr = toISO(getToday())
 
+  const [startHour, setStartHour] = useState(8)
+  const [timeFormat, setTimeFormat] = useState('24h')
+  const [scheduleError, setScheduleError] = useState('')
   const [tasks, setTasks] = useState<Task[]>([])
   const [dateStr, setDateStr] = useState(todayStr)
   const [streak, setStreak] = useState(0)
   const [, setStreakDays] = useState<string[]>([])
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [inputText, setInputText] = useState("")
+  const [inputText, setInputText] = useState('')
   const [selectedColor, setSelectedColor] = useState(COLORS[2].value)
   const [editingTask, setEditingTask] = useState<string | null>(null)
-  const [editTitle, setEditTitle] = useState("")
-  const [mobileTab, setMobileTab] = useState<"grid" | "tasks" | "today" | "streak">("grid")
+  const [editTitle, setEditTitle] = useState('')
+  const [mobileTab, setMobileTab] = useState<
+    'grid' | 'tasks' | 'today' | 'streak'
+  >('grid')
   const [isMobile, setIsMobile] = useState(false)
   const [now, setNow] = useState(new Date())
   const [settingsOpen, setSettingsOpen] = useState(false)
@@ -127,11 +136,13 @@ export default function DailyPlannerPage() {
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
     check()
-    window.addEventListener("resize", check)
-    return () => window.removeEventListener("resize", check)
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
   }, [])
 
   useEffect(() => {
+    setStartHour(Number(localStorage.getItem('bns_planner_startHour') ?? 8))
+    setTimeFormat(JSON.parse(localStorage.getItem('bns_planner_timeFormat') ?? '"24h"'))
     const { streak: s, days } = loadStreak()
     setStreak(s)
     setStreakDays(days)
@@ -144,7 +155,12 @@ export default function DailyPlannerPage() {
   }, [])
 
   useEffect(() => {
-    setTasks(loadTasks(dateStr))
+    const restore = () => {
+      setTasks(loadTasks(dateStr))
+    }
+    restore()
+    window.addEventListener('bns:sync', restore)
+    return () => window.removeEventListener('bns:sync', restore)
   }, [dateStr])
 
   useEffect(() => {
@@ -154,25 +170,29 @@ export default function DailyPlannerPage() {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
-      if (e.key === "n" || e.key === "N") {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      )
+        return
+      if (e.key === 'n' || e.key === 'N') {
         e.preventDefault()
         inputRef.current?.focus()
       }
-      if (e.key === "t" || e.key === "T") {
+      if (e.key === 't' || e.key === 'T') {
         e.preventDefault()
         setDateStr(todayStr)
         setTimeout(() => {
           if (gridRef.current) gridRef.current.scrollTop = 0
         }, 50)
       }
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault()
         inputRef.current?.focus()
       }
     }
-    window.addEventListener("keydown", handler)
-    return () => window.removeEventListener("keydown", handler)
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
   }, [todayStr])
 
   const commitTasks = useCallback(
@@ -192,7 +212,7 @@ export default function DailyPlannerPage() {
       completed: false,
     }
     commitTasks([...tasks, t])
-    setInputText("")
+    setInputText('')
   }, [inputText, selectedColor, tasks, commitTasks])
 
   const deleteTask = useCallback(
@@ -209,19 +229,33 @@ export default function DailyPlannerPage() {
   )
 
   const moveTaskToGrid = useCallback(
-    (taskId: string, startSlot: number) =>
+    (taskId: string, startSlot: number) => {
+      const task = tasks.find((t) => t.id === taskId)
+      const duration = Math.min(task?.duration || 2, 48 - startSlot)
+      const conflict = tasks.some(
+        (t) =>
+          t.id !== taskId &&
+          t.startSlot != null &&
+          startSlot < t.startSlot + (t.duration || 2) &&
+          startSlot + duration > t.startSlot
+      )
+      if (conflict) {
+        setScheduleError('That time overlaps another task. Choose a free slot.')
+        return
+      }
+      setScheduleError('')
       commitTasks(
-        tasks.map((t) =>
-          t.id === taskId ? { ...t, startSlot, duration: t.duration || 2 } : t
-        )
-      ),
+        tasks.map((t) => (t.id === taskId ? { ...t, startSlot, duration } : t))
+      )
+    },
     [tasks, commitTasks]
   )
 
   const handleDrop = useCallback(
     (e: React.DragEvent, targetSlot: number) => {
       e.preventDefault()
-      const taskId = e.dataTransfer.getData("taskId")
+      e.stopPropagation()
+      const taskId = e.dataTransfer.getData('taskId')
       if (!taskId) return
       moveTaskToGrid(taskId, targetSlot)
     },
@@ -229,9 +263,9 @@ export default function DailyPlannerPage() {
   )
 
   const changeDate = useCallback(
-    (dir: "prev" | "next") => {
+    (dir: 'prev' | 'next') => {
       const d = getDayFromStr(dateStr)
-      d.setDate(d.getDate() + (dir === "prev" ? -1 : 1))
+      d.setDate(d.getDate() + (dir === 'prev' ? -1 : 1))
       setDateStr(toISO(d))
     },
     [dateStr]
@@ -241,7 +275,7 @@ export default function DailyPlannerPage() {
   const unscheduledTasks = tasks.filter((t) => t.startSlot == null)
 
   const nowMin = now.getHours() * 60 + now.getMinutes()
-  const timeLineTop = (nowMin / 30) * SLOT_HEIGHT
+  const timeLineTop = ((nowMin - startHour * 60) / 30) * SLOT_HEIGHT
 
   const scrollToNow = () => {
     if (gridRef.current) {
@@ -250,7 +284,7 @@ export default function DailyPlannerPage() {
   }
 
   const syncKeys = useMemo(
-    () => ["bns_streak", "bns_streak_days", `bns_tasks_${dateStr}`],
+    () => ['bns_streak', 'bns_streak_days', `bns_tasks_${dateStr}`],
     [dateStr]
   )
   useSync(syncKeys)
@@ -263,7 +297,10 @@ export default function DailyPlannerPage() {
       {/* Top Bar */}
       <div className="flex h-[52px] shrink-0 items-center justify-between border-b border-border bg-bg px-3 md:px-4">
         <div className="flex items-center gap-2 md:gap-4 min-w-0">
-          <Link href="/" className="font-display text-sm font-semibold text-fg shrink-0">
+          <Link
+            href="/"
+            className="font-display text-sm font-semibold text-fg shrink-0"
+          >
             build<span className="text-teal">n</span>scale
           </Link>
           <div className="h-4 w-px bg-border shrink-0" />
@@ -275,21 +312,27 @@ export default function DailyPlannerPage() {
 
         {!isMobile && (
           <div className="hidden md:flex gap-3 text-xs text-tertiary">
-            <KbdHint keys={["N"]} label="New task" />
-            <KbdHint keys={["T"]} label="Today" />
-            <KbdHint keys={["⌘", "K"]} label="Command" />
+            <KbdHint keys={['N']} label="New task" />
+            <KbdHint keys={['T']} label="Today" />
+            <KbdHint keys={['⌘', 'K']} label="Command" />
           </div>
         )}
 
         <div className="flex items-center gap-2 md:gap-3 shrink-0">
           <StreakPill count={streak} />
-          <button onClick={() => setUserGuideOpen(true)} className="flex items-center gap-1 rounded-md border border-border px-2 py-1 text-[11px] text-muted hover:text-fg hover:bg-raised transition-colors">
+          <button
+            onClick={() => setUserGuideOpen(true)}
+            className="flex items-center gap-1 rounded-md border border-border px-2 py-1 text-[11px] text-muted hover:text-fg hover:bg-raised transition-colors"
+          >
             <IconBook2 className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Guide</span>
           </button>
 
           <ThemeToggle />
-          <button onClick={() => setSettingsOpen(true)} className="text-tertiary hover:text-muted transition-colors">
+          <button
+            onClick={() => setSettingsOpen(true)}
+            className="text-tertiary hover:text-muted transition-colors"
+          >
             <IconSettings className="h-[18px] w-[18px]" />
           </button>
         </div>
@@ -306,15 +349,17 @@ export default function DailyPlannerPage() {
           <div className="inline-flex min-w-full">
             <div
               className="grid flex-1"
-              style={{ gridTemplateColumns: "minmax(48px, 64px) 1fr" }}
+              style={{ gridTemplateColumns: 'minmax(48px, 64px) 1fr' }}
             >
-              {HOURS.flatMap((hour) => [
+              {HOURS.filter((hour) => hour >= startHour).flatMap((hour) => [
                 <div
                   key={`l-${hour}`}
                   className="time-cell flex h-[56px] items-start border-b border-raised pt-1"
                 >
                   <span className="font-mono w-12 md:w-16 text-right text-[11px] text-tertiary pr-1 md:pr-3">
-                    {String(hour).padStart(2, "0")}:00
+                    {timeFormat === '24h'
+                      ? `${String(hour).padStart(2, '0')}:00`
+                      : `${hour % 12 || 12}${hour < 12 ? 'am' : 'pm'}`}
                   </span>
                 </div>,
                 <div
@@ -323,25 +368,49 @@ export default function DailyPlannerPage() {
                   onDrop={(e) => handleDrop(e, hour * 2)}
                   onDragOver={(e) => e.preventDefault()}
                 >
-                  <div className="h-[28px] border-b border-raised/40" onDragOver={(e) => e.preventDefault()} onDrop={(e) => handleDrop(e, hour * 2)} />
-                  <div className="h-[28px] border-b border-raised/40" onDragOver={(e) => e.preventDefault()} onDrop={(e) => handleDrop(e, hour * 2 + 1)} />
+                  <div
+                    className="h-[28px] border-b border-raised/40"
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => handleDrop(e, hour * 2)}
+                  />
+                  <div
+                    className="h-[28px] border-b border-raised/40"
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => handleDrop(e, hour * 2 + 1)}
+                  />
                   {scheduledTasks
-                    .filter((t) => t.startSlot! >= hour * 2 && t.startSlot! < (hour + 1) * 2)
+                    .filter(
+                      (t) =>
+                        t.startSlot! >= hour * 2 &&
+                        t.startSlot! < (hour + 1) * 2
+                    )
                     .map((task) => {
-                      const innerTop = (task.startSlot! - hour * 2) * SLOT_HEIGHT
+                      const innerTop =
+                        (task.startSlot! - hour * 2) * SLOT_HEIGHT
                       const blockH = (task.duration || 2) * SLOT_HEIGHT - 2
                       return (
                         <div
                           key={task.id}
                           className={`task-block absolute left-1 right-1 md:left-2 md:right-2 cursor-pointer rounded-[5px] px-1.5 md:px-2.5 py-1.5 text-[11px] md:text-xs font-medium text-fg transition-all duration-150 hover:scale-[1.01] hover:brightness-110 hover:shadow-[0_4px_12px_rgba(0,0,0,0.3)] ${
-                            task.completed ? "opacity-45" : ""
+                            task.completed ? 'opacity-45' : ''
                           }`}
                           style={{
                             top: `${innerTop}px`,
                             height: `${blockH}px`,
-                            background: task.color,
-                            borderLeft: "3px solid rgba(0,0,0,0.2)",
-                            textDecoration: task.completed ? "line-through" : "none",
+                            background: `color-mix(in srgb, ${task.color} 20%, var(--color-surface))`,
+                            borderLeft: '3px solid rgba(0,0,0,0.2)',
+                            textDecoration: task.completed
+                              ? 'line-through'
+                              : 'none',
+                          }}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              setEditingTask(task.id)
+                              setEditTitle(task.title)
+                            }
                           }}
                           onClick={() => {
                             setEditingTask(task.id)
@@ -371,7 +440,9 @@ export default function DailyPlannerPage() {
           {tasks.length === 0 && (
             <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-bg/80 font-mono text-sm text-tertiary px-4 text-center">
               <p>No tasks yet.</p>
-              <p className="mt-2">Press N to add your first task, or type in the sidebar →</p>
+              <p className="mt-2">
+                Press N to add your first task, or type in the sidebar →
+              </p>
             </div>
           )}
         </div>
@@ -381,17 +452,28 @@ export default function DailyPlannerPage() {
           className={`shrink-0 border-l border-border bg-surface transition-all duration-280 overflow-y-auto ${
             isMobile
               ? sidebarOpen
-                ? "fixed inset-y-0 right-0 z-30 w-[280px] shadow-lg"
-                : "hidden"
+                ? 'fixed inset-y-0 right-0 z-30 w-[280px] shadow-lg'
+                : 'hidden'
               : sidebarOpen
-                ? "w-[260px] lg:w-[280px]"
-                : "w-0 overflow-hidden border-l-0"
+                ? 'w-[260px] lg:w-[280px]'
+                : 'w-0 overflow-hidden border-l-0'
           }`}
         >
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
-            <span className="text-xs uppercase tracking-[0.08em] text-muted">Tasks</span>
-            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-tertiary hover:text-muted transition-colors">
-              {isMobile ? <IconX className="h-4 w-4" /> : sidebarOpen ? <IconLayoutSidebarRightCollapse className="h-4 w-4" /> : <IconLayoutSidebarRightCollapse className="h-4 w-4 rotate-180" />}
+            <span className="text-xs uppercase tracking-[0.08em] text-muted">
+              Tasks
+            </span>
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="text-tertiary hover:text-muted transition-colors"
+            >
+              {isMobile ? (
+                <IconX className="h-4 w-4" />
+              ) : sidebarOpen ? (
+                <IconLayoutSidebarRightCollapse className="h-4 w-4" />
+              ) : (
+                <IconLayoutSidebarRightCollapse className="h-4 w-4 rotate-180" />
+              )}
             </button>
           </div>
 
@@ -403,12 +485,14 @@ export default function DailyPlannerPage() {
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") addTask()
+                  if (e.key === 'Enter') addTask()
                 }}
                 placeholder="Add task…"
                 className="w-full bg-transparent text-sm text-fg outline-none placeholder:text-tertiary"
               />
-              <div className="mt-1 font-mono text-[10px] text-tertiary">↵ to add · drag to plan</div>
+              <div className="mt-1 font-mono text-[10px] text-tertiary">
+                ↵ to add · drag to plan
+              </div>
             </div>
 
             {inputText && (
@@ -417,7 +501,9 @@ export default function DailyPlannerPage() {
                   <button
                     key={c.name}
                     className={`h-5 w-5 rounded-full border-2 transition-all ${
-                      selectedColor === c.value ? "scale-110 border-fg" : "border-transparent"
+                      selectedColor === c.value
+                        ? 'scale-110 border-fg'
+                        : 'border-transparent'
                     }`}
                     style={{ background: c.value }}
                     onClick={() => setSelectedColor(c.value)}
@@ -427,11 +513,16 @@ export default function DailyPlannerPage() {
             )}
 
             <div className="flex flex-col gap-2">
+              {scheduleError && (
+                <p role="alert" className="text-xs text-danger">
+                  {scheduleError}
+                </p>
+              )}
               {unscheduledTasks.map((task) => (
                 <div
                   key={task.id}
                   draggable
-                  onDragStart={(e) => e.dataTransfer.setData("taskId", task.id)}
+                  onDragStart={(e) => e.dataTransfer.setData('taskId', task.id)}
                   className="flex cursor-move items-center gap-2.5 rounded-md border border-border bg-raised px-3 py-2.5 text-sm"
                 >
                   <IconGripVertical className="h-3.5 w-3.5 shrink-0 text-tertiary" />
@@ -440,18 +531,49 @@ export default function DailyPlannerPage() {
                     style={{ background: task.color }}
                   />
                   <span
-                    className={`flex-1 truncate ${task.completed ? "text-tertiary line-through" : ""}`}
+                    className={`flex-1 truncate ${task.completed ? 'text-tertiary line-through' : ''}`}
                   >
                     {task.title}
                   </span>
-                  <button onClick={() => toggleComplete(task.id)} className="text-tertiary hover:text-teal transition-colors shrink-0">
+                  <label className="sr-only" htmlFor={`schedule-${task.id}`}>
+                    Schedule {task.title}
+                  </label>
+                  <select
+                    id={`schedule-${task.id}`}
+                    value=""
+                    aria-label={`Schedule ${task.title}`}
+                    className="w-14 rounded border border-border bg-surface text-[10px]"
+                    onChange={(e) => {
+                      if (e.target.value)
+                        moveTaskToGrid(task.id, Number(e.target.value))
+                    }}
+                  >
+                    <option value="">Time</option>
+                    {Array.from(
+                      { length: (24 - startHour) * 2 },
+                      (_, i) => i + startHour * 2
+                    ).map((slot) => (
+                      <option key={slot} value={slot}>
+                        {String(Math.floor(slot / 2)).padStart(2, '0')}:
+                        {slot % 2 ? '30' : '00'}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    aria-label={`Mark ${task.title} ${task.completed ? 'incomplete' : 'complete'}`}
+                    onClick={() => toggleComplete(task.id)}
+                    className="text-tertiary hover:text-teal transition-colors shrink-0"
+                  >
                     <div
                       className={`h-4 w-4 rounded border ${
-                        task.completed ? "border-teal bg-teal" : "border-border"
+                        task.completed ? 'border-teal bg-teal' : 'border-border'
                       }`}
                     />
                   </button>
-                  <button onClick={() => deleteTask(task.id)} className="text-tertiary hover:text-danger transition-colors shrink-0">
+                  <button
+                    onClick={() => deleteTask(task.id)}
+                    className="text-tertiary hover:text-danger transition-colors shrink-0"
+                  >
                     <IconTrash className="h-3.5 w-3.5" />
                   </button>
                 </div>
@@ -478,7 +600,9 @@ export default function DailyPlannerPage() {
               />
             </div>
             {streak > 0 && (
-              <div className="mt-3 text-[11px] text-amber">🔥 Keep your streak alive</div>
+              <div className="mt-3 text-[11px] text-amber">
+                🔥 Keep your streak alive
+              </div>
             )}
           </div>
         </aside>
@@ -496,10 +620,16 @@ export default function DailyPlannerPage() {
       {/* Bottom Bar */}
       <footer className="flex h-11 shrink-0 items-center justify-between border-t border-border bg-bg px-3 md:px-4 text-sm">
         <div className="flex items-center gap-2 md:gap-4 text-muted">
-          <button onClick={() => changeDate("prev")} className="text-tertiary hover:text-muted transition-colors">
+          <button
+            onClick={() => changeDate('prev')}
+            className="text-tertiary hover:text-muted transition-colors"
+          >
             <IconChevronLeft className="h-4 w-4" />
           </button>
-          <button onClick={() => changeDate("prev")} className="hover:text-fg transition-colors text-xs md:text-sm">
+          <button
+            onClick={() => changeDate('prev')}
+            className="hover:text-fg transition-colors text-xs md:text-sm"
+          >
             Yesterday
           </button>
           <button
@@ -507,14 +637,20 @@ export default function DailyPlannerPage() {
               setDateStr(todayStr)
               scrollToNow()
             }}
-            className={`pb-0.5 text-xs md:text-sm ${isToday ? "border-b-2 border-teal text-fg" : ""}`}
+            className={`pb-0.5 text-xs md:text-sm ${isToday ? 'border-b-2 border-teal text-fg' : ''}`}
           >
             Today
           </button>
-          <button onClick={() => changeDate("next")} className="hover:text-fg transition-colors text-xs md:text-sm">
+          <button
+            onClick={() => changeDate('next')}
+            className="hover:text-fg transition-colors text-xs md:text-sm"
+          >
             Tomorrow
           </button>
-          <button onClick={() => changeDate("next")} className="text-tertiary hover:text-muted transition-colors">
+          <button
+            onClick={() => changeDate('next')}
+            className="text-tertiary hover:text-muted transition-colors"
+          >
             <IconChevronRight className="h-4 w-4" />
           </button>
         </div>
@@ -534,44 +670,82 @@ export default function DailyPlannerPage() {
         </div>
 
         <div className="flex items-center gap-3 md:gap-4 text-tertiary">
-          <IconShare className="h-4 w-4 hover:text-muted cursor-pointer transition-colors" onClick={() => {
-            const summary = tasks
-              .filter((t) => t.startSlot != null)
-              .sort((a, b) => (a.startSlot || 0) - (b.startSlot || 0))
-              .map((t) => `• ${t.title}`)
-              .join("\n")
-            const text = `My plan for ${formatDate(selectedDate)}:\n${summary || "No scheduled tasks"}`
-            navigator.clipboard.writeText(text).then(() => {
-              const el = document.createElement("div")
-              el.className = "fixed bottom-20 left-1/2 -translate-x-1/2 z-50 rounded-md bg-teal px-4 py-2 text-sm text-bg shadow-lg"
-              el.textContent = "Copied to clipboard!"
-              document.body.appendChild(el)
-              setTimeout(() => el.remove(), 2000)
-            })
-          }} />
-          <IconDownload className="h-4 w-4 hover:text-muted cursor-pointer transition-colors" />
-          <IconChartBar className="h-4 w-4 text-amber" />
+          <button
+            aria-label="Copy day summary"
+            onClick={() => {
+              const summary = tasks
+                .filter((t) => t.startSlot != null)
+                .sort((a, b) => (a.startSlot || 0) - (b.startSlot || 0))
+                .map((t) => `• ${t.title}`)
+                .join('\n')
+              const text = `My plan for ${formatDate(selectedDate)}:\n${summary || 'No scheduled tasks'}`
+              navigator.clipboard
+                .writeText(text)
+                .then(() => {
+                  const el = document.createElement('div')
+                  el.className =
+                    'fixed bottom-20 left-1/2 -translate-x-1/2 z-50 rounded-md bg-teal px-4 py-2 text-sm text-bg shadow-lg'
+                  el.textContent = 'Copied to clipboard!'
+                  document.body.appendChild(el)
+                  setTimeout(() => el.remove(), 2000)
+                })
+                .catch(() => {
+                  setScheduleError(
+                    'Clipboard unavailable. Export your plan as CSV instead.'
+                  )
+                })
+            }}
+          >
+            <IconShare className="h-4 w-4" />
+          </button>
+          <button
+            aria-label="Download day as CSV"
+            onClick={() =>
+              downloadFile(
+                `plan-${dateStr}.csv`,
+                [
+                  ['Task', 'Start', 'Minutes', 'Completed'],
+                  ...tasks.map((t) => [
+                    t.title,
+                    t.startSlot == null
+                      ? ''
+                      : `${String(Math.floor(t.startSlot / 2)).padStart(2, '0')}:${t.startSlot % 2 ? '30' : '00'}`,
+                    t.startSlot == null ? '' : (t.duration || 2) * 30,
+                    t.completed,
+                  ]),
+                ]
+                  .map((row) => row.map(csvCell).join(','))
+                  .join('\n'),
+                'text/csv;charset=utf-8'
+              )
+            }
+          >
+            <IconDownload className="h-4 w-4" />
+          </button>
+          <Link href="/tools/weekly-review" aria-label="Review your week">
+            <IconChartBar className="h-4 w-4 text-amber" />
+          </Link>
         </div>
       </footer>
 
       {/* Mobile Tab Bar */}
       {isMobile && (
         <div className="grid h-14 shrink-0 grid-cols-4 border-t border-border bg-bg pb-[env(safe-area-inset-bottom)]">
-          {([
-            { key: "tasks" as const, icon: "📋", label: "Tasks" },
-            { key: "grid" as const, icon: "🗓", label: "Planner" },
-            { key: "today" as const, icon: "●", label: "Today" },
-            { key: "streak" as const, icon: "🔥", label: "Streak" },
-          ]).map((tab) => (
+          {[
+            { key: 'tasks' as const, icon: '📋', label: 'Tasks' },
+            { key: 'grid' as const, icon: '🗓', label: 'Planner' },
+            { key: 'today' as const, icon: '●', label: 'Today' },
+            { key: 'streak' as const, icon: '🔥', label: 'Streak' },
+          ].map((tab) => (
             <button
               key={tab.key}
               onClick={() => {
                 setMobileTab(tab.key)
-                if (tab.key === "tasks") setSidebarOpen(true)
-                if (tab.key === "today") scrollToNow()
+                if (tab.key === 'tasks') setSidebarOpen(true)
+                if (tab.key === 'today') scrollToNow()
               }}
               className={`flex flex-col items-center justify-center gap-1 text-[10px] ${
-                mobileTab === tab.key ? "text-teal" : "text-tertiary"
+                mobileTab === tab.key ? 'text-teal' : 'text-tertiary'
               }`}
             >
               <span className="text-lg">{tab.icon}</span>
@@ -583,7 +757,10 @@ export default function DailyPlannerPage() {
 
       {/* Overlay when sidebar is open on mobile */}
       {isMobile && sidebarOpen && (
-        <div className="fixed inset-0 z-20 bg-black/40" onClick={() => setSidebarOpen(false)} />
+        <div
+          className="fixed inset-0 z-20 bg-black/40"
+          onClick={() => setSidebarOpen(false)}
+        />
       )}
 
       {/* Delete Confirmation */}
@@ -596,9 +773,12 @@ export default function DailyPlannerPage() {
             className="w-full max-w-xs rounded-lg border border-border bg-surface p-5 shadow-lg"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="mb-2 font-display text-base font-semibold text-fg">Delete task?</h3>
+            <h3 className="mb-2 font-display text-base font-semibold text-fg">
+              Delete task?
+            </h3>
             <p className="mb-4 text-sm text-muted">
-              This will remove the task from all time slots. This cannot be undone.
+              This will remove the task from all time slots. This cannot be
+              undone.
             </p>
             <div className="flex gap-2">
               <button
@@ -631,13 +811,15 @@ export default function DailyPlannerPage() {
             className="w-full max-w-sm rounded-lg border border-border bg-surface p-5 shadow-lg"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="mb-4 font-display text-base font-semibold text-fg">Edit task</h3>
+            <h3 className="mb-4 font-display text-base font-semibold text-fg">
+              Edit task
+            </h3>
             <input
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value)}
               className="mb-4 w-full rounded-md border border-border bg-raised px-3 py-2 text-sm text-fg outline-none"
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
+                if (e.key === 'Enter') {
                   commitTasks(
                     tasks.map((t) =>
                       t.id === editingTask ? { ...t, title: editTitle } : t
@@ -647,6 +829,30 @@ export default function DailyPlannerPage() {
                 }
               }}
             />
+            <div className="mb-4 flex flex-wrap gap-3 text-xs text-teal">
+              <button
+                onClick={() => {
+                  toggleComplete(editingTask)
+                  setEditingTask(null)
+                }}
+              >
+                Toggle completed
+              </button>
+              <button
+                onClick={() => {
+                  commitTasks(
+                    tasks.map((t) =>
+                      t.id === editingTask
+                        ? { ...t, startSlot: undefined, duration: undefined }
+                        : t
+                    )
+                  )
+                  setEditingTask(null)
+                }}
+              >
+                Move to inbox
+              </button>
+            </div>
             <div className="flex gap-2">
               <button
                 onClick={() => {
@@ -687,26 +893,35 @@ export default function DailyPlannerPage() {
         title="Planner Settings"
         settings={[
           {
-            key: "startHour",
-            label: "Day starts at",
-            type: "number",
-            value: 8,
+            key: 'startHour',
+            label: 'Day starts at',
+            type: 'number',
+            value: startHour,
             min: 0,
             max: 12,
-            suffix: "AM",
+            suffix: 'AM',
           },
           {
-            key: "timeFormat",
-            label: "Time format",
-            type: "select",
-            value: "12h",
+            key: 'timeFormat',
+            label: 'Time format',
+            type: 'select',
+            value: timeFormat,
             options: [
-              { label: "12-hour", value: "12h" },
-              { label: "24-hour", value: "24h" },
+              { label: '12-hour', value: '12h' },
+              { label: '24-hour', value: '24h' },
             ],
           },
         ]}
-        onChange={() => {}}
+        onChange={(key, value) => {
+          if (key === 'startHour') {
+            setStartHour(Number(value))
+            localStorage.setItem('bns_planner_startHour', String(value))
+          }
+          if (key === 'timeFormat') {
+            setTimeFormat(String(value))
+            localStorage.setItem('bns_planner_timeFormat', JSON.stringify(String(value)))
+          }
+        }}
       />
 
       <UserGuideModal

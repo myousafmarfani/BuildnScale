@@ -61,12 +61,13 @@ export function SettingsDrawer({ open, onClose, title, settings, onChange, onRes
       <div className="absolute inset-0 bg-black/40" />
       <div
         ref={drawerRef}
+        role="dialog" aria-modal="true" aria-label={title}
         className="absolute right-0 top-0 h-full w-full max-w-sm border-l border-border bg-bg shadow-xl"
         style={{ animation: "slide-in-right 0.2s ease-out" }}
       >
         <div className="flex h-14 items-center justify-between border-b border-border px-5">
           <span className="font-display text-sm font-semibold text-fg">{title}</span>
-          <button onClick={onClose} className="text-muted hover:text-fg bg-transparent border-none cursor-pointer">
+          <button aria-label="Close settings" onClick={onClose} className="text-muted hover:text-fg bg-transparent border-none cursor-pointer">
             <IconX className="h-5 w-5" />
           </button>
         </div>
@@ -91,9 +92,15 @@ export function SettingsDrawer({ open, onClose, title, settings, onChange, onRes
                 ) : (
                   <div className="flex items-center gap-2">
                     <input
-                      type="number"
+                      type={setting.type === "text" ? "text" : "number"}
+                      aria-label={setting.label}
                       value={setting.value}
-                      onChange={(e) => onChange(setting.key, Number(e.target.value))}
+                      onChange={(e) => {
+                        if (setting.type === "text") { onChange(setting.key, e.target.value); return }
+                        const number = Number(e.target.value)
+                        if (e.target.value === "" || !Number.isFinite(number)) return
+                        onChange(setting.key, Math.min(setting.max ?? Infinity, Math.max(setting.min ?? -Infinity, number)))
+                      }}
                       min={setting.min}
                       max={setting.max}
                       step={setting.step ?? 1}

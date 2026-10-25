@@ -45,7 +45,7 @@ const config: Config = {
         pill: "9999px",
       },
       maxWidth: {
-        site: "1100px",
+        site: "1200px",
         narrow: "800px",
         article: "720px",
       },

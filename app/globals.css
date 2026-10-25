@@ -303,3 +303,89 @@
     animation: spin 0.6s linear infinite;
   }
 }
+
+/* Workspace design system. Existing tool data and routes stay compatible. */
+@layer base {
+  :root, [data-theme="dark"] {
+    --color-bg: #101713;
+    --color-surface: #171f1b;
+    --color-raised: #202a24;
+    --color-overlay: #29362e;
+    --color-fg: #eff4ee;
+    --color-muted: #a4b2a8;
+    --color-tertiary: #87998d;
+    --color-border: #2c3a31;
+    --color-border-strong: #506654;
+    --color-teal: #b9e88a;
+    --color-teal-hover: #d0f5ac;
+    --color-teal-subtle: #273c23;
+    --color-teal-muted: #779961;
+    --color-amber: #e8be7d;
+    --color-info: #9abfdc;
+    --habit-color-purple: #bdb0e4;
+  }
+  [data-theme="light"] {
+    --color-bg: #f6f8f2;
+    --color-surface: #ffffff;
+    --color-raised: #edf1e8;
+    --color-overlay: #e1e8db;
+    --color-fg: #1e3024;
+    --color-muted: #526254;
+    --color-tertiary: #627363;
+    --color-border: #dce3d6;
+    --color-border-strong: #a3b59b;
+    --color-teal: #41682d;
+    --color-teal-hover: #315121;
+    --color-teal-subtle: #e3eed7;
+    --color-teal-muted: #8ba978;
+    --color-amber: #8b5e1a;
+    --color-info: #386e99;
+    --habit-color-purple: #7760a7;
+  }
+  body { font-family: var(--font-dm-sans), system-ui, sans-serif; }
+  .font-display, .font-mono { font-family: var(--font-jetbrains-mono), monospace; }
+  button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: .5; }
+  ::selection { background: var(--color-teal-subtle); color: var(--color-fg); }
+}
+@layer components {
+  .site-nav { @apply sticky top-0 z-[100] border-b border-border bg-bg; }
+  .brand { @apply inline-flex shrink-0 items-center text-lg font-semibold tracking-tight; }
+  .brand-mark { @apply mr-2.5 flex h-8 w-8 items-center justify-center rounded-lg bg-teal text-bg; }
+  .btn-primary { @apply inline-flex items-center justify-center gap-2 rounded-lg border border-teal bg-teal px-5 py-3 text-sm font-semibold text-bg transition-opacity hover:opacity-90; }
+  .btn-secondary { @apply inline-flex items-center justify-center gap-2 rounded-lg border border-border-strong bg-surface px-5 py-3 text-sm font-medium text-fg transition-colors hover:bg-raised; }
+  .eyebrow { @apply flex items-center gap-2 font-mono text-[10px] font-medium tracking-[0.14em] text-teal; }
+  .hero-title { font-size: clamp(48px, 6.3vw, 78px); line-height: 1.03; letter-spacing: -.055em; font-weight: 600; }
+  .section-title { font-size: clamp(28px, 3.3vw, 40px); line-height: 1.15; letter-spacing: -.04em; font-weight: 600; }
+  .home-hero { @apply relative overflow-hidden py-16 lg:py-24; background-image: radial-gradient(ellipse at 85% 20%, var(--color-teal-subtle), transparent 55%); }
+  .hero-workspace { @apply relative overflow-hidden rounded-2xl border border-border-strong bg-surface shadow-2xl; transform: rotate(-1deg); }
+  .workspace-block { @apply flex-1 rounded-lg border-l-2 p-3; background: var(--tone-bg); border-color: var(--tone-fg); }
+  .tone-teal { --tone-bg: color-mix(in srgb, var(--color-teal) 10%, var(--color-surface)); --tone-fg: var(--color-teal); }
+  .tone-amber { --tone-bg: color-mix(in srgb, var(--color-amber) 10%, var(--color-surface)); --tone-fg: var(--color-amber); }
+  .tone-blue { --tone-bg: color-mix(in srgb, var(--color-info) 10%, var(--color-surface)); --tone-fg: var(--color-info); }
+  .tone-purple { --tone-bg: color-mix(in srgb, var(--habit-color-purple) 10%, var(--color-surface)); --tone-fg: var(--habit-color-purple); }
+  .focus-dot { @apply h-8 w-8 rounded-full border-[6px] border-teal; }
+  .catalog-search { @apply flex items-center gap-3 rounded-xl border border-border-strong bg-surface px-4 py-4 sm:px-5; }
+  .catalog-search:focus-within { border-color: var(--color-teal); }
+  .catalog-search input { @apply min-w-0 flex-1 bg-transparent text-sm text-fg outline-none placeholder:text-tertiary; }
+  .catalog-search input:focus-visible { outline: none; }
+  .catalog-search kbd { @apply rounded border border-border px-2 py-0.5 text-xs text-tertiary; }
+  .filter-chip { @apply inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-2 text-xs text-muted transition-colors hover:border-border-strong hover:text-fg; }
+  .filter-chip.is-active { @apply border-teal bg-teal-subtle text-teal; }
+  .tool-card { @apply relative flex flex-col rounded-xl border border-border bg-surface p-6 transition-colors hover:border-border-strong; }
+  .tool-icon { @apply inline-flex h-12 w-12 items-center justify-center rounded-xl; background: var(--tone-bg); color: var(--tone-fg); }
+  .favorite-button { @apply relative z-10 rounded-lg p-2 transition-colors hover:bg-raised; }
+  .workflow-card { @apply flex flex-col rounded-xl border border-border bg-bg p-6; }
+  .open-source-banner { @apply flex flex-col items-start justify-between gap-7 rounded-2xl border border-border-strong bg-teal-subtle p-7 md:flex-row md:items-center md:p-10; }
+  .tool-switcher { @apply absolute left-0 top-full z-[150] mt-2 w-[290px] max-w-[calc(100vw-32px)] rounded-xl border border-border-strong bg-surface p-2 shadow-2xl; }
+  .workspace-input { @apply w-full rounded-lg border border-border bg-bg px-3 py-2.5 text-sm outline-none focus:border-teal; }
+  .tool-intro { @apply mb-7 flex flex-wrap items-start justify-between gap-5; }
+}
+@media (max-width: 640px) {
+  .hero-workspace { transform: none; }
+  .h-screen { height: 100dvh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

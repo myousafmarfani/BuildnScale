@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { useState, useEffect, useCallback } from "react"
-import Link from "next/link"
+import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 import {
   IconActivity,
   IconPlus,
@@ -12,10 +12,10 @@ import {
   IconTrash,
   IconEdit,
   IconCheck,
-} from "@tabler/icons-react"
-import { useSession } from "next-auth/react"
-import { ToolBreadcrumbs } from "@/components/ui/ToolBreadcrumbs"
-import { ThemeToggle } from "@/components/ui/ThemeToggle"
+} from '@tabler/icons-react'
+import { useSession } from 'next-auth/react'
+import { ToolBreadcrumbs } from '@/components/ui/ToolBreadcrumbs'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 interface CheckResult {
   url: string
@@ -43,51 +43,85 @@ interface Site {
   totalChecks: number
 }
 
-export default function DowntimeDetectorPage() {
-  const { data: session, status } = useSession()
-  const isAuthenticated = status === "authenticated"
+const Sparkline = ({ days }: { days: { up: number; total: number }[] }) => {
+  const maxVal = Math.max(...days.map((d) => d.total), 1)
+  return (
+    <div className="flex items-end gap-[2px] h-8">
+      {days.slice(-30).map((d, i) => {
+        const ratio = d.total > 0 ? d.up / d.total : 0
+        const height = Math.max(2, (d.total / maxVal) * 32)
+        return (
+          <div
+            key={i}
+            className="w-[3px] rounded-sm"
+            style={{
+              height: `${height}px`,
+              background:
+                ratio >= 0.99
+                  ? 'var(--color-teal)'
+                  : ratio >= 0.8
+                    ? 'var(--color-amber)'
+                    : '#E24B4A',
+              opacity: d.total > 0 ? 1 : 0.25,
+            }}
+          />
+        )
+      })}
+    </div>
+  )
+}
 
-  const [url, setUrl] = useState("")
+export default function DowntimeDetectorPage() {
+  const { status } = useSession()
+  const isAuthenticated = status === 'authenticated'
+
+  const [url, setUrl] = useState('')
   const [checking, setChecking] = useState(false)
   const [result, setResult] = useState<CheckResult | null>(null)
-  const [error, setError] = useState("")
+  const [error, setError] = useState('')
 
   const [sites, setSites] = useState<Site[]>([])
   const [loadingSites, setLoadingSites] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)
-  const [addUrl, setAddUrl] = useState("")
-  const [addName, setAddName] = useState("")
+  const [addUrl, setAddUrl] = useState('')
+  const [addName, setAddName] = useState('')
   const [adding, setAdding] = useState(false)
 
   const [checkingSiteId, setCheckingSiteId] = useState<string | null>(null)
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
   const [editingSiteId, setEditingSiteId] = useState<string | null>(null)
-  const [editName, setEditName] = useState("")
+  const [editName, setEditName] = useState('')
 
-  const [history, setHistory] = useState<{ uptimePercent: number; days: { date: string; up: number; down: number }[] } | null>(null)
+  const [history, setHistory] = useState<{
+    uptimePercent: number
+    days: { date: string; up: number; down: number }[]
+  } | null>(null)
 
   const doCheck = useCallback(async (targetUrl: string) => {
     setChecking(true)
-    setError("")
+    setError('')
     setResult(null)
+    setHistory(null)
     try {
-      const res = await fetch("/api/downtime/check", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/downtime/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: targetUrl }),
       })
       const data = await res.json()
       if (!res.ok) {
-        setError(data.error || "Check failed")
+        setError(data.error || 'Check failed')
         return
       }
       setResult(data)
-      const historyRes = await fetch(`/api/downtime/history?url=${encodeURIComponent(data.url)}`)
+      const historyRes = await fetch(
+        `/api/downtime/history?url=${encodeURIComponent(data.url)}`
+      )
       if (historyRes.ok) {
         setHistory(await historyRes.json())
       }
     } catch {
-      setError("Network error. Please try again.")
+      setError('Network error. Please try again.')
     } finally {
       setChecking(false)
     }
@@ -95,9 +129,11 @@ export default function DowntimeDetectorPage() {
 
   const fetchSites = useCallback(async () => {
     try {
-      const res = await fetch("/api/downtime/sites")
+      const res = await fetch('/api/downtime/sites')
       if (res.ok) {
         setSites(await res.json())
+      } else {
+        setError('Could not load monitors. Please try again.')
       }
     } catch {
       // ignore
@@ -119,26 +155,29 @@ export default function DowntimeDetectorPage() {
   const addSite = async () => {
     if (!addUrl.trim()) return
     setAdding(true)
-    setError("")
+    setError('')
     try {
-      const res = await fetch("/api/downtime/sites", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: addUrl.trim(), display_name: addName.trim() || null }),
+      const res = await fetch('/api/downtime/sites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: addUrl.trim(),
+          display_name: addName.trim() || null,
+        }),
       })
       const data = await res.json()
       if (res.ok) {
         setShowAddModal(false)
-        setAddUrl("")
-        setAddName("")
+        setAddUrl('')
+        setAddName('')
         await fetchSites()
         // Immediately check the newly added site
         checkSiteNow(data.id)
       } else {
-        setError(data.error || "Failed to add site")
+        setError(data.error || 'Failed to add site')
       }
     } catch {
-      setError("Failed to add site")
+      setError('Failed to add site')
     } finally {
       setAdding(false)
     }
@@ -147,7 +186,13 @@ export default function DowntimeDetectorPage() {
   const checkSiteNow = async (siteId: string) => {
     setCheckingSiteId(siteId)
     try {
-      await fetch(`/api/downtime/sites/${siteId}/check`, { method: "POST" })
+      const response = await fetch(`/api/downtime/sites/${siteId}/check`, {
+        method: 'POST',
+      })
+      if (!response.ok) {
+        setError('Could not check this monitor. Please try again.')
+        return
+      }
       await fetchSites()
     } catch {
       // ignore
@@ -158,7 +203,9 @@ export default function DowntimeDetectorPage() {
 
   const deleteSite = async (siteId: string) => {
     try {
-      const res = await fetch(`/api/downtime/sites/${siteId}`, { method: "DELETE" })
+      const res = await fetch(`/api/downtime/sites/${siteId}`, {
+        method: 'DELETE',
+      })
       if (res.ok) {
         setDeleteConfirmId(null)
         await fetchSites()
@@ -171,8 +218,8 @@ export default function DowntimeDetectorPage() {
   const updateDisplayName = async (siteId: string, name: string) => {
     try {
       const res = await fetch(`/api/downtime/sites/${siteId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ display_name: name }),
       })
       if (res.ok) {
@@ -186,45 +233,30 @@ export default function DowntimeDetectorPage() {
 
   const statusBadge = (isUp: boolean) => {
     if (isUp) {
-      return <span className="inline-flex items-center gap-1 rounded-full bg-green-500/20 px-2 py-0.5 text-[11px] font-medium text-green-400 border border-green-500/30">ONLINE</span>
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full bg-green-500/20 px-2 py-0.5 text-[11px] font-medium text-green-400 border border-green-500/30">
+          RESPONDING
+        </span>
+      )
     }
-    return <span className="inline-flex items-center gap-1 rounded-full bg-red-500/20 px-2 py-0.5 text-[11px] font-medium text-red-400 border border-red-500/30">DOWN</span>
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-red-500/20 px-2 py-0.5 text-[11px] font-medium text-red-400 border border-red-500/30">
+        CHECK FAILED
+      </span>
+    )
   }
 
   const formatTimeAgo = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime()
     const mins = Math.floor(diff / 60000)
-    if (mins < 1) return "just now"
+    if (mins < 1) return 'just now'
     if (mins < 60) return `${mins} min ago`
     const hours = Math.floor(mins / 60)
     if (hours < 24) return `${hours}h ago`
     return `${Math.floor(hours / 24)}d ago`
   }
 
-  const Sparkline = ({ days }: { days: { up: number; total: number }[] }) => {
-    const maxVal = Math.max(...days.map((d) => d.total), 1)
-    return (
-      <div className="flex items-end gap-[2px] h-8">
-        {days.slice(-30).map((d, i) => {
-          const ratio = d.total > 0 ? d.up / d.total : 0
-          const height = Math.max(2, (d.total / maxVal) * 32)
-          return (
-            <div
-              key={i}
-              className="w-[3px] rounded-sm"
-              style={{
-                height: `${height}px`,
-                background: ratio >= 0.99 ? "var(--color-teal)" : ratio >= 0.8 ? "var(--color-amber)" : "#E24B4A",
-                opacity: ratio,
-              }}
-            />
-          )
-        })}
-      </div>
-    )
-  }
-
-  if (status === "loading") {
+  if (status === 'loading') {
     return (
       <div className="flex min-h-screen items-center justify-center bg-bg">
         <div className="spinner" />
@@ -236,7 +268,10 @@ export default function DowntimeDetectorPage() {
     <div className="min-h-screen bg-bg">
       <div className="flex h-[52px] shrink-0 items-center justify-between border-b border-border bg-bg px-3 md:px-4">
         <div className="flex items-center gap-2 md:gap-4 min-w-0">
-          <Link href="/" className="font-display text-sm font-semibold text-fg shrink-0">
+          <Link
+            href="/"
+            className="font-display text-sm font-semibold text-fg shrink-0"
+          >
             build<span className="text-teal">n</span>scale
           </Link>
           <div className="h-4 w-px bg-border shrink-0" />
@@ -251,9 +286,13 @@ export default function DowntimeDetectorPage() {
         <div className="mb-8 text-center">
           <div className="mb-3 flex items-center justify-center gap-2">
             <IconActivity className="h-6 w-6 text-teal" />
-            <h1 className="font-display text-3xl font-bold text-fg">Downtime Detector</h1>
+            <h1 className="font-display text-3xl font-bold text-fg">
+              Downtime Detector
+            </h1>
           </div>
-          <p className="text-sm text-muted">Check if any website is up. Monitor your own domains 24/7.</p>
+          <p className="text-sm text-muted">
+            Check if any website is up. Monitor your own domains 24/7.
+          </p>
         </div>
 
         {/* Guest Check */}
@@ -264,7 +303,9 @@ export default function DowntimeDetectorPage() {
                 type="text"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter" && url.trim() && !checking) doCheck(url) }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && url.trim() && !checking) doCheck(url)
+                }}
                 placeholder="https://example.com"
                 className="flex-1 rounded-lg border border-border bg-bg px-4 py-2.5 text-sm text-fg outline-none placeholder:text-tertiary focus:border-teal/50 font-mono"
               />
@@ -273,7 +314,7 @@ export default function DowntimeDetectorPage() {
                 disabled={!url.trim() || checking}
                 className="rounded-lg bg-teal px-5 py-2.5 text-sm font-medium text-bg transition-all hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {checking ? "Checking..." : "Check Now"}
+                {checking ? 'Checking...' : 'Check Now'}
               </button>
             </div>
           </div>
@@ -289,7 +330,9 @@ export default function DowntimeDetectorPage() {
           <div className="mb-8 rounded-xl border border-border bg-surface p-6">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="font-mono text-sm text-fg">{result.url.replace(/^https?:\/\//, "")}</span>
+                <span className="font-mono text-sm text-fg">
+                  {result.url.replace(/^https?:\/\//, '')}
+                </span>
                 {statusBadge(result.is_up)}
               </div>
               <span className="font-mono text-xs text-tertiary">
@@ -300,24 +343,41 @@ export default function DowntimeDetectorPage() {
             <div className="mb-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
               <div className="rounded-lg bg-bg p-3">
                 <div className="text-[11px] text-tertiary mb-1">Response</div>
-                <div className="font-mono text-sm text-fg">{result.response_ms}ms</div>
+                <div className="font-mono text-sm text-fg">
+                  {result.response_ms}ms
+                </div>
               </div>
               <div className="rounded-lg bg-bg p-3">
-                <div className="text-[11px] text-tertiary mb-1">HTTP Status</div>
-                <div className="font-mono text-sm text-fg">{result.status_code ?? "N/A"}</div>
+                <div className="text-[11px] text-tertiary mb-1">
+                  HTTP Status
+                </div>
+                <div className="font-mono text-sm text-fg">
+                  {result.status_code ?? 'N/A'}
+                </div>
               </div>
               <div className="rounded-lg bg-bg p-3">
-                <div className="text-[11px] text-tertiary mb-1">SSL</div>
-                <div className="font-mono text-sm text-fg">{result.is_up ? "Valid" : "N/A"}</div>
+                <div className="text-[11px] text-tertiary mb-1">
+                  Check location
+                </div>
+                <div className="font-mono text-sm text-fg">
+                  {result.region || 'Server'}
+                </div>
               </div>
             </div>
 
             {history && history.days.length > 0 && (
               <div className="border-t border-border pt-4">
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-[11px] text-tertiary">30-day uptime: {history.uptimePercent}%</span>
+                  <span className="text-[11px] text-tertiary">
+                    30-day uptime: {history.uptimePercent}%
+                  </span>
                 </div>
-                <Sparkline days={history.days.map(d => ({ up: d.up, total: d.up + d.down }))} />
+                <Sparkline
+                  days={history.days.map((d) => ({
+                    up: d.up,
+                    total: d.up + d.down,
+                  }))}
+                />
               </div>
             )}
 
@@ -327,7 +387,8 @@ export default function DowntimeDetectorPage() {
                   href="/sign-in"
                   className="inline-flex items-center gap-2 text-sm text-teal hover:underline"
                 >
-                  Sign in to monitor this site 24/7 <IconArrowRight className="h-3.5 w-3.5" />
+                  Sign in to monitor this site 24/7{' '}
+                  <IconArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
             )}
@@ -338,7 +399,9 @@ export default function DowntimeDetectorPage() {
         {isAuthenticated && (
           <div>
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-display text-lg font-semibold text-fg">My Monitored Sites</h2>
+              <h2 className="font-display text-lg font-semibold text-fg">
+                My Monitored Sites
+              </h2>
               <button
                 onClick={() => setShowAddModal(true)}
                 className="flex items-center gap-1.5 rounded-lg bg-teal px-3.5 py-2 text-xs font-medium text-bg transition-all hover:brightness-110"
@@ -354,7 +417,10 @@ export default function DowntimeDetectorPage() {
             ) : sites.length === 0 ? (
               <div className="rounded-xl border border-dashed border-border bg-surface p-12 text-center">
                 <IconActivity className="mx-auto mb-3 h-8 w-8 text-tertiary" />
-                <p className="text-sm text-muted">No sites monitored yet. Add your first site to start tracking uptime.</p>
+                <p className="text-sm text-muted">
+                  No sites monitored yet. Add your first site to start tracking
+                  uptime.
+                </p>
               </div>
             ) : (
               <div className="grid gap-4">
@@ -374,12 +440,15 @@ export default function DowntimeDetectorPage() {
                               className="rounded border border-border bg-bg px-2 py-1 text-sm text-fg outline-none w-40"
                               autoFocus
                               onKeyDown={(e) => {
-                                if (e.key === "Enter") updateDisplayName(site.id, editName)
-                                if (e.key === "Escape") setEditingSiteId(null)
+                                if (e.key === 'Enter')
+                                  updateDisplayName(site.id, editName)
+                                if (e.key === 'Escape') setEditingSiteId(null)
                               }}
                             />
                             <button
-                              onClick={() => updateDisplayName(site.id, editName)}
+                              onClick={() =>
+                                updateDisplayName(site.id, editName)
+                              }
                               className="text-teal hover:text-green-400"
                             >
                               <IconCheck className="h-4 w-4" />
@@ -387,13 +456,17 @@ export default function DowntimeDetectorPage() {
                           </div>
                         ) : (
                           <span className="font-mono text-sm font-medium text-fg truncate">
-                            {site.displayName || site.url.replace(/^https?:\/\//, "")}
+                            {site.displayName ||
+                              site.url.replace(/^https?:\/\//, '')}
                           </span>
                         )}
-                        {site.lastCheck
-                          ? statusBadge(site.lastCheck.isUp)
-                          : <span className="text-[11px] text-tertiary">Pending</span>
-                        }
+                        {site.lastCheck ? (
+                          statusBadge(site.lastCheck.isUp)
+                        ) : (
+                          <span className="text-[11px] text-tertiary">
+                            Pending
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-center gap-1 shrink-0">
                         <button
@@ -402,10 +475,18 @@ export default function DowntimeDetectorPage() {
                           className="rounded-md p-1.5 text-tertiary hover:text-fg hover:bg-raised transition-colors disabled:opacity-50"
                           title="Check now"
                         >
-                          <IconRefresh className={`h-4 w-4 ${checkingSiteId === site.id ? "animate-spin" : ""}`} />
+                          <IconRefresh
+                            className={`h-4 w-4 ${checkingSiteId === site.id ? 'animate-spin' : ''}`}
+                          />
                         </button>
                         <button
-                          onClick={() => { setEditingSiteId(site.id); setEditName(site.displayName || site.url.replace(/^https?:\/\//, "")) }}
+                          onClick={() => {
+                            setEditingSiteId(site.id)
+                            setEditName(
+                              site.displayName ||
+                                site.url.replace(/^https?:\/\//, '')
+                            )
+                          }}
                           className="rounded-md p-1.5 text-tertiary hover:text-fg hover:bg-raised transition-colors"
                           title="Edit name"
                         >
@@ -428,16 +509,25 @@ export default function DowntimeDetectorPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-4 text-[11px] text-tertiary">
-                      <span className="font-mono text-[10px] text-tertiary truncate max-w-[200px]">{site.url}</span>
+                      <span className="font-mono text-[10px] text-tertiary truncate max-w-[200px]">
+                        {site.url}
+                      </span>
                       {site.uptimePercent !== null && (
-                        <span className="font-mono">{site.uptimePercent}% uptime</span>
+                        <span className="font-mono">
+                          {site.uptimePercent}% uptime
+                        </span>
                       )}
                       {site.lastCheck && (
-                        <span>Checked {formatTimeAgo(site.lastCheck.checkedAt)}</span>
+                        <span>
+                          Checked {formatTimeAgo(site.lastCheck.checkedAt)}
+                        </span>
                       )}
-                      {site.lastCheck?.responseMs !== null && site.lastCheck?.responseMs !== undefined && (
-                        <span className="font-mono">{site.lastCheck.responseMs}ms</span>
-                      )}
+                      {site.lastCheck?.responseMs !== null &&
+                        site.lastCheck?.responseMs !== undefined && (
+                          <span className="font-mono">
+                            {site.lastCheck.responseMs}ms
+                          </span>
+                        )}
                     </div>
                   </div>
                 ))}
@@ -458,8 +548,13 @@ export default function DowntimeDetectorPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-display text-base font-semibold text-fg">Add Site</h3>
-              <button onClick={() => setShowAddModal(false)} className="text-tertiary hover:text-fg">
+              <h3 className="font-display text-base font-semibold text-fg">
+                Add Site
+              </h3>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="text-tertiary hover:text-fg"
+              >
                 <IconX className="h-4 w-4" />
               </button>
             </div>
@@ -474,7 +569,9 @@ export default function DowntimeDetectorPage() {
               />
             </div>
             <div className="mb-4">
-              <label className="mb-1 block text-xs text-tertiary">Display Name (optional)</label>
+              <label className="mb-1 block text-xs text-tertiary">
+                Display Name (optional)
+              </label>
               <input
                 type="text"
                 value={addName}
@@ -488,7 +585,7 @@ export default function DowntimeDetectorPage() {
               disabled={!addUrl.trim() || adding}
               className="w-full rounded-lg bg-teal px-4 py-2.5 text-sm font-medium text-bg transition-all hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {adding ? "Checking site..." : "Add & Check Now"}
+              {adding ? 'Checking site...' : 'Add & Check Now'}
             </button>
           </div>
         </div>
@@ -504,8 +601,12 @@ export default function DowntimeDetectorPage() {
             className="w-full max-w-xs rounded-xl border border-border bg-surface p-6 shadow-lg"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="mb-2 font-display text-base font-semibold text-fg">Remove site?</h3>
-            <p className="mb-4 text-sm text-muted">All check history will be deleted. This cannot be undone.</p>
+            <h3 className="mb-2 font-display text-base font-semibold text-fg">
+              Remove site?
+            </h3>
+            <p className="mb-4 text-sm text-muted">
+              All check history will be deleted. This cannot be undone.
+            </p>
             <div className="flex gap-2">
               <button
                 onClick={() => deleteSite(deleteConfirmId)}

@@ -1,13 +1,18 @@
 import { getAllPosts, getPostBySlug } from '@/lib/posts'
 import { faqPageJsonLd } from '@/lib/json-ld'
+import { notFound } from 'next/navigation'
 import PostContent from './PostContent'
 
 export function generateStaticParams() {
   const posts = getAllPosts()
-  return posts.map(post => ({ slug: post.slug }))
+  return posts.map((post) => ({ slug: post.slug }))
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
   try {
     const { slug } = await params
     const post = getPostBySlug(slug)
@@ -39,69 +44,107 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
-function blogPostJsonLd(post: { title: string; excerpt: string; date: string; slug: string; category: string }) {
+function blogPostJsonLd(post: {
+  title: string
+  excerpt: string
+  date: string
+  slug: string
+  category: string
+}) {
   return {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
     headline: post.title,
     description: post.excerpt,
     datePublished: post.date,
     dateModified: post.date,
-    author: { "@type": "Person", name: "Muhammad Yousaf" },
+    author: { '@type': 'Person', name: 'Muhammad Yousaf' },
     publisher: {
-      "@type": "Organization",
-      name: "buildnscale.dev",
-      logo: { "@type": "ImageObject", url: "https://www.buildnscale.dev/og-image.png" },
+      '@type': 'Organization',
+      name: 'buildnscale.dev',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://www.buildnscale.dev/og-image.png',
+      },
     },
     url: `https://www.buildnscale.dev/blog/${post.slug}`,
-    mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.buildnscale.dev/blog/${post.slug}` },
-    image: "https://www.buildnscale.dev/og-image.png",
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://www.buildnscale.dev/blog/${post.slug}`,
+    },
+    image: 'https://www.buildnscale.dev/og-image.png',
     articleSection: post.category,
   }
 }
 
-export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function BlogPostPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const { slug } = await params
+  let post
   try {
-    const { slug } = await params
-    const post = getPostBySlug(slug)
-    const allPosts = getAllPosts()
-    const relatedPosts = allPosts.filter(p => p.slug !== post.slug && p.category === post.category).slice(0, 3)
-    return (
-      <>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostJsonLd(post)) }}
-        />
-        {post.faq.length > 0 && (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageJsonLd(post.faq)) }}
-          />
-        )}
+    post = getPostBySlug(slug)
+  } catch {
+    notFound()
+  }
+  const allPosts = getAllPosts()
+  const relatedPosts = allPosts
+    .filter((p) => p.slug !== post.slug && p.category === post.category)
+    .slice(0, 3)
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(blogPostJsonLd(post)),
+        }}
+      />
+      {post.faq.length > 0 && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "BreadcrumbList",
-              itemListElement: [
-                { "@type": "ListItem", position: 1, name: "Home", item: "https://www.buildnscale.dev" },
-                { "@type": "ListItem", position: 2, name: "Blog", item: "https://www.buildnscale.dev/blog" },
-                { "@type": "ListItem", position: 3, name: post.category, item: `https://www.buildnscale.dev/blog` },
-                { "@type": "ListItem", position: 4, name: post.title, item: `https://www.buildnscale.dev/blog/${post.slug}` },
-              ],
-            }),
+            __html: JSON.stringify(faqPageJsonLd(post.faq)),
           }}
         />
-        <PostContent post={post} relatedPosts={relatedPosts} />
-      </>
-    )
-  } catch {
-    return (
-      <div className="container-site py-20 text-center">
-        <h1 className="font-display text-3xl text-fg">Post not found</h1>
-        <p className="mt-4 text-muted">The page you&apos;re looking for doesn&apos;t exist.</p>
-      </div>
-    )
-  }
+      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: 'https://www.buildnscale.dev',
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Blog',
+                item: 'https://www.buildnscale.dev/blog',
+              },
+              {
+                '@type': 'ListItem',
+                position: 3,
+                name: post.category,
+                item: `https://www.buildnscale.dev/blog`,
+              },
+              {
+                '@type': 'ListItem',
+                position: 4,
+                name: post.title,
+                item: `https://www.buildnscale.dev/blog/${post.slug}`,
+              },
+            ],
+          }),
+        }}
+      />
+      <PostContent post={post} relatedPosts={relatedPosts} />
+    </>
+  )
 }
