@@ -111,9 +111,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const benchmarkPages = [
     '/leaderboard',
     '/leaderboard/coding',
+    '/leaderboard/agents',
     '/leaderboard/value',
     '/leaderboard/methodology',
     '/leaderboard/changelog',
+    '/leaderboard/archive',
     '/models',
     ...BENCHMARKS.map((b) => `/benchmarks/${b.slug}`),
   ].map((path) => ({
@@ -121,14 +123,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }))
-  const modelPages = snapshots.flatMap((snapshot) =>
-    snapshot.models.map((model) => ({
-      url: `${baseUrl}/models/${model.id}`,
-      lastModified: new Date(snapshot.retrievedAt),
-      changeFrequency: 'monthly' as const,
-      priority: 0.6,
-    }))
-  )
+  const modelPages = snapshots
+    .filter((snapshot) => snapshot.source === 'arena')
+    .flatMap((snapshot) =>
+      snapshot.models.map((model) => ({
+        url: `${baseUrl}/models/${model.id}`,
+        lastModified: new Date(snapshot.retrievedAt),
+        changeFrequency: 'monthly' as const,
+        priority: 0.6,
+      }))
+    )
   return [
     ...staticPages,
     ...toolPages,

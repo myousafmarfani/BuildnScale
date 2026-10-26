@@ -1,3 +1,4 @@
+import { fetchArena } from './arena.mjs'
 import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -28,10 +29,12 @@ async function githubContent(path: string, ref: string) {
   return Buffer.from(data.content, 'base64').toString('utf8')
 }
 export async function importBenchmarks(
-  source: 'evalplus' | 'artificial-analysis'
+  source: 'evalplus' | 'artificial-analysis' | 'arena'
 ) {
   let snapshot: Snapshot
-  if (source === 'evalplus') {
+  if (source === 'arena') {
+    snapshot = await fetchArena() as Snapshot
+  } else if (source === 'evalplus') {
     const commits = await json(
       'https://api.github.com/repos/evalplus/evalplus.github.io/commits?path=results.json&per_page=1'
     )
@@ -84,9 +87,24 @@ export async function importBenchmarks(
     const old = assertSnapshot(previous.payload) as Snapshot
     if (snapshot.models.length < old.models.length * 0.75)
       throw new Error('Coverage dropped more than 25%; manual review required')
+    if (source === 'arena') {
+      for (const metric of ['arena-text', 'arena-webdev', 'arena-agent'] as const) {
+        const oldRows = old.models.filter(m => m.scores[metric] != null)
+        const newRows = snapshot.models.filter(m => m.scores[metric] != null)
+        if (newRows.length < oldRows.length * 0.75) throw new Error('Arena board coverage dropped more than 25%')
+        const before = oldRows.map(m => m.evidence?.[metric]?.publishedAt || '').sort().at(-1)
+        if (before && newRows.some(m => (m.evidence?.[metric]?.publishedAt || '') < before)) throw new Error('Arena board date regressed')
+      }
+    }
     for (const model of snapshot.models) {
       const prior = old.models.find((m) => m.id === model.id)
-      if (!prior || snapshot.indexVersion !== old.indexVersion) continue
+      if (source === 'arena') {
+        for (const [metric, ev] of Object.entries(model.evidence || {})) {
+          const before = prior?.evidence?.[metric as keyof typeof prior.evidence]
+          if (before && ev.publishedAt < before.publishedAt) throw new Error('Arena publication regressed')
+        }
+      }
+      if (!prior || source === 'arena' || snapshot.indexVersion !== old.indexVersion) continue
       for (const [key, value] of Object.entries(model.scores)) {
         const before = prior.scores[key as keyof typeof prior.scores]
         if (value != null && before != null && Math.abs(value - before) > 10)
@@ -101,7 +119,7 @@ export async function importBenchmarks(
         sourceRevision: snapshot.sourceRevision,
       },
     },
-    update: {},
+    update: { retrievedAt: new Date() }, // Successful check; immutable payload/revision retained.
     create: {
       source,
       sourceRevision: snapshot.sourceRevision,

@@ -1,133 +1,30 @@
 import Link from 'next/link'
 import { benchmarkMetadata } from '@/lib/benchmarks/seo'
 import { BenchmarkShell, PageHeading } from '@/components/benchmarks/Shell'
-export const metadata = benchmarkMetadata(
-  'Benchmark methodology & data sources',
-  'How BuildnScale sources benchmark data, preserves model identities, calculates ranks, handles ties and missing measurements, and publishes corrections.',
-  '/leaderboard/methodology'
-)
+export const metadata = benchmarkMetadata('Benchmark methodology & data sources', 'Sources, ranking methods, uncertainty, freshness, and corrections for BuildnScale AI comparisons.', '/leaderboard/methodology')
 export default function Methodology() {
-  return (
-    <BenchmarkShell active="Methodology">
-      <PageHeading
-        title="Evidence before rankings."
-        description="What these comparisons measure, where the data comes from, and what we do not claim. Methodology version 1.0 · 26 October 2026."
-      />
-      <article className="benchmark-copy max-w-3xl">
-        <h2>1. Who evaluates the models?</h2>
-        <p>
-          BuildnScale currently republishes attributed, licensed results. The
-          initial coding source is the EvalPlus website repository, licensed
-          under Apache-2.0. We normalize the published JSON, preserve evaluated
-          labels, and link to an immutable upstream revision. We have not rerun
-          these evaluations. The initial source data was last updated on 26
-          December 2024; it is historical coverage, not a current frontier
-          ranking.
-        </p>
-        <p>
-          <a href="https://github.com/evalplus/evalplus.github.io">
-            EvalPlus source repository
-          </a>{' '}
-          ·{' '}
-          <a href="https://github.com/evalplus/evalplus">
-            Evaluation framework
-          </a>{' '}
-          · <a href="https://arxiv.org/abs/2305.01210">Research paper</a>
-        </p>
-        <h2>2. What is ranked?</h2>
-        <p>
-          Each leaderboard orders evaluated model labels by one metric within
-          one source snapshot. Higher is better for the metrics currently
-          supported. We do not combine scores across sources, datasets, or index
-          versions. Equal displayed scores receive competition ranks (1, 1, 3);
-          alphabetical order breaks display ties without implying superiority.
-          Filtering preserves ranks from the full selected snapshot.
-        </p>
-        <p>
-          HumanEval and HumanEval+ cover 164 Python tasks. EvalPlus uses a
-          sanitized 399-task MBPP subset for MBPP and MBPP+. Expanded tests can
-          detect failures missed by original tests. Scores are source-reported
-          pass@1 percentages, not human-preference ratings. The upstream
-          leaderboard describes greedy decoding; per-model settings, evaluation
-          dates, raw run counts, and confidence intervals are not included in
-          its summary JSON.
-        </p>
-        <h2>3. What does a score leave out?</h2>
-        <p>
-          Python code-generation scores do not measure complete application
-          development, deployment safety, tool selection, long-running agents,
-          or production reliability. Public static datasets may be present in
-          training data. Scores from different prompting modes may not be
-          directly comparable. A tiny score difference does not establish a
-          statistically significant difference.
-        </p>
-        <p>
-          Parameter counts and instruction labels come from the source. A
-          Hugging Face namespace identifies a repository publisher; it is not a
-          verified corporate identity or API hosting provider. The source field
-          named “open-data” does not establish model license or commercial-use
-          rights, so we do not convert it into an “open source” badge.
-        </p>
-        <h2>4. Missing data and model versions</h2>
-        <p>
-          Missing values remain unavailable and are excluded from ranking for
-          that metric. They never become zero. We keep exact evaluated labels;
-          where the source does not identify an API version, reasoning effort,
-          agent scaffold, or harness, we explicitly say so. We do not merge
-          models across sources using fuzzy name matching.
-        </p>
-        <h2>5. Pricing and performance</h2>
-        <p>
-          When permitted pricing data is connected, prices are USD per million
-          input/output tokens. The calculator estimates catalog token costs from
-          the user's workload assumptions; it excludes caching, retries, batch
-          discounts, tools, taxes, and separately billed reasoning. Speed
-          measurements depend on the source's measurement setup. We do not
-          create a universal “value” score by dividing unrelated benchmark
-          indices by token price.
-        </p>
-        <h2>6. Updates and provenance</h2>
-        <p>
-          Each publication records the source URL, revision, source-update date
-          when available, retrieval date, license or permission reference, and
-          attribution. Imports validate identifiers, numeric ranges, dates,
-          links, and metric names before publication. Historical snapshots are
-          retained. Import failures preserve the last successful snapshot; the
-          bundled EvalPlus snapshot is the fallback if storage is unavailable.
-          Data older than 30 days, or without a source-update date, is flagged.
-        </p>
-        <p>
-          Retrieval time is not evaluation time. Checking the same unchanged
-          source does not make old results new. A daily import job checks for
-          updates; it does not imply daily model evaluations.
-        </p>
-        <h2>7. External feeds and publication rights</h2>
-        <p>
-          Artificial Analysis integration is disabled by default. Publication
-          requires credentials and a recorded permission reference covering
-          public display. Any connected index must preserve its source version
-          and attribution. Arena rankings are not scraped or republished here.
-          Model weights, benchmark task text, and third-party logos are not
-          bundled.
-        </p>
-        <h2>8. Independence and corrections</h2>
-        <p>
-          There is no paid rank placement. Future sponsorships or affiliate
-          links must be disclosed and cannot change scores. Original BuildnScale
-          evaluations and community votes will be separately labeled if
-          introduced. They are not part of today's published dataset.
-        </p>
-        <p>
-          Report a correction with the model label, metric, source URL, and
-          evidence through{' '}
-          <a href="https://github.com/myousafmarfani/BuildnScale/issues/new">
-            GitHub issues
-          </a>
-          . We retain the original source snapshot and describe publication
-          changes in the{' '}
-          <Link href="/leaderboard/changelog">update history</Link>.
-        </p>
-      </article>
-    </BenchmarkShell>
-  )
+  return <BenchmarkShell active="Methodology">
+    <PageHeading title="Evidence before rankings." description="What these comparisons measure, where the data comes from, and what remains unknown. Methodology 2.0 · 27 October 2026." />
+    <article className="benchmark-copy max-w-3xl">
+      <h2>Current coverage</h2>
+      <p>BuildnScale imports Arena’s official open leaderboard dataset. The overview uses the overall Text board with style control; Coding uses the overall Web Development board; Agents uses the aggregate Agent board. Other categories and modalities are not included in this release. These boards can have different publication dates and model coverage. A newly released model may not yet have published results.</p>
+      <p><a href="https://huggingface.co/datasets/lmarena-ai/leaderboard-dataset">Arena dataset and schema</a> · <a href="https://arena.ai/blog/arena-leaderboard-dataset">Dataset announcement</a> · <a href="https://arena.ai/blog/leaderboard-changelog/">Arena methodology changes</a></p>
+      <h2>Measurements and ranks</h2>
+      <p>Text and web development use Arena preference ratings based on its Bradley–Terry methodology. Text uses the style-controlled subset, not the raw text subset. Agent Arena uses IPS scores, which can be negative. These scales are not percentages and are not combined into an overall BuildnScale score. Web development ratings do not measure general coding accuracy or SWE-bench issue resolution.</p>
+      <p>We preserve the source’s published rank, full-precision score, confidence bounds, counts, model label, and publication date. Display rounding does not change rank. Filtering preserves ranks from the complete selected board. Agent counts are observations and sessions; text/web development counts are votes. Confidence intervals describe uncertainty; small gaps and overlapping intervals do not establish superiority. Read <a href="https://arena.ai/blog/agent-arena-methodology/">Agent Arena’s methodology</a> for its interpretation and assumptions.</p>
+      <h2>Model identities and missing data</h2>
+      <p>Only exact model labels and organisations are joined across Arena boards. Reasoning variants remain distinct. When the same source label has multiple records in one board, we retain separate records marked with their source rank; their configurations are unknown and their internal URLs can change if those ambiguous ranks change. We do not guess equivalent provider API IDs, release dates, prices, context limits, or model licenses from a name. Missing measurements stay unavailable and unranked, never zero. A source model label is not proof of production availability.</p>
+      <h2>Freshness and failure handling</h2>
+      <p>Scheduled checks target every four hours. Scheduling delays, provider outages, and publication delays can occur. Each import reads all three latest overall boards from immutable Parquet files at one dataset revision and verifies the published license. Source publication dates are shown for each measurement; the summary uses the oldest included board date.</p>
+      <p>Last successful check and source publication are separate: checking unchanged data does not make the scores new. A notice appears after eight hours without a successful check, or when an included board is older than seven days. The page cache can take up to one hour to reflect a freshness warning. Validation failures retain the previous snapshot and fail the refresh job. The bundled, dated Arena snapshot is used when storage is unavailable; its original check time is preserved.</p>
+      <p>We validate identities, dates, counts, numeric values, confidence bounds, coverage drops, and publication regressions before saving. Imported revisions are retained in the update history. These checks detect malformed or suspicious updates; they cannot independently establish that the source’s evaluations are correct.</p>
+      <h2>Attribution and licensing</h2>
+      <p>Arena / lmarena-ai publishes this dataset under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. BuildnScale filters the dataset to selected overall boards and normalizes its format. We have not rerun the evaluations. Attribution, source revision links, and license links accompany the results. Arena does not endorse BuildnScale. We do not scrape Arena’s website or bundle model weights, task text, or logos.</p>
+      <h2>Historical results and optional sources</h2>
+      <p>The <Link href="/leaderboard/archive">EvalPlus archive</Link> preserves the historical Apache-2.0 coding dataset, initially updated on 26 December 2024. HumanEval/HumanEval+ cover 164 Python function tasks; MBPP/MBPP+ use EvalPlus’s sanitized 399-task subset. Pass@1 percentages are separate from Arena ratings. Non-Arena ranks use exact-score competition ranking (1, 1, 3). Artificial Analysis remains optional and disabled unless public-display rights are recorded. Its data is not required for the current Arena leaderboard.</p>
+      <h2>Pricing, independence, and corrections</h2>
+      <p>Arena’s dataset does not provide token prices or output speed. Those fields remain unavailable until a separately sourced, permitted feed is connected. There is no invented value score or paid rank placement. Validate candidates against your own application and agent workloads.</p>
+      <p>Report a correction with the model label, metric, revision, and evidence through <a href="https://github.com/myousafmarfani/BuildnScale/issues/new">GitHub issues</a>. Inspect published snapshots in the <Link href="/leaderboard/changelog">update history</Link>.</p>
+    </article>
+  </BenchmarkShell>
 }

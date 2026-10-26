@@ -1,3 +1,5 @@
+import { comparisonSnapshots } from '@/lib/benchmarks/selection.mjs'
+import { CurrentCoverage } from '@/components/benchmarks/CurrentCoverage'
 import { getSnapshots } from '@/lib/benchmarks/data'
 import { benchmarkMetadata } from '@/lib/benchmarks/seo'
 import {
@@ -21,7 +23,11 @@ export default async function Compare({
 }) {
   const snapshots = await getSnapshots(),
     query = await searchParams
-  const models = snapshots
+  const selectedIds = (
+    typeof query.models === 'string' ? query.models : ''
+  ).split(',')
+  const available = comparisonSnapshots(snapshots, selectedIds, query.source)
+  const models = available
     .flatMap((s) => s.models)
     .sort((a, b) => a.name.localeCompare(b.name))
   const ids = [
@@ -37,7 +43,11 @@ export default async function Compare({
         title="Compare the evidence."
         description="Choose up to three evaluated model labels. Scores stay within their own benchmark; missing evidence stays visible."
       />
-      <ComparePicker models={models} selected={ids} />
+      {models.length ? (
+        <ComparePicker models={models} selected={ids} />
+      ) : (
+        <CurrentCoverage />
+      )}
       {snapshots
         .filter((s) => s.models.some((m) => ids.includes(m.id)))
         .map((s) => (

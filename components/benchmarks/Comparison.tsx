@@ -1,3 +1,4 @@
+import { Measurement } from './Measurement'
 import Link from 'next/link'
 import type { Snapshot, Metric } from '@/lib/benchmarks/types'
 import { METRICS, formatScore, dateLabel } from '@/lib/benchmarks/catalog'
@@ -61,6 +62,7 @@ export function Comparison({
                 {entries.map(({ m }) => (
                   <td className="font-mono" key={m.id}>
                     {formatScore(m.scores[metric], metric)}
+                    <Measurement model={m} metric={metric} />
                   </td>
                 ))}
               </tr>
@@ -109,7 +111,7 @@ export function Comparison({
                   m.speed == null ? 'Not measured' : `${m.speed} tokens/s`
                 ),
               ],
-              ['Confidence intervals', entries.map(() => 'Not supplied')],
+              ['Confidence intervals', entries.map(({s}) => s.source === 'arena' ? 'Shown with each measurement' : 'Not supplied')],
             ].map(([label, values]) => (
               <tr key={label as string}>
                 <th scope="row">{label}</th>

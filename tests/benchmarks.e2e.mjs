@@ -49,6 +49,29 @@ try {
   page.on('pageerror', (e) => errors.push(e.message))
   await page.goto(base + '/leaderboard')
   await page.getByRole('heading', { name: 'Choose with evidence.' }).waitFor()
+  await page.locator('tbody tr').first().waitFor()
+  assert.equal(await page.locator('tbody tr').count(), 25)
+  assert.match(await page.locator('aside').innerText(), /Arena published dataset/)
+  assert.match(await page.locator('tbody').innerText(), /Source CI|Published 2026/)
+  assert.equal(await page.getByLabel('Benchmark', {exact:true}).inputValue(), 'arena-text')
+  await page.screenshot({path:output+'/arena-desktop.png',fullPage:true})
+  const currentProfile = await page.locator('tbody tr th a').first().getAttribute('href')
+  await page.goto(base + currentProfile)
+  assert.match(await page.locator('main').innerText(), /Source CI/)
+  await page.goto(base + '/leaderboard/agents')
+  assert.equal(await page.getByLabel('Benchmark', {exact:true}).inputValue(), 'arena-agent')
+  assert.match(await page.locator('tbody').innerText(), /95% CI|observations/)
+  await page.goto(base + '/leaderboard/coding')
+  assert.equal(await page.getByLabel('Benchmark', {exact:true}).inputValue(), 'arena-webdev')
+  const currentPicks = page.locator('tbody input[type=checkbox]')
+  await currentPicks.nth(0).check(); await currentPicks.nth(1).check()
+  await page.getByRole('link', {name:'Compare models →',exact:true}).click()
+  await page.getByRole('heading', {name:'Compare the evidence.'}).waitFor()
+  assert.match(await page.locator('table').innerText(), /Source CI/)
+  await page.goto(base + '/leaderboard/archive')
+  await page
+    .getByRole('heading', { name: 'Historical benchmark archive.' })
+    .waitFor()
   await page.screenshot({
     path: output + '/overview-desktop.png',
     fullPage: true,
@@ -64,7 +87,7 @@ try {
   )
   assert.notEqual(await page.locator('tbody tr').first().innerText(), first)
   await page.getByRole('button', { name: 'Reset filters' }).click()
-  await page.waitForURL(base + '/leaderboard')
+  await page.waitForURL(base + '/leaderboard/archive')
   const search = page.getByLabel('Search models')
   await search.fill('nonexistent-model-xyz')
   await page.getByText('No models match these filters.').first().waitFor()
@@ -98,7 +121,7 @@ try {
     path: output + '/comparison-desktop.png',
     fullPage: true,
   })
-  await page.goto(base + '/models')
+  await page.goto(base + '/models?source=evalplus')
   await page.locator('tbody tr th a').first().click()
   await page.getByRole('heading', { name: 'Evaluation record' }).waitFor()
   assert.match(
@@ -136,14 +159,18 @@ try {
   )
   const sitemap = await (await page.request.get(base + '/sitemap.xml')).text()
   assert.match(sitemap, /\/leaderboard\/coding/)
-  assert.match(sitemap, /\/models\//)
+  assert.match(sitemap, /\/models\/arena-/)
+  assert.doesNotMatch(sitemap, /\/models\/gpt-4o-/)
+  assert.match(sitemap, /\/leaderboard\/archive/)
   assert.doesNotMatch(sitemap, /\/compare\//)
   await page.goto(base + '/leaderboard/value')
   await page
     .getByRole('heading', { name: 'No verified price feed published yet.' })
     .waitFor()
   await page.getByLabel('Requests / month').fill('5000')
-  await page.goto(base + '/leaderboard/coding?q=deepseek&metric=humaneval%2B')
+  await page.goto(
+    base + '/leaderboard/coding?source=evalplus&q=deepseek&metric=humaneval%2B'
+  )
   assert.ok((await page.locator('tbody tr').count()) > 0)
   assert.match(await page.locator('tbody').innerText(), /deepseek/i)
   for (const theme of ['dark', 'light']) {
@@ -157,10 +184,8 @@ try {
     })
   }
   await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto(base + '/leaderboard/coding')
-  const mobileCards = page
-    .getByLabel('Mobile benchmark results')
-    .locator('article')
+  await page.goto(base + '/leaderboard/coding?source=evalplus')
+  const mobileCards = page.locator('[aria-label="Mobile benchmark results"]:visible article')
   assert.equal(await mobileCards.count(), 25)
   const scoreBox = await mobileCards.first().locator('strong').boundingBox()
   assert.ok(scoreBox && scoreBox.x >= 0 && scoreBox.x + scoreBox.width <= 390)

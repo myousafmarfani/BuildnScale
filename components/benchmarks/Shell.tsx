@@ -2,7 +2,7 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 import type { Snapshot } from '@/lib/benchmarks/types'
 import { dateLabel } from '@/lib/benchmarks/catalog'
-import { isStale } from '@/lib/benchmarks/core.mjs'
+import { isStale, arenaFreshness } from '@/lib/benchmarks/core.mjs'
 export function BenchmarkShell({
   children,
   active = 'Overview',
@@ -27,11 +27,13 @@ export function BenchmarkShell({
         {[
           ['/leaderboard', 'Overview'],
           ['/leaderboard/coding', 'Coding'],
+          ['/leaderboard/agents', 'Agents'],
           ['/leaderboard/value', 'Price & performance'],
           ['/models', 'Models'],
           ['/compare', 'Compare'],
           ['/leaderboard/methodology', 'Methodology'],
           ['/leaderboard/changelog', 'Updates'],
+          ['/leaderboard/archive', 'Archive'],
         ].map(([href, label]) => (
           <Link
             key={href}
@@ -54,7 +56,10 @@ export function BenchmarkShell({
   )
 }
 export function SnapshotNotice({ snapshot }: { snapshot: Snapshot }) {
-  const stale = isStale(snapshot.sourceUpdatedAt)
+  const arena = snapshot.source === 'arena'
+  const checkedAt = snapshot.lastCheckedAt || snapshot.retrievedAt
+  const { checkOverdue: overdue, publicationOld: oldPublication } = arenaFreshness(snapshot)
+  const stale = arena ? overdue || oldPublication : isStale(snapshot.sourceUpdatedAt)
   return (
     <aside
       className={`mb-7 rounded-xl border p-4 text-sm leading-relaxed ${stale ? 'border-amber/40 bg-amber/5' : 'border-border bg-surface'}`}
@@ -63,18 +68,17 @@ export function SnapshotNotice({ snapshot }: { snapshot: Snapshot }) {
       <p className="font-medium">
         {snapshot.source === 'evalplus'
           ? 'Historical EvalPlus snapshot'
-          : 'Artificial Analysis snapshot'}{' '}
-        · source updated {dateLabel(snapshot.sourceUpdatedAt)}
+          : arena ? 'Arena published dataset' : 'Artificial Analysis snapshot'}{' '}
+        · source published (oldest included board) {dateLabel(snapshot.sourceUpdatedAt)}
       </p>
       <p className="mt-1 text-muted">
         {snapshot.source === 'evalplus'
           ? 'Coverage reflects this archived source, not today’s frontier or model availability. Scores are imported, not tested by BuildnScale.'
-          : 'Scores reflect the selected source index and configuration, not a universal ranking.'}{' '}
-        {stale &&
-          'Source is older than 30 days or its update date is unavailable.'}
+          : arena ? 'Latest published overall boards for text, web development, and agents. Each rating has its own scale and publication date. Results are imported, not evaluated by BuildnScale.' : 'Scores reflect the selected source index and configuration, not a universal ranking.'}{' '}
+        {arena ? <> {overdue && 'Update check overdue: no successful source check in the last eight hours. Displaying the last validated snapshot.'} {oldPublication && 'At least one board was published more than seven days ago; a recent check does not make those measurements new.'}</> : stale && 'Source is older than 30 days or its update date is unavailable.'}
       </p>
       <p className="mt-2 text-xs text-muted">
-        Retrieved {dateLabel(snapshot.retrievedAt)} ·{' '}
+        Retrieved {dateLabel(snapshot.retrievedAt)} · Last successful check {new Date(checkedAt).toISOString().replace('T', ' ').replace(/\.\d+Z$/, ' UTC')} ·{' '}
         <a
           className="text-teal underline underline-offset-4"
           href={snapshot.sourceURL}
@@ -83,9 +87,10 @@ export function SnapshotNotice({ snapshot }: { snapshot: Snapshot }) {
         >
           View exact source ↗
         </a>{' '}
-        · {snapshot.license}
+        · {arena ? <a className="text-teal underline" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> : snapshot.license}
         {snapshot.indexVersion && ` · Index version ${snapshot.indexVersion}`}
       </p>
+      {arena && <p className="mt-2 text-xs text-muted">{snapshot.attribution}</p>}
     </aside>
   )
 }

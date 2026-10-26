@@ -31,6 +31,9 @@ export const METRICS: Record<
     unit: '%',
     tasks: 399,
   },
+  'arena-text': { name: 'Arena Text (style controlled)', description: 'Arena text preference rating (overall, style controlled). Not a percentage or coding pass rate.', unit: '', tasks: null },
+  'arena-webdev': { name: 'Arena Web Development', description: 'Arena web development preference rating (overall). Distinct from repository issue resolution or general coding accuracy.', unit: '', tasks: null },
+  'arena-agent': { name: 'Arena Agent', description: 'Arena agent IPS score (overall). Interpret within the source methodology; not interchangeable with text or web development ratings.', unit: '', tasks: null },
   'aa-intelligence': {
     name: 'AA Intelligence Index',
     description:
@@ -73,7 +76,7 @@ export const formatScore = (
   value: number | null | undefined,
   metric: Metric
 ) =>
-  value == null ? 'Not measured' : `${value.toFixed(1)}${METRICS[metric].unit}`
+  value == null ? 'Not measured' : `${value.toFixed(metric === 'arena-agent' ? 4 : 1)}${METRICS[metric].unit}`
 export const dateLabel = (value: string | null) =>
   value
     ? new Date(value).toLocaleDateString('en-GB', {

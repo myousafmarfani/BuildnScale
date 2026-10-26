@@ -3,15 +3,15 @@ export function EvidenceJsonLd({ snapshot }: { snapshot: Snapshot }) {
   const data = {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
-    name: 'Historical EvalPlus coding benchmark results on BuildnScale',
+    name: snapshot.source === 'arena' ? 'Arena model rankings on BuildnScale' : 'Historical EvalPlus coding benchmark results on BuildnScale',
     description:
-      'An attributed historical source snapshot of Python code-generation measurements. Normalized by BuildnScale; evaluations were not rerun.',
-    url: 'https://www.buildnscale.dev/leaderboard',
-    license: 'https://www.apache.org/licenses/LICENSE-2.0',
+      snapshot.source === 'arena' ? 'Latest imported overall Arena text, web development, and agent boards, with source dates and uncertainty. Normalized by BuildnScale; evaluations were not rerun.' : 'An attributed historical source snapshot of Python code-generation measurements. Normalized by BuildnScale; evaluations were not rerun.',
+    url: snapshot.source === 'arena' ? 'https://www.buildnscale.dev/leaderboard' : 'https://www.buildnscale.dev/leaderboard/archive',
+    license: snapshot.source === 'arena' ? 'https://creativecommons.org/licenses/by/4.0/' : 'https://www.apache.org/licenses/LICENSE-2.0',
     creator: {
       '@type': 'Organization',
-      name: 'EvalPlus contributors',
-      url: 'https://evalplus.github.io/',
+      name: snapshot.source === 'arena' ? 'Arena / lmarena-ai' : 'EvalPlus contributors',
+      url: snapshot.source === 'arena' ? 'https://arena.ai/' : 'https://evalplus.github.io/',
     },
     publisher: {
       '@type': 'Organization',
@@ -21,7 +21,7 @@ export function EvidenceJsonLd({ snapshot }: { snapshot: Snapshot }) {
     citation: snapshot.sourceURL,
     version: snapshot.sourceRevision,
     dateModified: snapshot.sourceUpdatedAt,
-    variableMeasured: [
+    variableMeasured: snapshot.source === 'arena' ? ['Arena Text (style controlled)', 'Arena Web Development', 'Arena Agent IPS'] : [
       'HumanEval pass@1',
       'HumanEval+ pass@1',
       'MBPP pass@1',
