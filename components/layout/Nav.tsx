@@ -20,7 +20,7 @@ export function Nav() {
   return (
     <header className="site-nav">
       <nav
-        className="container-site flex h-[72px] items-center gap-8"
+        className="container-site flex h-[calc(var(--site-header-height)-1px)] items-center gap-8"
         aria-label="Main navigation"
       >
         <Link href="/" aria-label="BuildnScale home" className="brand">

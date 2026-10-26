@@ -17,9 +17,12 @@ import {
   IconBrandGithub,
   IconStar,
   IconChevronRight,
+  IconLayoutSidebarLeftCollapse,
+  IconLayoutSidebarLeftExpand,
 } from '@tabler/icons-react'
 import { TOOLS, getTool } from '@/lib/tools-registry'
 import { ToolIcon } from './ToolIcon'
+import { useLocalSetting } from '@/hooks/useLocalSetting'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 const destinations = [
@@ -36,6 +39,10 @@ export function ToolWorkspace({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession()
   const [hydrated, setHydrated] = useState(false)
   useEffect(() => setHydrated(true), [])
+  const [sidebarCollapsed, setSidebarCollapsed] = useLocalSetting(
+    'bns_sidebar_collapsed',
+    false
+  )
   const [menu, setMenu] = useState(false)
   const [search, setSearch] = useState(false)
   const [query, setQuery] = useState('')
@@ -183,6 +190,22 @@ export function ToolWorkspace({ children }: { children: React.ReactNode }) {
           >
             <IconMenu2 className="h-5 w-5" />
           </button>
+          <button
+            className="workspace-icon-button hidden lg:inline-flex"
+            aria-label={
+              sidebarCollapsed ? 'Expand tool sidebar' : 'Collapse tool sidebar'
+            }
+            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-expanded={!sidebarCollapsed}
+            aria-controls="workspace-sidebar"
+            onClick={() => setSidebarCollapsed((value) => !value)}
+          >
+            {sidebarCollapsed ? (
+              <IconLayoutSidebarLeftExpand className="h-5 w-5" />
+            ) : (
+              <IconLayoutSidebarLeftCollapse className="h-5 w-5" />
+            )}
+          </button>
           <Link href="/" className="brand hidden lg:inline-flex">
             <span className="brand-mark">b.</span>build
             <span className="text-teal">n</span>scale
@@ -229,7 +252,11 @@ export function ToolWorkspace({ children }: { children: React.ReactNode }) {
         </div>
       </header>
       <div className="workspace-body">
-        <aside className="workspace-rail">
+        <aside
+          id="workspace-sidebar"
+          aria-label="Tool sidebar"
+          className={`workspace-rail ${sidebarCollapsed ? 'is-collapsed' : ''}`}
+        >
           <div className="min-h-0 flex-1 overflow-y-auto px-3 pt-5">
             {navigation}
           </div>

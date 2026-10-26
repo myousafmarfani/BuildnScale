@@ -50,3 +50,7 @@ pnpm test:browser
 - Guest check responses and signed-in monitoring create/rename/history/remove flows are mocked browser tests. They validate the UI contract; they do not validate production credentials, database access, DNS, or real monitoring availability.
 
 A responsive Chromium check is not a claim of testing every physical device or browser. Production authentication and monitoring integrations still need staging credentials for end-to-end verification. No production data is changed by these tests.
+
+## Navigation follow-up
+
+The desktop tool sidebar has an explicit expand/collapse toggle. Collapse hides the rail and gives its width back to the tool. The preference survives reloads and tool changes; the separate mobile menu remains available. Blog filter and article bars share the public header height, and heading anchor offsets clear both sticky bars. Article contents has an accessible persisted disclosure, shown above the article on mobile and in the sidebar on desktop. Browser regression checks cover both disclosure states, reload persistence, sticky geometry, and heading navigation.

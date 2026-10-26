@@ -96,6 +96,41 @@ try {
   console.log(
     'PASS: all eight tools at 320, 390, 768, and 1440px; no horizontal viewport overflow'
   )
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(`${base}/tools/daily-planner`)
+  const widthBefore = await page
+    .locator('.workspace-content')
+    .evaluate((element) => element.clientWidth)
+  await page
+    .getByRole('button', { name: 'Collapse tool sidebar', exact: true })
+    .click()
+  assert.equal(
+    await page
+      .getByRole('complementary', { name: 'Tool sidebar', exact: true })
+      .isVisible(),
+    false
+  )
+  assert.ok(
+    (await page
+      .locator('.workspace-content')
+      .evaluate((element) => element.clientWidth)) >
+      widthBefore + 200
+  )
+  await page.reload()
+  await page
+    .getByRole('button', { name: 'Expand tool sidebar', exact: true })
+    .waitFor()
+  await page.goto(`${base}/tools/json-toolkit`)
+  await page
+    .getByRole('button', { name: 'Expand tool sidebar', exact: true })
+    .click()
+  await page
+    .getByRole('complementary', { name: 'Tool sidebar', exact: true })
+    .waitFor()
+  console.log(
+    'PASS: desktop sidebar collapse, reclaimed space, reload persistence, and reopening on another tool'
+  )
+
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto(`${base}/tools/daily-planner`)
   await page
@@ -514,6 +549,78 @@ try {
   await authenticated.close()
   console.log(
     'PASS: signed-in monitor create, rename, history navigation, and removal (mocked account/API)'
+  )
+
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto(`${base}/blog`)
+    await page
+      .getByRole('navigation', { name: 'Blog categories', exact: true })
+      .waitFor()
+    await page.evaluate(() => window.scrollTo(0, 700))
+    await page.waitForFunction(() => {
+      const header = document.querySelector('.site-nav').getBoundingClientRect()
+      const filter = document
+        .querySelector('[aria-label="Blog categories"]')
+        .getBoundingClientRect()
+      return Math.abs(filter.top - header.bottom) < 1
+    })
+    await page.screenshot({ path: `${output}/blog-filters-${width}.png` })
+    await page.goto(`${base}/blog/why-time-blocking`)
+    const tocToggle = page.getByRole('button', {
+      name: 'On this page',
+      exact: true,
+    })
+    await tocToggle.waitFor()
+    // The preference is shared across responsive views and articles.
+    if ((await tocToggle.getAttribute('aria-expanded')) === 'false')
+      await tocToggle.click()
+    await tocToggle.click()
+    assert.equal(await tocToggle.getAttribute('aria-expanded'), 'false')
+    assert.equal(
+      await page
+        .getByRole('navigation', { name: 'On this page', exact: true })
+        .count(),
+      0
+    )
+    await page.reload()
+    await page
+      .getByRole('button', { name: 'On this page', exact: true })
+      .waitFor()
+    await page.waitForFunction(() =>
+      [...document.querySelectorAll('button')].some(
+        (button) =>
+          button.textContent.includes('On this page') &&
+          button.getClientRects().length &&
+          button.getAttribute('aria-expanded') === 'false'
+      )
+    )
+    await page
+      .getByRole('button', { name: 'On this page', exact: true })
+      .click()
+    const toc = page.getByRole('navigation', {
+      name: 'On this page',
+      exact: true,
+    })
+    const headingId = await page
+      .locator('.blog-article-body h2')
+      .first()
+      .getAttribute('id')
+    await toc.getByRole('button').first().click()
+    await page.waitForFunction((id) => {
+      const heading = document.getElementById(id)
+      const bar = document
+        .querySelector('[aria-label="Article navigation"]')
+        .getBoundingClientRect()
+      return (
+        Math.abs(heading.getBoundingClientRect().top - 144) < 4 &&
+        heading.getBoundingClientRect().top > bar.bottom
+      )
+    }, headingId)
+    await page.screenshot({ path: `${output}/blog-article-${width}.png` })
+  }
+  console.log(
+    'PASS: blog sticky filters, collapsible TOC persistence, and unobscured heading navigation at mobile/desktop widths'
   )
   assert.deepEqual(errors, [], `Browser runtime errors: ${errors.join('\n')}`)
   console.log(`PASS: no browser runtime errors; screenshots in ${output}`)

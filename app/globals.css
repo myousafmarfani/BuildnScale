@@ -546,3 +546,13 @@
   .note-preview-pane code { @apply rounded bg-raised px-1 py-0.5 font-mono text-xs; }
   .note-preview-pane pre { @apply my-4 rounded-lg bg-raised p-4; }
 }
+@layer base {
+  :root { --site-header-height:72px; }
+}
+@layer components {
+  .blog-sticky-bar { position:sticky; top:var(--site-header-height); z-index:20; }
+  .blog-article-body :is(h2,h3) { scroll-margin-top:calc(var(--site-header-height) + 72px); }
+  .article-sidebar { top:calc(var(--site-header-height) + 64px); }
+  .article-toc-links { max-height:45dvh; overflow-y:auto; overscroll-behavior:contain; }
+}
+@media (min-width:1024px) { .workspace-rail.is-collapsed { display:none; } }
