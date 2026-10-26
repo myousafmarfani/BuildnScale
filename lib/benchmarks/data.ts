@@ -1,0 +1,63 @@
+import seed from '@/data/benchmarks/evalplus-snapshot.json'
+import { prisma } from '@/lib/prisma'
+import { assertSnapshot } from './core.mjs'
+import type { Snapshot } from './types'
+import { unstable_cache } from 'next/cache'
+export const getSnapshots = unstable_cache(
+  async (): Promise<Snapshot[]> => {
+    const fallback = seed as Snapshot
+    if (!process.env.DATABASE_URL) return [fallback]
+    try {
+      const candidates = await Promise.all(
+        ['evalplus', 'artificial-analysis'].map((source) =>
+          prisma.benchmarkSnapshot.findFirst({
+            where: { source },
+            orderBy: { retrievedAt: 'desc' },
+          })
+        )
+      )
+      const rows = candidates.filter((row) => row !== null)
+      const latest = new Map<string, Snapshot>()
+      for (const row of rows) {
+        if (latest.has(row.source)) continue
+        try {
+          latest.set(row.source, assertSnapshot(row.payload) as Snapshot)
+        } catch {
+          console.warn('Ignoring invalid benchmark snapshot', row.id)
+        }
+      }
+      if (!latest.has('evalplus')) latest.set('evalplus', fallback)
+      return [...latest.values()]
+    } catch {
+      console.warn(
+        'Benchmark storage unavailable; serving attributed bundled snapshot'
+      )
+      return [fallback]
+    }
+  },
+  ['benchmarks-v1'],
+  { revalidate: 3600, tags: ['benchmarks'] }
+)
+export async function getModel(id: string) {
+  const snapshots = await getSnapshots()
+  for (const snapshot of snapshots) {
+    const model = snapshot.models.find((m) => m.id === id)
+    if (model) return { model, snapshot }
+  }
+  return null
+}
+export async function getHistory() {
+  if (!process.env.DATABASE_URL) return [seed as Snapshot]
+  try {
+    const rows = await prisma.benchmarkSnapshot.findMany({
+      orderBy: { retrievedAt: 'desc' },
+      take: 20,
+    })
+    return [
+      seed as Snapshot,
+      ...rows.map((r) => assertSnapshot(r.payload) as Snapshot),
+    ].sort((a, b) => b.retrievedAt.localeCompare(a.retrievedAt))
+  } catch {
+    return [seed as Snapshot]
+  }
+}

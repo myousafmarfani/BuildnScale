@@ -1,0 +1,26 @@
+name: Refresh benchmark snapshots
+on:
+  schedule:
+    - cron: '25 3 * * *'
+  workflow_dispatch:
+permissions: {}
+jobs:
+  refresh:
+    if: vars.BNS_BENCHMARK_IMPORTS_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Import permitted benchmark sources
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          AA_ENABLED: ${{ vars.BNS_AA_IMPORT_ENABLED }}
+        run: |
+          test -n "$CRON_SECRET"
+          curl --fail-with-body --silent --show-error --max-time 300 --request POST \
+            --header "Authorization: Bearer $CRON_SECRET" \
+            'https://www.buildnscale.dev/api/benchmarks/refresh?source=evalplus'
+          if [ "$AA_ENABLED" = 'true' ]; then
+            curl --fail-with-body --silent --show-error --max-time 300 --request POST \
+              --header "Authorization: Bearer $CRON_SECRET" \
+              'https://www.buildnscale.dev/api/benchmarks/refresh?source=artificial-analysis'
+          fi
