@@ -14,9 +14,11 @@ import { rankModels } from '@/lib/benchmarks/core.mjs'
 export function Explorer({
   snapshot,
   catalog = false,
+  defaultMetric,
 }: {
   snapshot: Snapshot
   catalog?: boolean
+  defaultMetric?: Metric
 }) {
   const params = useSearchParams(),
     pathname = usePathname(),
@@ -26,7 +28,9 @@ export function Explorer({
   ) as Metric[]
   const metric = metricList.includes(params.get('metric') as Metric)
     ? (params.get('metric') as Metric)
-    : metricList[0]
+    : defaultMetric && metricList.includes(defaultMetric)
+      ? defaultMetric
+      : metricList[0]
   const query = params.get('q') || '',
     publisher = params.get('publisher') || '',
     mode = params.get('mode') || ''

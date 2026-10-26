@@ -20,7 +20,8 @@ export async function generateMetadata({
     ? benchmarkMetadata(
         `${found.model.name} benchmarks`,
         `Inspect ${found.model.name} scores, evaluated configuration, data provenance, and benchmark limitations.`,
-        `/models/${found.model.id}`
+        `/models/${found.model.id}`,
+        found.snapshot.source !== 'evalplus'
       )
     : notFound()
 }
@@ -89,6 +90,7 @@ export default async function ModelPage({
                   ? 'Not provided'
                   : `${m.parametersB} billion`,
               ],
+              ['Model release date', dateLabel(m.releaseDate || null)],
               ['Evaluation date', 'Not supplied per model'],
               ['Source updated', dateLabel(s.sourceUpdatedAt)],
               ['Source revision', s.sourceRevision],
@@ -124,9 +126,10 @@ export default async function ModelPage({
               : `Source-reported output speed: ${m.speed} tokens/second.`}
           </p>
           <p className="mt-6 text-sm leading-relaxed text-muted">
-            Python function-completion results do not establish React, Next.js,
-            tool-calling, or production-agent reliability. Validate candidates
-            on your own workload.
+            {s.source === 'evalplus'
+              ? 'Python function-completion results do not establish React, Next.js, tool-calling, or production-agent reliability.'
+              : 'Source indices summarize specific evaluations and configurations; they do not establish reliability for every application or agent workflow.'}{' '}
+            Validate candidates on your own workload.
           </p>
           <Link
             className="mt-6 inline-block text-sm text-teal"

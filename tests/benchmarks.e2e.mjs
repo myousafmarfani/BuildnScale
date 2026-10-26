@@ -48,7 +48,15 @@ try {
     errors = []
   page.on('pageerror', (e) => errors.push(e.message))
   await page.goto(base + '/leaderboard')
-  await page.getByRole('heading', { name: 'Choose with evidence.' }).waitFor()
+  await page
+    .getByRole('heading', { name: 'Current rankings are not available yet.' })
+    .waitFor()
+  assert.equal(await page.locator('tbody tr').count(), 0)
+  await page.screenshot({path:output+'/current-coverage.png',fullPage:true})
+  await page.goto(base + '/leaderboard/archive')
+  await page
+    .getByRole('heading', { name: 'Historical benchmark archive.' })
+    .waitFor()
   await page.screenshot({
     path: output + '/overview-desktop.png',
     fullPage: true,
@@ -64,7 +72,7 @@ try {
   )
   assert.notEqual(await page.locator('tbody tr').first().innerText(), first)
   await page.getByRole('button', { name: 'Reset filters' }).click()
-  await page.waitForURL(base + '/leaderboard')
+  await page.waitForURL(base + '/leaderboard/archive')
   const search = page.getByLabel('Search models')
   await search.fill('nonexistent-model-xyz')
   await page.getByText('No models match these filters.').first().waitFor()
@@ -98,7 +106,7 @@ try {
     path: output + '/comparison-desktop.png',
     fullPage: true,
   })
-  await page.goto(base + '/models')
+  await page.goto(base + '/models?source=evalplus')
   await page.locator('tbody tr th a').first().click()
   await page.getByRole('heading', { name: 'Evaluation record' }).waitFor()
   assert.match(
@@ -136,14 +144,17 @@ try {
   )
   const sitemap = await (await page.request.get(base + '/sitemap.xml')).text()
   assert.match(sitemap, /\/leaderboard\/coding/)
-  assert.match(sitemap, /\/models\//)
+  assert.doesNotMatch(sitemap, /\/models\//)
+  assert.match(sitemap, /\/leaderboard\/archive/)
   assert.doesNotMatch(sitemap, /\/compare\//)
   await page.goto(base + '/leaderboard/value')
   await page
     .getByRole('heading', { name: 'No verified price feed published yet.' })
     .waitFor()
   await page.getByLabel('Requests / month').fill('5000')
-  await page.goto(base + '/leaderboard/coding?q=deepseek&metric=humaneval%2B')
+  await page.goto(
+    base + '/leaderboard/coding?source=evalplus&q=deepseek&metric=humaneval%2B'
+  )
   assert.ok((await page.locator('tbody tr').count()) > 0)
   assert.match(await page.locator('tbody').innerText(), /deepseek/i)
   for (const theme of ['dark', 'light']) {
@@ -157,7 +168,7 @@ try {
     })
   }
   await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto(base + '/leaderboard/coding')
+  await page.goto(base + '/leaderboard/coding?source=evalplus')
   const mobileCards = page
     .getByLabel('Mobile benchmark results')
     .locator('article')

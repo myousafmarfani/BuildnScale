@@ -1,3 +1,5 @@
+import { selectSnapshot } from '@/lib/benchmarks/selection.mjs'
+import { CurrentCoverage } from '@/components/benchmarks/CurrentCoverage'
 import { Suspense } from 'react'
 import Link from 'next/link'
 import { getSnapshots } from '@/lib/benchmarks/data'
@@ -21,9 +23,7 @@ export default async function Models({
 }) {
   const sources = await getSnapshots(),
     query = await searchParams
-  const snapshot =
-    sources.find((s) => s.source === query.source) ||
-    sources.find((s) => s.source === 'evalplus')!
+  const snapshot = selectSnapshot(sources, query.source)
   return (
     <BenchmarkShell active="Models">
       <PageHeading
@@ -34,19 +34,27 @@ export default async function Models({
         <nav aria-label="Catalog source" className="mb-5 flex gap-3">
           {sources.map((s) => (
             <Link
-              className={`filter-chip ${snapshot.source === s.source ? 'is-active' : ''}`}
+              className={`filter-chip ${snapshot?.source === s.source ? 'is-active' : ''}`}
               key={s.source}
               href={`/models?source=${s.source}`}
             >
-              {s.source}
+              {s.source === 'evalplus'
+                ? 'Archive (2024)'
+                : 'Latest imported results'}
             </Link>
           ))}
         </nav>
       )}
-      <SnapshotNotice snapshot={snapshot} />
-      <Suspense fallback={<p>Loading catalog…</p>}>
-        <Explorer snapshot={snapshot} catalog />
-      </Suspense>
+      {snapshot ? (
+        <>
+          <SnapshotNotice snapshot={snapshot} />
+          <Suspense fallback={<p>Loading catalog…</p>}>
+            <Explorer snapshot={snapshot} catalog />
+          </Suspense>
+        </>
+      ) : (
+        <CurrentCoverage />
+      )}
     </BenchmarkShell>
   )
 }

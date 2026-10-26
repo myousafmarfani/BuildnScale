@@ -63,7 +63,7 @@ export default async function BenchmarkGuide({
         </p>
         <p>
           <Link
-            href={`/leaderboard/coding?metric=${encodeURIComponent(b.metric)}`}
+            href={`/leaderboard/archive?metric=${encodeURIComponent(b.metric)}`}
           >
             Explore {b.name} results →
           </Link>

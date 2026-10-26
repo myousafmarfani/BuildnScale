@@ -1,3 +1,30 @@
+# Current model coverage rollout
+
+The main `/leaderboard`, `/leaderboard/coding`, `/models`, and default comparison
+picker now select the latest permitted Artificial Analysis snapshot. The 2024
+EvalPlus dataset lives at `/leaderboard/archive` or explicit `?source=evalplus`.
+An absent current feed produces an honest coverage state, never a 2024 fallback.
+Individual archived model/comparison URLs remain accessible with dated notices.
+Historical model profiles are noindex and omitted from the current model sitemap.
+
+Before merging this update, configure `AA_API_KEY`, `AA_PERMISSION_REFERENCE`, and
+`AA_PUBLIC_DISPLAY_ENABLED=true` in Vercel, confirm public-display rights, and test
+an AA import. API credentials are not in this repository and were not available
+during development. A free API plan may provide headline quality, pricing, and
+performance data; confirm actual coverage and applicable terms with the source.
+The current V2 free endpoint is used, not a fabricated static list of new models.
+
+After deployment, set GitHub `BNS_AA_IMPORT_ENABLED=true` and run **Refresh benchmark
+snapshots**. `BNS_BENCHMARK_IMPORTS_ENABLED=true` and matching GitHub/Vercel
+`CRON_SECRET` are also required. Check workflow success, `/leaderboard/changelog`,
+source index version, model labels/release dates, and `/leaderboard/value`. A new
+release appears only once the source includes it; missing scores stay unmeasured.
+Do not describe this as real-time or comprehensive coverage of all released models.
+
+No SQL migration is needed for this update. Existing snapshots are preserved.
+If current feed setup is incomplete, leave this PR unmerged until the operator is
+ready to replace the historical landing page with the current-coverage state.
+
 # AI benchmarks: operations and rollout
 
 ## Product scope

@@ -12,6 +12,7 @@ export type Model = {
   publisher: string
   link: string
   instructionTuned: boolean | null
+  releaseDate?: string | null
   parametersB: number | null
   scores: Partial<Record<Metric, number | null>>
   pricing: { input: number | null; output: number | null } | null

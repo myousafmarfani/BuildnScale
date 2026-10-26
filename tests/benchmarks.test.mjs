@@ -75,6 +75,7 @@ test('cost estimate respects units, missing prices and free pricing', () => {
 const row = (id) => ({
   id,
   slug: `model-${id}`,
+  release_date: '2026-10-01',
   name: `Model ${id}`,
   model_creator: { name: 'Example' },
   evaluations: {
@@ -95,6 +96,7 @@ test('AA adapter preserves unknown configuration and index version instead of ma
     models: undefined,
   })
   assert.equal(result.indexVersion, '4.3')
+  assert.equal(result.models[0].releaseDate, '2026-10-01')
   assert.equal(result.models[0].instructionTuned, null)
   assert.equal(result.models[0].scores['aa-coding'], null)
   assert.equal(result.models[0].pricing.input, 0)

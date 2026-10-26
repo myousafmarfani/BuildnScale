@@ -32,6 +32,7 @@ export function BenchmarkShell({
           ['/compare', 'Compare'],
           ['/leaderboard/methodology', 'Methodology'],
           ['/leaderboard/changelog', 'Updates'],
+          ['/leaderboard/archive', 'Archive'],
         ].map(([href, label]) => (
           <Link
             key={href}

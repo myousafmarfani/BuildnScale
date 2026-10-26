@@ -14,6 +14,22 @@ export default function Methodology() {
         description="What these comparisons measure, where the data comes from, and what we do not claim. Methodology version 1.0 · 26 October 2026."
       />
       <article className="benchmark-copy max-w-3xl">
+        <h2>Current coverage and the historical archive</h2>
+        <p>
+          The main leaderboard and model catalog use the latest permitted
+          Artificial Analysis snapshot when one has been published. Coding
+          defaults to its Coding Index; the overview defaults to its
+          Intelligence Index. If the feed is unavailable, these pages say so
+          instead of substituting the 2024 dataset. Historical EvalPlus results
+          remain in the explicit archive.
+        </p>
+        <p>
+          “Latest imported” describes our stored snapshot, not a claim that
+          every model has just been evaluated or that every new release is
+          covered. Source coverage, source version, retrieval date, and unknown
+          evaluation timestamps remain visible. Models with no measurement are
+          not assigned an invented score.
+        </p>
         <h2>1. Who evaluates the models?</h2>
         <p>
           BuildnScale currently republishes attributed, licensed results. The

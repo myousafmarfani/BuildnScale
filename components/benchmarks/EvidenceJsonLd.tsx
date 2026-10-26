@@ -6,7 +6,7 @@ export function EvidenceJsonLd({ snapshot }: { snapshot: Snapshot }) {
     name: 'Historical EvalPlus coding benchmark results on BuildnScale',
     description:
       'An attributed historical source snapshot of Python code-generation measurements. Normalized by BuildnScale; evaluations were not rerun.',
-    url: 'https://www.buildnscale.dev/leaderboard',
+    url: 'https://www.buildnscale.dev/leaderboard/archive',
     license: 'https://www.apache.org/licenses/LICENSE-2.0',
     creator: {
       '@type': 'Organization',
