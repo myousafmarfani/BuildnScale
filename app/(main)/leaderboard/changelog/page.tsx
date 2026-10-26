@@ -26,7 +26,7 @@ export default async function History() {
             <h2 className="mt-4 text-xl font-semibold">
               {s.source === 'evalplus'
                 ? 'EvalPlus coding snapshot'
-                : 'Artificial Analysis snapshot'}
+                : s.source === 'arena' ? 'Arena published dataset' : 'Artificial Analysis snapshot'}
             </h2>
             <p className="mt-3 text-sm text-muted">
               {s.models.length} evaluated labels · Source updated{' '}

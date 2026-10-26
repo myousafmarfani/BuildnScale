@@ -19,14 +19,14 @@ export async function generateMetadata({
   params: Promise<{ category: string }>
 }) {
   const { category } = await params
-  if (!['coding', 'value'].includes(category)) notFound()
+  if (!['coding', 'agents', 'value'].includes(category)) notFound()
   return benchmarkMetadata(
     category === 'value'
       ? 'AI model pricing and performance'
-      : 'AI coding benchmark leaderboard',
+      : category === 'agents' ? 'AI agent leaderboard' : 'AI web development leaderboard',
     category === 'value'
       ? 'Estimate token costs using verified prices, with explicit assumptions and quality benchmarks kept separate.'
-      : 'Compare AI coding results by benchmark, evaluated model label, and prompting mode with source provenance.',
+      : category === 'agents' ? 'Compare published Arena Agent IPS scores, confidence intervals, and observation counts.' : 'Compare published Arena Web Development ratings, confidence intervals, and vote counts.',
     `/leaderboard/${category}`
   )
 }
@@ -38,17 +38,17 @@ export default async function Category({
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
   const { category } = await params
-  if (!['coding', 'value'].includes(category)) notFound()
+  if (!['coding', 'agents', 'value'].includes(category)) notFound()
   const sources = await getSnapshots(),
     query = await searchParams
   const snapshot = selectSnapshot(sources, query.source)
   return (
     <BenchmarkShell
-      active={category === 'value' ? 'Price & performance' : 'Coding'}
+      active={category === 'value' ? 'Price & performance' : category === 'agents' ? 'Agents' : 'Coding'}
     >
       <PageHeading
         title={
-          category === 'value' ? 'Know the tradeoffs.' : 'Coding, measured.'
+          category === 'value' ? 'Know the tradeoffs.' : category === 'agents' ? 'Agents, measured.' : 'Web development, measured.'
         }
         description={
           category === 'value'
@@ -66,17 +66,17 @@ export default async function Category({
             >
               {s.source === 'evalplus'
                 ? 'EvalPlus archive (2024)'
-                : 'Latest imported results'}
+                : s.source === 'arena' ? 'Arena latest published' : 'Artificial Analysis'}
             </Link>
           ))}
         </nav>
       )}
-      {category === 'coding' ? (
+      {category !== 'value' ? (
         snapshot ? (
           <>
             <SnapshotNotice snapshot={snapshot} />
             <Suspense fallback={<p>Loading explorer…</p>}>
-              <Explorer snapshot={snapshot} defaultMetric="aa-coding" />
+              <Explorer snapshot={snapshot} defaultMetric={category === 'agents' ? 'arena-agent' : 'arena-webdev'} />
             </Suspense>
           </>
         ) : (

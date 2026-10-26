@@ -10,6 +10,7 @@ import {
 } from '@tabler/icons-react'
 import type { Metric, Snapshot } from '@/lib/benchmarks/types'
 import { METRICS, formatScore } from '@/lib/benchmarks/catalog'
+import { Measurement } from './Measurement'
 import { rankModels } from '@/lib/benchmarks/core.mjs'
 export function Explorer({
   snapshot,
@@ -86,7 +87,7 @@ export function Explorer({
 
   return (
     <section aria-label="Model explorer">
-      <div className="mb-5 grid gap-4 rounded-2xl border border-border bg-surface p-4 sm:p-5 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
+      <div className={`mb-5 grid gap-4 rounded-2xl border border-border bg-surface p-4 sm:p-5 ${snapshot.source === 'arena' ? 'lg:grid-cols-3' : 'lg:grid-cols-[1.5fr_1fr_1fr_1fr]'}`}>
         <label className="text-xs text-muted">
           Search models
           <div className="mt-2 flex items-center gap-2 rounded-lg border border-border bg-bg px-3">
@@ -128,7 +129,7 @@ export function Explorer({
             ))}
           </select>
         </label>
-        <label className="text-xs text-muted">
+        {snapshot.source !== 'arena' && <label className="text-xs text-muted">
           Evaluation mode
           <select
             className="workspace-input mt-2 min-h-11"
@@ -140,7 +141,7 @@ export function Explorer({
             <option value="instruct">Instruction prompted</option>
             <option value="base">Base completion</option>
           </select>
-        </label>
+        </label>}
       </div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3 text-sm">
         <p aria-live="polite" className="text-muted">
@@ -155,7 +156,7 @@ export function Explorer({
       </div>
       <p className="mb-5 max-w-3xl text-sm leading-relaxed text-muted">
         {METRICS[metric].description} Ranks apply only to this source snapshot
-        and selected metric. Equal displayed scores share a rank; small
+        and selected metric. Arena ranks are preserved from the source; other ranks use exact scores. Small
         differences do not establish statistical superiority.
       </p>
       <div
@@ -175,8 +176,8 @@ export function Explorer({
               <th scope="col">Rank</th>
               <th scope="col">Model / evaluated label</th>
               <th scope="col">{METRICS[metric].name}</th>
-              <th scope="col">Mode</th>
-              <th scope="col">Parameters</th>
+              {snapshot.source !== 'arena' && <><th scope="col">Mode</th>
+              <th scope="col">Parameters</th></>}
               <th scope="col">Source</th>
             </tr>
           </thead>
@@ -210,6 +211,7 @@ export function Explorer({
                   <span className="font-mono font-medium text-teal">
                     {formatScore(m.scores[metric], metric)}
                   </span>
+                  <Measurement model={m} metric={metric} />
                   {m.scores[metric] != null && METRICS[metric].unit === '%' && (
                     <div
                       aria-hidden="true"
@@ -222,7 +224,7 @@ export function Explorer({
                     </div>
                   )}
                 </td>
-                <td className="text-muted">
+                {snapshot.source !== 'arena' && <><td className="text-muted">
                   {m.instructionTuned === null
                     ? 'Not supplied'
                     : m.instructionTuned
@@ -231,7 +233,7 @@ export function Explorer({
                 </td>
                 <td className="font-mono text-muted">
                   {m.parametersB == null ? 'Not provided' : `${m.parametersB}B`}
-                </td>
+                </td></>}
                 <td>
                   <a
                     className="inline-flex min-h-11 items-center gap-1 text-teal"
@@ -296,14 +298,15 @@ export function Explorer({
                 </span>
               </div>
             </div>
+            <Measurement model={m} metric={metric} />
             <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3 text-xs text-muted">
               <span>
-                {m.publisher} ·{' '}
+                {m.publisher}{snapshot.source !== 'arena' && <> ·{' '}
                 {m.instructionTuned === null
                   ? 'Mode not supplied'
                   : m.instructionTuned
                     ? 'Instruction'
-                    : 'Completion'}
+                    : 'Completion'}</>}
               </span>
               <a
                 className="inline-flex min-h-9 items-center gap-1 text-teal"
@@ -348,9 +351,7 @@ export function Explorer({
         </button>
       </div>
       <p className="mt-6 text-xs leading-relaxed text-muted">
-        {snapshot.attribution} Parameter counts and instruction labels are
-        source metadata. Namespace is shown where supplied; it is not a verified
-        API provider or license classification.
+        {snapshot.attribution} {snapshot.source !== 'arena' && 'Parameter counts and instruction labels are source metadata. Namespace is shown where supplied; it is not a verified API provider or license classification.'}
       </p>
       {selected.length > 0 && (
         <div className="sticky bottom-4 z-40 mt-6 rounded-xl border border-border-strong bg-surface p-4 shadow-xl">

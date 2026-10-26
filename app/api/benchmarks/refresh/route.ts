@@ -13,12 +13,12 @@ export async function POST(request: Request) {
     !timingSafeEqual(Buffer.from(actual), Buffer.from(`Bearer ${expected}`))
   )
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  const source = new URL(request.url).searchParams.get('source') || 'evalplus'
-  if (source !== 'evalplus' && source !== 'artificial-analysis')
+  const source = new URL(request.url).searchParams.get('source') || 'arena'
+  if (source !== 'evalplus' && source !== 'artificial-analysis' && source !== 'arena')
     return NextResponse.json({ error: 'Unsupported source' }, { status: 400 })
   try {
     const result = await importBenchmarks(source)
-    revalidateTag('benchmarks', 'max')
+    revalidateTag('benchmarks', { expire: 0 })
     return NextResponse.json(result)
   } catch (error) {
     console.error(

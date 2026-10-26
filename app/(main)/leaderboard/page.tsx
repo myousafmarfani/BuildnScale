@@ -1,3 +1,4 @@
+import { EvidenceJsonLd } from '@/components/benchmarks/EvidenceJsonLd'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { getSnapshots } from '@/lib/benchmarks/data'
@@ -12,7 +13,7 @@ import { Explorer } from '@/components/benchmarks/Explorer'
 import { CurrentCoverage } from '@/components/benchmarks/CurrentCoverage'
 export const metadata = benchmarkMetadata(
   'AI benchmarks for developers',
-  'Compare the latest imported AI model benchmark scores, prices, and performance, with source dates and historical results kept in a separate archive.',
+  'Compare the latest imported AI model benchmark ratings and uncertainty, with source dates and historical results kept in a separate archive.',
   '/leaderboard'
 )
 export const revalidate = 3600
@@ -22,7 +23,7 @@ export default async function Leaderboard() {
     <BenchmarkShell>
       <PageHeading
         title="Choose with evidence."
-        description="AI model benchmarks for developers building applications and agents. Compare the latest published snapshot, inspect its source, and weigh quality against price and speed."
+        description="AI model benchmarks for developers building applications and agents. Compare the latest published snapshot, inspect its source, and weigh results across distinct Arena categories."
       />
       {snapshot ? (
         <>
@@ -33,12 +34,12 @@ export default async function Leaderboard() {
                 'Latest imported model coverage',
               ],
               [
-                'Quality, cost & speed',
-                'Source-reported measurements, kept separate',
+                'Text, web development & agents',
+                'Separate source ratings, never a blended score',
               ],
               [
-                `Index version ${snapshot.indexVersion}`,
-                'Comparable within the recorded source version',
+                'Published uncertainty',
+                'Confidence intervals and counts from Arena',
               ],
             ].map(([title, text]) => (
               <div className="metric-card" key={title}>
@@ -47,17 +48,18 @@ export default async function Leaderboard() {
               </div>
             ))}
           </div>
+          <EvidenceJsonLd snapshot={snapshot} />
           <SnapshotNotice snapshot={snapshot} />
           <div className="mb-6 flex flex-wrap gap-3">
             <Link className="btn-primary" href="/leaderboard/coding">
-              Coding benchmarks →
+              Web development →
             </Link>
-            <Link className="btn-secondary" href="/leaderboard/value">
-              Compare workload costs →
+            <Link className="btn-secondary" href="/leaderboard/agents">
+              Agent results →
             </Link>
           </div>
           <Suspense fallback={<p>Loading explorer…</p>}>
-            <Explorer snapshot={snapshot} defaultMetric="aa-intelligence" />
+            <Explorer snapshot={snapshot} defaultMetric="arena-text" />
           </Suspense>
         </>
       ) : (

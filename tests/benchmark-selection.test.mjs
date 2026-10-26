@@ -5,7 +5,7 @@ import {
   comparisonSnapshots,
 } from '../lib/benchmarks/selection.mjs'
 const archive = { source: 'evalplus', models: [{ id: 'old-model' }] },
-  current = { source: 'artificial-analysis', models: [{ id: 'current-model' }] }
+  current = { source: 'arena', models: [{ id: 'current-model' }] }
 test('current results are default regardless of source order', () => {
   for (const snapshots of [
     [archive, current],

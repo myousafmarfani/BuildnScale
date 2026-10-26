@@ -111,6 +111,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const benchmarkPages = [
     '/leaderboard',
     '/leaderboard/coding',
+    '/leaderboard/agents',
     '/leaderboard/value',
     '/leaderboard/methodology',
     '/leaderboard/changelog',
@@ -123,7 +124,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
   const modelPages = snapshots
-    .filter((snapshot) => snapshot.source !== 'evalplus')
+    .filter((snapshot) => snapshot.source === 'arena')
     .flatMap((snapshot) =>
       snapshot.models.map((model) => ({
         url: `${baseUrl}/models/${model.id}`,

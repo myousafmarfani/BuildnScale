@@ -49,8 +49,8 @@ export function ValueExplorer({ snapshots }: { snapshots: Snapshot[] }) {
             No verified price feed published yet.
           </h2>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
-            The historical EvalPlus source contains coding scores, not prices or
-            speed measurements. Price rankings will appear when an attributed,
+            The Arena and historical EvalPlus datasets do not provide token prices or
+            output speed measurements. Price rankings will appear when an attributed,
             permitted pricing source is connected. Coding scores remain
             available now.
           </p>

@@ -46,3 +46,15 @@ The normalized snapshot and displayed rankings are transformations by BuildnScal
 No EvalPlus evaluations were rerun. Model weights, task text, and logos are not included.
 
 Source: https://github.com/evalplus/evalplus.github.io
+
+## Arena leaderboard dataset
+
+`data/benchmarks/arena-snapshot.json` is a transformed subset of the official
+[Arena / lmarena-ai leaderboard dataset](https://huggingface.co/datasets/lmarena-ai/leaderboard-dataset),
+licensed [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+The source revision and retrieval/publication dates are recorded in the JSON.
+BuildnScale selects the latest overall text (style controlled), web development,
+and agent boards and normalizes their structure. Full-precision measurements,
+source ranks, confidence bounds, and counts are retained. Evaluations were not
+rerun. No Arena endorsement is implied. The application's MIT license does not
+replace this data license or restrict its permitted reuse.

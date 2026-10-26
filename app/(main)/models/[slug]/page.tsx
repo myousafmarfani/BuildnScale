@@ -1,3 +1,4 @@
+import { Measurement } from '@/components/benchmarks/Measurement'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getModel } from '@/lib/benchmarks/data'
@@ -63,6 +64,7 @@ export default async function ModelPage({
             <strong className="text-teal">
               {formatScore(value, key as Metric)}
             </strong>
+            <Measurement model={m} metric={key as Metric} />
             <p className="mt-3 text-xs leading-relaxed text-muted">
               {METRICS[key as Metric].description}
             </p>
@@ -98,7 +100,7 @@ export default async function ModelPage({
                 'Reasoning effort / harness',
                 'Not supplied per model in this source',
               ],
-              ['Confidence interval', 'Not supplied; no significance claim'],
+              ['Confidence intervals', s.source === 'arena' ? 'Shown with each measurement above; overlapping intervals do not establish superiority' : 'Not supplied; no significance claim'],
               ['Model license / context limit', 'Not verified in this dataset'],
             ].map(([label, value]) => (
               <div
@@ -128,7 +130,7 @@ export default async function ModelPage({
           <p className="mt-6 text-sm leading-relaxed text-muted">
             {s.source === 'evalplus'
               ? 'Python function-completion results do not establish React, Next.js, tool-calling, or production-agent reliability.'
-              : 'Source indices summarize specific evaluations and configurations; they do not establish reliability for every application or agent workflow.'}{' '}
+              : 'Source ratings describe specific evaluations and configurations; they do not establish reliability for every application or agent workflow.'}{' '}
             Validate candidates on your own workload.
           </p>
           <Link
