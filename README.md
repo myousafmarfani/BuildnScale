@@ -1,6 +1,6 @@
 <div align="center">
   <img src="https://img.shields.io/badge/status-active-0d9488?style=flat-square" alt="Status" />
-  <img src="https://img.shields.io/badge/license-MIT-0d9488?style=flat-square" alt="License" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-0d9488?style=flat-square" alt="MIT License" /></a>
   <img src="https://img.shields.io/badge/PRs-welcome-0d9488?style=flat-square" alt="PRs Welcome" />
   <img src="https://img.shields.io/github/stars/buildnscale/buildnscale?style=flat-square&color=0d9488" alt="GitHub Stars" />
   <img src="https://img.shields.io/badge/stack-Next.js%2016.2.6%20·%20TypeScript%20·%20Prisma%20·%20NextAuth-0d9488?style=flat-square" alt="Stack" />
@@ -235,7 +235,21 @@ We welcome contributions of all sizes — a typo fix, a new tool idea, or a perf
 
 ## 📄 License
 
-[MIT](LICENSE) — use it, fork it, ship it.
+BuildnScale's original source code and accompanying documentation are licensed
+under the [MIT License](LICENSE), copyright © 2026 Muhammad Yousaf.
+
+You may use, modify, self-host, redistribute, and commercially reuse the software,
+including in closed-source projects, provided you retain the copyright and license
+notice in copies or substantial portions. The software is provided without warranty;
+see the full [LICENSE](LICENSE) for the exact terms.
+
+Third-party dependencies and bundled fonts retain their own licenses. See
+[third-party notices](THIRD_PARTY_NOTICES.md), including the SIL Open Font License
+notices distributed alongside the font files.
+
+The software license concerns reuse of the code. Use of the hosted platform is
+separately covered by its [Terms of Service](https://www.buildnscale.dev/terms)
+and [Privacy Policy](https://www.buildnscale.dev/privacy).
 
 <br/>
 
