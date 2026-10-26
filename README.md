@@ -1,287 +1,67 @@
-<div align="center">
-  <img src="https://img.shields.io/badge/status-active-0d9488?style=flat-square" alt="Status" />
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-0d9488?style=flat-square" alt="MIT License" /></a>
-  <img src="https://img.shields.io/badge/PRs-welcome-0d9488?style=flat-square" alt="PRs Welcome" />
-  <img src="https://img.shields.io/github/stars/buildnscale/buildnscale?style=flat-square&color=0d9488" alt="GitHub Stars" />
-  <img src="https://img.shields.io/badge/stack-Next.js%2016.2.6%20·%20TypeScript%20·%20Prisma%20·%20NextAuth-0d9488?style=flat-square" alt="Stack" />
-  <br/><br/>
-  <a href="https://buildnscale.dev">buildnscale.dev</a>
-</div>
+# BuildnScale
 
-<br/>
+Free, open-source productivity and developer tools for planning work, staying
+focused, and handling everyday development tasks.
 
-<p align="center">
-  <b>Eight productivity and developer tools for developers who ship.</b><br/>
-  Free. Open-source. No account required.
-</p>
+[Open the platform](https://www.buildnscale.dev) ·
+[Browse tools](https://www.buildnscale.dev/tools) ·
+[Contribute](CONTRIBUTING.md)
 
-<br/>
+## Tools
 
-## 🧰 Tools
+| Tool | What it does |
+| --- | --- |
+| [Daily Planner](https://www.buildnscale.dev/tools/daily-planner) | Capture tasks and schedule your day in time blocks. |
+| [Pomodoro](https://www.buildnscale.dev/tools/pomodoro) | Focus on a task, take breaks, and track completed sessions. |
+| [Markdown Notes](https://www.buildnscale.dev/tools/markdown-notes) | Write, preview, search, and export notes. |
+| [JSON Toolkit](https://www.buildnscale.dev/tools/json-toolkit) | Format, validate, and minify JSON in your browser. |
+| [Downtime Detector](https://www.buildnscale.dev/tools/downtime-detector) | Check website responses and manage saved monitors. |
+| [Rate Calculator](https://www.buildnscale.dev/tools/rate-calculator) | Estimate freelance rates and prepare printable invoices. |
+| [Habit Tracker](https://www.buildnscale.dev/tools/habit-tracker) | Record check-ins and review consistency over time. |
+| [Weekly Review](https://www.buildnscale.dev/tools/weekly-review) | Review focus time, completed tasks, habits, and reflections. |
 
-All tools can be started without an account. Personal productivity data stays in your browser; JSON input stays only in the current tab. Website checks contact the server. Sign in for saved website monitors and optional cloud backup/sync. Local data takes precedence when two devices have conflicting values.
+## How it works
 
-```text
-                  ⚡ Ready in 0 seconds · No install · No signup
-```
+Personal productivity tools save work in your browser without requiring an account.
+Export a [workspace backup](https://www.buildnscale.dev/tools#workspace-data) before
+clearing site data or switching browsers. JSON input stays in the current tab and
+is not saved. Website checks run on the server; accounts enable saved monitors
+and optional sync for supported productivity data.
 
-<table>
-  <tr>
-    <td width="24" align="center">🟢</td>
-    <td width="160"><b>Downtime Detector</b></td>
-    <td>Check if any site is up right now. Monitor your own domains with server-location HTTP checks, uptime history, and response time tracking.</td>
-    <td width="140"><code>HTTP status</code> <code>Response time</code> <code>REST API</code></td>
-  </tr>
-  <tr>
-    <td width="24" align="center">🗓</td>
-    <td width="160"><b>Daily Focus Planner</b></td>
-    <td>Drag tasks into 30-min time blocks on a vertical day grid. Schedule by dragging or choosing a time; switch dates and export a day as CSV.</td>
-    <td width="140"><code>localStorage</code> <code>Drag & drop</code> <code>Sync</code></td>
-  </tr>
-  <tr>
-    <td width="24" align="center">▶️</td>
-    <td width="160"><b>Pomodoro + Task Log</b></td>
-    <td>25-min focus sessions with automatic breaks. Logs every session with task metadata. Export CSV of your focus history.</td>
-    <td width="140"><code>Audio</code> <code>Streaks</code> <code>CSV</code></td>
-  </tr>
-  <tr>
-    <td width="24" align="center">🔥</td>
-    <td width="160"><b>Habit Streak Tracker</b></td>
-    <td>Daily check-ins with a GitHub-style contribution heatmap. Habit streaks, completion rates, and configurable 13/26/52-week heatmaps.</td>
-    <td width="140"><code>Heatmap</code> <code>Analytics</code> <code>Year view</code></td>
-  </tr>
-  <tr>
-    <td width="24" align="center">📝</td>
-    <td width="160"><b>Markdown Notes</b></td>
-    <td>Distraction-free editor with live preview. Auto-save, sanitized preview, word count, and Markdown export.</td>
-    <td width="140"><code>marked</code> <code>Auto-save</code> <code>Search</code></td>
-  </tr>
-  <tr>
-    <td width="24" align="center">💰</td>
-    <td width="160"><b>Freelancer Rate Calculator</b></td>
-    <td>Calculate your ideal hourly rate from income goals, expenses, and billable weeks. Generate client-ready PDF invoices.</td>
-    <td width="140"><code>Sliders</code> <code>Breakdown</code> <code>PDF</code></td>
-  </tr>
-  <tr>
-    <td width="24" align="center">📊</td>
-    <td width="160"><b>Weekly Review Dashboard</b></td>
-    <td>Aggregate focus time, task completions, and habit scores. Cross-tool stats, bar charts, CSV export, guided reflections.</td>
-    <td width="140"><code>Stats</code> <code>Charts</code> <code>CSV</code></td>
-  </tr>
-  <tr>
-    <td align="center">{ }</td>
-    <td><b>JSON Toolkit</b></td>
-    <td>Format, validate, minify, copy, and download JSON locally. Import a file up to 1 MB. Unsafe numeric identifiers are rejected rather than silently rounded.</td>
-    <td><code>Browser-only</code> <code>No saved input</code></td>
-  </tr>
-</table>
+The workspace includes tool search, favorites, a collapsible sidebar, mobile
+navigation, and light and dark themes.
 
-<br/>
+## Run locally
 
-## ✨ Features
-
-<div>
-  <table>
-    <tr>
-      <td width="260"><b>🔓 No account required</b><br/><sub>Open any tool and start using it instantly. Zero friction.</sub></td>
-      <td width="260"><b>🆓 100% free</b><br/><sub>All features, no limits, no hidden tiers. Forever.</sub></td>
-      <td width="260"><b>☁️ Multi-device sync</b><br/><sub>Sign in and your data syncs to PostgreSQL automatically.</sub></td>
-    </tr>
-    <tr>
-      <td><b>💾 Local-first</b><br/><sub>Works from browser storage. Syncs when authenticated.</sub></td>
-      <td><b>🌙 Dark mode</b><br/><sub>Easy on the eyes. Respects system theme.</sub></td>
-      <td><b>⌨️ Keyboard shortcuts</b><br/><sub>Power-user friendly. Never touch the mouse.</sub></td>
-    </tr>
-    <tr>
-      <td><b>📱 Responsive</b><br/><sub>Works on desktop, tablet, and mobile.</sub></td>
-      <td><b>🔥 Streak tracking</b><br/><sub>Consistency across planner, habits, and Pomodoro.</sub></td>
-      <td><b>📤 CSV export</b><br/><sub>Take your data with you. Open in any spreadsheet.</sub></td>
-    </tr>
-    <tr>
-      <td><b>📄 PDF invoices</b><br/><sub>Client-ready invoices in one click.</sub></td>
-      <td><b>🔍 SEO-optimized</b><br/><sub>Structured data, sitemap, OG images for every page.</sub></td>
-      <td><b>🔒 Privacy-first</b><br/><sub>No tracking. No analytics. Your data stays yours.</sub></td>
-    </tr>
-  </table>
-</div>
-
-> **40+ badges across all tools** · **Free forever** · **Open source, privacy-first**
-
-<br/>
-
-## 🚀 Getting Started
+Requires Node.js 20.9+ and pnpm.
 
 ```bash
-# Clone the repo
-git clone https://github.com/buildnscale/buildnscale.git
-cd buildnscale/website
-
-# Install dependencies
-pnpm install
-
-# Create a local env file and fill in your values
-# DATABASE_URL=
-# NEXTAUTH_SECRET=
-# NEXTAUTH_URL=http://localhost:3000
-# AUTH_GOOGLE_ID=
-# AUTH_GOOGLE_SECRET=
-
-# Run the dev server
+git clone https://github.com/myousafmarfani/BuildnScale.git buildnscale
+cd buildnscale
+cp .env.example .env
+pnpm install --frozen-lockfile
+pnpm exec prisma generate
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) — all tools work immediately without any setup.
+Set a local `NEXTAUTH_SECRET` in `.env`, then open
+[localhost:3000](http://localhost:3000). Accounts, sync, and saved monitoring require
+PostgreSQL. See [development setup](CONTRIBUTING.md#local-development) for configuration
+and test commands.
 
-### Database setup (optional — only needed for accounts/sync)
+## Built with
 
-```bash
-# Push the Prisma schema to your Postgres instance
-pnpm prisma db push
+Next.js App Router, React, TypeScript, Tailwind CSS, Prisma, PostgreSQL, and NextAuth.
 
-# Generate the Prisma client
-pnpm prisma generate
-```
+## Contributing
 
-> Tools work fully without a database. Accounts and cross-device sync require Postgres (we use [Neon](https://neon.tech)). When a user signs in, browser data is automatically synced to the backend — no manual import/export needed.
+Bug reports, usability improvements, documentation, and focused tool contributions
+are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
+For workspace architecture and browser checks, see the
+[tool experience guide](docs/tool-experience-redesign.md).
 
-<br/>
+## License
 
-## 🏗 Stack
-
-| Layer | Choice |
-|---|---|
-| **Framework** | [Next.js 16.2.6](https://nextjs.org) (App Router) |
-| **Language** | TypeScript 5 |
-| **Styling** | Tailwind CSS 3.4.1 + OKLCH design tokens |
-| **Database ORM** | Prisma 6.19.3 |
-| **Database** | PostgreSQL ([Neon](https://neon.tech)) |
-| **Auth** | NextAuth v4.24.14 (Credentials + Google OAuth) |
-| **Animation** | Framer Motion 12.38.0 |
-| **Icons** | Tabler Icons React 3.44.0 + Lucide React 1.16.0 |
-| **Markdown** | `marked` 18.0.3 + `gray-matter` 4.0.3 |
-| **Theme** | `next-themes` 0.4.6 |
-| **Deployment** | Vercel (recommended) |
-
-<br/>
-
-## 🧱 Project Structure
-
-```
-website/
-├── app/
-│   ├── (main)/          # Public pages (home, blog, dashboard, auth, legal)
-│   │   ├── blog/
-│   │   ├── changelog/
-│   │   ├── dashboard/
-│   │   │   └── settings/
-│   │   ├── pricing/
-│   │   ├── privacy/
-│   │   ├── roadmap/
-│   │   ├── sign-in/
-│   │   ├── sign-up/
-│   │   └── terms/
-│   ├── api/             # Auth and sync route handlers
-│   │   ├── auth/
-│   │   └── sync/
-│   ├── fonts/           # Local font assets
-│   └── tools/           # Full-screen tool apps
-│       ├── daily-planner/
-│       ├── downtime-detector/  # + detail view [siteId]
-│       ├── habit-tracker/
-│       ├── markdown-notes/
-│       ├── pomodoro/
-│       ├── rate-calculator/
-│       └── weekly-review/
-├── components/
-│   ├── blog/            # Blog card and post UI
-│   ├── layout/          # Nav, Footer, MobileSheet
-│   ├── tools/           # Tool-specific components
-│   ├── ui/              # Reusable UI (Button, Card, Toast, etc.)
-│   └── providers.tsx    # Session + theme providers
-├── content/blog/        # Markdown blog posts
-├── hooks/               # Shared hooks (sync, etc.)
-├── lib/                 # Shared utilities (auth, prisma, utils)
-├── prisma/              # Database schema & migrations
-├── public/              # Static assets
-└── types/               # TypeScript declarations
-```
-
-<br/>
-
-## 🤝 Contributing
-
-We welcome contributions of all sizes — a typo fix, a new tool idea, or a performance improvement.
-
-### Getting started
-
-1. Fork the repository
-2. Create a branch: `git checkout -b feat/your-feature`
-3. Make your changes
-4. Run lint: `pnpm lint`
-5. Push and open a PR
-
-### What needs help
-
-- **New tools** — have an idea for a productivity tool? Build it.
-- **i18n** — help translate the UI
-- **PWA / offline** — make tools work offline
-- **Mobile polish** — improve the mobile experience
-- **Tests** — add unit/integration tests
-- **Docs** — improve this README or add tool guides
-
-> **Code style:** We don't add comments unless necessary. Match the existing patterns — `camelCase` for variables, `PascalCase` for components, and keep components small.
-
-<br/>
-
-## 📄 License
-
-BuildnScale's original source code and accompanying documentation are licensed
-under the [MIT License](LICENSE), copyright © 2026 Muhammad Yousaf.
-
-You may use, modify, self-host, redistribute, and commercially reuse the software,
-including in closed-source projects, provided you retain the copyright and license
-notice in copies or substantial portions. The software is provided without warranty;
-see the full [LICENSE](LICENSE) for the exact terms.
-
-Third-party dependencies and bundled fonts retain their own licenses. See
-[third-party notices](THIRD_PARTY_NOTICES.md), including the SIL Open Font License
-notices distributed alongside the font files.
-
-The software license concerns reuse of the code. Use of the hosted platform is
-separately covered by its [Terms of Service](https://www.buildnscale.dev/terms)
-and [Privacy Policy](https://www.buildnscale.dev/privacy).
-
-<br/>
-
----
-
-<div align="center">
-  <sub>Built by developers, for developers. No bloat. Just tools.</sub>
-  <br/>
-  <sub>
-    <a href="https://buildnscale.dev">buildnscale.dev</a> ·
-    <a href="https://github.com/myousafmarfani/BuildnScale">GitHub</a>
-    <a href="https://buildnscale.dev/blog">Blog</a>
-  </sub>
-</div>
-
-## Workspace upgrade
-
-The homepage, catalog, navigation, footer, tool switcher, and sitemap use `lib/tools-registry.ts` as the source of truth. The catalog supports search (including `/tools?q=json`), task-based categories, favorites, and recent tools. Export/import browser data from `/tools#workspace-data` before clearing site data or moving browsers.
-
-### Validation
-
-```bash
-pnpm install --frozen-lockfile
-pnpm exec prisma generate
-pnpm lint
-pnpm typecheck
-pnpm test
-pnpm build
-```
-
-See [upgrade review](docs/workspace-upgrade.md) for findings, product reasoning, and remaining validation.
-
-## Tool detail workspace
-
-Every tool now shares desktop/mobile navigation and a searchable workspace menu. Each tool has a task-specific layout. See [the tool experience redesign](docs/tool-experience-redesign.md) for architecture, design references, and browser test commands.
+[MIT](LICENSE) · Copyright © 2026 Muhammad Yousaf.
+Third-party packages and fonts retain their own licenses; see
+[third-party notices](THIRD_PARTY_NOTICES.md).
