@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { assertSnapshot } from './core.mjs'
 import type { Snapshot } from './types'
 import { unstable_cache } from 'next/cache'
-export const getSnapshots = unstable_cache(
+const getStoredSnapshots = unstable_cache(
   async (): Promise<Snapshot[]> => {
     const fallback = seed as Snapshot
     if (!process.env.DATABASE_URL) return [fallback]
@@ -38,6 +38,18 @@ export const getSnapshots = unstable_cache(
   ['benchmarks-v1'],
   { revalidate: 3600, tags: ['benchmarks'] }
 )
+// Apply the publication gate after the shared cache so disabling display also
+// removes already imported AA data, including data from a warm cache.
+function publicSources() {
+  return process.env.AA_PUBLIC_DISPLAY_ENABLED === 'true' &&
+    Boolean(process.env.AA_PERMISSION_REFERENCE?.trim())
+    ? ['evalplus', 'artificial-analysis']
+    : ['evalplus']
+}
+export async function getSnapshots(): Promise<Snapshot[]> {
+  const sources = publicSources()
+  return (await getStoredSnapshots()).filter(snapshot => sources.includes(snapshot.source))
+}
 export async function getModel(id: string) {
   const snapshots = await getSnapshots()
   for (const snapshot of snapshots) {
@@ -50,6 +62,7 @@ export async function getHistory() {
   if (!process.env.DATABASE_URL) return [seed as Snapshot]
   try {
     const rows = await prisma.benchmarkSnapshot.findMany({
+      where: { source: { in: publicSources() } },
       orderBy: { retrievedAt: 'desc' },
       take: 20,
     })
