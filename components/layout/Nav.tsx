@@ -1,189 +1,124 @@
-"use client"
-
-import { useState, useRef, useEffect } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { useTheme } from "next-themes"
-import { useSession, signOut } from "next-auth/react"
+'use client'
+import { useState } from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import {
-  IconCalendarEvent,
-  IconPlayerPlay,
-  IconFlame,
-  IconMarkdown,
-  IconCalculator,
-  IconChartBar,
-  IconActivity,
-  IconChevronDown,
-  IconMenu2,
-  IconSun,
-  IconMoon,
+  IconArrowUpRight,
   IconBrandGithub,
-} from "@tabler/icons-react"
-import { MobileSheet } from "./MobileSheet"
-
-const tools = [
-  { icon: IconActivity, name: "Downtime Detector", desc: "Monitor uptime", href: "/tools/downtime-detector" },
-  { icon: IconCalendarEvent, name: "Daily Focus Planner", desc: "Time-block your day", href: "/tools/daily-planner" },
-  { icon: IconPlayerPlay, name: "Pomodoro + Task Log", desc: "Track sessions", href: "/tools/pomodoro" },
-  { icon: IconFlame, name: "Habit Tracker", desc: "Build daily streaks", href: "/tools/habit-tracker" },
-  { icon: IconMarkdown, name: "Markdown Notes", desc: "Capture fast", href: "/tools/markdown-notes" },
-  { icon: IconCalculator, name: "Freelancer Calculator", desc: "Price your time", href: "/tools/rate-calculator" },
-  { icon: IconChartBar, name: "Weekly Review", desc: "Reflect and reset", href: "/tools/weekly-review" },
-]
+  IconMenu2,
+  IconX,
+} from '@tabler/icons-react'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { TOOLS } from '@/lib/tools-registry'
+import { ToolIcon } from '@/components/workspace/ToolIcon'
 
 export function Nav() {
-  const [sheetOpen, setSheetOpen] = useState(false)
-  const [dropdownOpen, setDropdownOpen] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
+  const [open, setOpen] = useState(false)
   const pathname = usePathname()
-  const { data: session, status } = useSession()
-  const isAuthenticated = status === "authenticated"
-
-  const [mounted, setMounted] = useState(false)
-  const { theme, setTheme } = useTheme()
-
-  useEffect(() => setMounted(true), [])
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false)
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
-
-  const isActive = (path: string) => pathname === path
-
+  const { data: session } = useSession()
   return (
-    <>
-      <nav className="sticky top-0 z-[100] h-[52px] border-b border-border bg-bg">
-        <div className="mx-auto flex h-full w-full max-w-site items-center px-5">
-          <Link href="/" className="font-display text-sm font-semibold text-fg">
-            build<span className="text-teal">n</span>scale
-          </Link>
-
-          <div className="ml-8 hidden items-center md:flex">
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className={`flex items-center gap-1 text-sm transition-colors duration-150 ${
-                  dropdownOpen ? "text-fg" : "text-muted hover:text-fg"
-                }`}
-              >
-                Tools
-                <IconChevronDown className="mt-0.5 h-3 w-3" />
-              </button>
-
-              {dropdownOpen && (
-                <div className="absolute left-0 top-[44px] w-[640px] rounded-xl border border-border-strong bg-bg p-5">
-                  <div className="grid grid-cols-2 gap-2">
-                    {tools.map((tool) => (
-                      <Link
-                        key={tool.href}
-                        href={tool.href}
-                        className="flex items-start gap-4 rounded-lg p-3.5 transition-colors hover:bg-raised group"
-                        onClick={() => setDropdownOpen(false)}
-                      >
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-raised text-teal group-hover:bg-teal/10 transition-colors">
-                          <tool.icon className="h-5 w-5" />
-                        </div>
-                        <div className="flex min-w-0 flex-col">
-                          <span className="text-sm font-medium text-fg group-hover:text-teal transition-colors">{tool.name}</span>
-                          <span className="mt-0.5 text-xs text-tertiary leading-relaxed">{tool.desc}</span>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                  <div className="mt-3 border-t border-border pt-3">
-                    <Link
-                      href="/tools"
-                      className="flex items-center justify-between rounded-lg px-3.5 py-2.5 text-sm font-medium text-teal transition-colors hover:bg-raised"
-                      onClick={() => setDropdownOpen(false)}
-                    >
-                      Browse all tools
-                      <span className="text-base leading-none">→</span>
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </div>
-
+    <header className="site-nav">
+      <nav
+        className="container-site flex h-[calc(var(--site-header-height)-1px)] items-center gap-8"
+        aria-label="Main navigation"
+      >
+        <Link href="/" aria-label="BuildnScale home" className="brand">
+          <span className="brand-mark">b.</span>build
+          <span className="text-teal">n</span>scale
+        </Link>
+        <div className="hidden items-center gap-7 md:flex">
+          {[
+            ['/tools', 'Tools'],
+            ['/blog', 'Build log'],
+            ['/roadmap', 'Roadmap'],
+          ].map(([href, label]) => (
             <Link
-              href="/blog"
-              className={`ml-6 text-sm transition-colors duration-150 ${
-                isActive("/blog") ? "text-fg" : "text-muted hover:text-fg"
-              }`}
+              key={href}
+              href={href}
+              aria-current={pathname.startsWith(href) ? 'page' : undefined}
+              className={`text-sm ${pathname.startsWith(href) ? 'text-teal' : 'text-muted hover:text-fg'}`}
             >
-              Blog
+              {label}
             </Link>
-
-          </div>
-
-          <div className="ml-auto hidden items-center gap-5 md:flex">
-            <a
-              href="https://github.com/myousafmarfani/BuildnScale"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-tertiary transition-colors duration-150 hover:text-muted"
-              aria-label="GitHub"
-            >
-              <IconBrandGithub className="h-[18px] w-[18px]" />
-            </a>
-            {mounted && (
-              <button
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="text-tertiary transition-colors duration-150 hover:text-muted"
-                aria-label="Toggle theme"
-              >
-                {theme === "dark" ? <IconSun className="h-[18px] w-[18px]" /> : <IconMoon className="h-[18px] w-[18px]" />}
-              </button>
-            )}
-            {isAuthenticated ? (
-              <div className="flex items-center gap-3">
-                <Link
-                  href="/dashboard"
-                  className="text-sm text-tertiary transition-colors duration-150 hover:text-muted"
-                >
-                  {session?.user?.name || session?.user?.email || "Dashboard"}
-                </Link>
-                <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  className="text-xs text-tertiary transition-colors duration-150 hover:text-muted bg-transparent border-none cursor-pointer"
-                >
-                  Sign out
-                </button>
-              </div>
-            ) : (
-              <>
-                <Link
-                  href="/sign-in"
-                  className="text-sm text-tertiary transition-colors duration-150 hover:text-muted"
-                >
-                  Sign in
-                </Link>
-                <Link
-                  href="/tools/downtime-detector"
-                  className="rounded-[6px] bg-teal px-3.5 py-[7px] text-xs font-medium text-bg transition-opacity hover:opacity-90"
-                >
-                  Try free →
-                </Link>
-              </>
-            )}
-          </div>
-
-          <button
-            className="ml-auto text-muted md:hidden"
-            onClick={() => setSheetOpen(true)}
-            aria-label="Open menu"
+          ))}
+        </div>
+        <div className="ml-auto flex items-center gap-4">
+          <a
+            href="https://github.com/myousafmarfani/BuildnScale"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Source code on GitHub"
+            className="hidden text-muted sm:block"
           >
-            <IconMenu2 className="h-5 w-5" />
+            <IconBrandGithub className="h-5 w-5" />
+          </a>
+          <ThemeToggle />
+          <Link
+            href={session ? '/dashboard' : '/tools'}
+            className="btn-primary hidden sm:inline-flex"
+          >
+            {session ? 'My dashboard' : 'Open workspace'}
+            <IconArrowUpRight className="h-4 w-4" />
+          </Link>
+          <button
+            className="md:hidden p-2"
+            aria-label={open ? 'Close navigation' : 'Open navigation'}
+            aria-expanded={open}
+            aria-controls="mobile-navigation"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? (
+              <IconX className="h-5 w-5" />
+            ) : (
+              <IconMenu2 className="h-5 w-5" />
+            )}
           </button>
         </div>
       </nav>
-
-      <MobileSheet open={sheetOpen} onOpenChange={setSheetOpen} />
-    </>
+      {open && (
+        <nav
+          id="mobile-navigation"
+          aria-label="Mobile navigation"
+          className="max-h-[calc(100dvh-72px)] overflow-y-auto border-t border-border bg-bg px-5 py-5 md:hidden"
+        >
+          <div className="mb-4 flex flex-wrap gap-5">
+            {[
+              ['/tools', 'All tools'],
+              ['/blog', 'Build log'],
+              ['/roadmap', 'Roadmap'],
+              [
+                session ? '/dashboard' : '/sign-in',
+                session ? 'Dashboard' : 'Sign in',
+              ],
+            ].map(([href, label]) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setOpen(false)}
+                className="py-2 text-sm text-muted"
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+          <div className="grid gap-1 sm:grid-cols-2">
+            {TOOLS.map((tool) => (
+              <Link
+                key={tool.slug}
+                href={`/tools/${tool.slug}`}
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-3 rounded-lg p-3 hover:bg-raised"
+              >
+                <span className="text-teal">
+                  <ToolIcon slug={tool.slug} />
+                </span>
+                <span className="text-sm">{tool.name}</span>
+              </Link>
+            ))}
+          </div>
+        </nav>
+      )}
+    </header>
   )
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { normalizePublicURL } from "@/lib/http-check";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
@@ -15,7 +16,7 @@ export async function GET() {
     include: {
       uptimeChecks: {
         orderBy: { checkedAt: "desc" },
-        take: 1,
+        where: { checkedAt: { gte: new Date(Date.now() - 30 * 86400000) } },
       },
     },
   });
@@ -69,7 +70,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    new URL(normalized);
+    normalized = normalizePublicURL(normalized).href;
   } catch {
     return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
   }

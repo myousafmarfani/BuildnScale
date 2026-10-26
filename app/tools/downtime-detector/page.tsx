@@ -1,21 +1,20 @@
-"use client"
+'use client'
 
-import { useState, useEffect, useCallback } from "react"
-import Link from "next/link"
+import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 import {
-  IconActivity,
   IconPlus,
-  IconX,
   IconArrowRight,
   IconExternalLink,
   IconRefresh,
   IconTrash,
   IconEdit,
-  IconCheck,
-} from "@tabler/icons-react"
-import { useSession } from "next-auth/react"
-import { ToolBreadcrumbs } from "@/components/ui/ToolBreadcrumbs"
-import { ThemeToggle } from "@/components/ui/ThemeToggle"
+} from '@tabler/icons-react'
+import { useSession } from 'next-auth/react'
+import {
+  ToolPageIntro,
+  EmptyToolState,
+} from '@/components/workspace/ToolPageIntro'
 
 interface CheckResult {
   url: string
@@ -43,51 +42,84 @@ interface Site {
   totalChecks: number
 }
 
-export default function DowntimeDetectorPage() {
-  const { data: session, status } = useSession()
-  const isAuthenticated = status === "authenticated"
+const Sparkline = ({ days }: { days: { up: number; total: number }[] }) => {
+  const maxVal = Math.max(...days.map((d) => d.total), 1)
+  return (
+    <div className="flex items-end gap-[2px] h-8">
+      {days.slice(-30).map((d, i) => {
+        const ratio = d.total > 0 ? d.up / d.total : 0
+        const height = Math.max(2, (d.total / maxVal) * 32)
+        return (
+          <div
+            key={i}
+            className="w-[3px] rounded-sm"
+            style={{
+              height: `${height}px`,
+              background:
+                ratio >= 0.99
+                  ? 'var(--color-teal)'
+                  : ratio >= 0.8
+                    ? 'var(--color-amber)'
+                    : '#E24B4A',
+              opacity: d.total > 0 ? 1 : 0.25,
+            }}
+          />
+        )
+      })}
+    </div>
+  )
+}
 
-  const [url, setUrl] = useState("")
+export default function DowntimeDetectorPage() {
+  const { status } = useSession()
+  const isAuthenticated = status === 'authenticated'
+
+  const [url, setUrl] = useState('')
   const [checking, setChecking] = useState(false)
   const [result, setResult] = useState<CheckResult | null>(null)
-  const [error, setError] = useState("")
+  const [error, setError] = useState('')
 
   const [sites, setSites] = useState<Site[]>([])
   const [loadingSites, setLoadingSites] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)
-  const [addUrl, setAddUrl] = useState("")
-  const [addName, setAddName] = useState("")
+  const [addUrl, setAddUrl] = useState('')
+  const [addName, setAddName] = useState('')
   const [adding, setAdding] = useState(false)
 
   const [checkingSiteId, setCheckingSiteId] = useState<string | null>(null)
-  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
   const [editingSiteId, setEditingSiteId] = useState<string | null>(null)
-  const [editName, setEditName] = useState("")
+  const [editName, setEditName] = useState('')
 
-  const [history, setHistory] = useState<{ uptimePercent: number; days: { date: string; up: number; down: number }[] } | null>(null)
+  const [history, setHistory] = useState<{
+    uptimePercent: number
+    days: { date: string; up: number; down: number }[]
+  } | null>(null)
 
   const doCheck = useCallback(async (targetUrl: string) => {
     setChecking(true)
-    setError("")
+    setError('')
     setResult(null)
+    setHistory(null)
     try {
-      const res = await fetch("/api/downtime/check", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/downtime/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: targetUrl }),
       })
       const data = await res.json()
       if (!res.ok) {
-        setError(data.error || "Check failed")
+        setError(data.error || 'Check failed')
         return
       }
       setResult(data)
-      const historyRes = await fetch(`/api/downtime/history?url=${encodeURIComponent(data.url)}`)
+      const historyRes = await fetch(
+        `/api/downtime/history?url=${encodeURIComponent(data.url)}`
+      )
       if (historyRes.ok) {
         setHistory(await historyRes.json())
       }
     } catch {
-      setError("Network error. Please try again.")
+      setError('Network error. Please try again.')
     } finally {
       setChecking(false)
     }
@@ -95,9 +127,11 @@ export default function DowntimeDetectorPage() {
 
   const fetchSites = useCallback(async () => {
     try {
-      const res = await fetch("/api/downtime/sites")
+      const res = await fetch('/api/downtime/sites')
       if (res.ok) {
         setSites(await res.json())
+      } else {
+        setError('Could not load monitors. Please try again.')
       }
     } catch {
       // ignore
@@ -119,26 +153,29 @@ export default function DowntimeDetectorPage() {
   const addSite = async () => {
     if (!addUrl.trim()) return
     setAdding(true)
-    setError("")
+    setError('')
     try {
-      const res = await fetch("/api/downtime/sites", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: addUrl.trim(), display_name: addName.trim() || null }),
+      const res = await fetch('/api/downtime/sites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: addUrl.trim(),
+          display_name: addName.trim() || null,
+        }),
       })
       const data = await res.json()
       if (res.ok) {
         setShowAddModal(false)
-        setAddUrl("")
-        setAddName("")
+        setAddUrl('')
+        setAddName('')
         await fetchSites()
         // Immediately check the newly added site
         checkSiteNow(data.id)
       } else {
-        setError(data.error || "Failed to add site")
+        setError(data.error || 'Failed to add site')
       }
     } catch {
-      setError("Failed to add site")
+      setError('Failed to add site')
     } finally {
       setAdding(false)
     }
@@ -147,7 +184,13 @@ export default function DowntimeDetectorPage() {
   const checkSiteNow = async (siteId: string) => {
     setCheckingSiteId(siteId)
     try {
-      await fetch(`/api/downtime/sites/${siteId}/check`, { method: "POST" })
+      const response = await fetch(`/api/downtime/sites/${siteId}/check`, {
+        method: 'POST',
+      })
+      if (!response.ok) {
+        setError('Could not check this monitor. Please try again.')
+        return
+      }
       await fetchSites()
     } catch {
       // ignore
@@ -158,9 +201,10 @@ export default function DowntimeDetectorPage() {
 
   const deleteSite = async (siteId: string) => {
     try {
-      const res = await fetch(`/api/downtime/sites/${siteId}`, { method: "DELETE" })
+      const res = await fetch(`/api/downtime/sites/${siteId}`, {
+        method: 'DELETE',
+      })
       if (res.ok) {
-        setDeleteConfirmId(null)
         await fetchSites()
       }
     } catch {
@@ -171,8 +215,8 @@ export default function DowntimeDetectorPage() {
   const updateDisplayName = async (siteId: string, name: string) => {
     try {
       const res = await fetch(`/api/downtime/sites/${siteId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ display_name: name }),
       })
       if (res.ok) {
@@ -184,345 +228,390 @@ export default function DowntimeDetectorPage() {
     }
   }
 
-  const statusBadge = (isUp: boolean) => {
-    if (isUp) {
-      return <span className="inline-flex items-center gap-1 rounded-full bg-green-500/20 px-2 py-0.5 text-[11px] font-medium text-green-400 border border-green-500/30">ONLINE</span>
-    }
-    return <span className="inline-flex items-center gap-1 rounded-full bg-red-500/20 px-2 py-0.5 text-[11px] font-medium text-red-400 border border-red-500/30">DOWN</span>
-  }
-
   const formatTimeAgo = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime()
     const mins = Math.floor(diff / 60000)
-    if (mins < 1) return "just now"
+    if (mins < 1) return 'just now'
     if (mins < 60) return `${mins} min ago`
     const hours = Math.floor(mins / 60)
     if (hours < 24) return `${hours}h ago`
     return `${Math.floor(hours / 24)}d ago`
   }
 
-  const Sparkline = ({ days }: { days: { up: number; total: number }[] }) => {
-    const maxVal = Math.max(...days.map((d) => d.total), 1)
-    return (
-      <div className="flex items-end gap-[2px] h-8">
-        {days.slice(-30).map((d, i) => {
-          const ratio = d.total > 0 ? d.up / d.total : 0
-          const height = Math.max(2, (d.total / maxVal) * 32)
-          return (
-            <div
-              key={i}
-              className="w-[3px] rounded-sm"
-              style={{
-                height: `${height}px`,
-                background: ratio >= 0.99 ? "var(--color-teal)" : ratio >= 0.8 ? "var(--color-amber)" : "#E24B4A",
-                opacity: ratio,
-              }}
-            />
-          )
-        })}
-      </div>
-    )
-  }
-
-  if (status === "loading") {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-bg">
-        <div className="spinner" />
-      </div>
-    )
-  }
-
   return (
-    <div className="min-h-screen bg-bg">
-      <div className="flex h-[52px] shrink-0 items-center justify-between border-b border-border bg-bg px-3 md:px-4">
-        <div className="flex items-center gap-2 md:gap-4 min-w-0">
-          <Link href="/" className="font-display text-sm font-semibold text-fg shrink-0">
-            build<span className="text-teal">n</span>scale
-          </Link>
-          <div className="h-4 w-px bg-border shrink-0" />
-          <ToolBreadcrumbs slug="downtime-detector" />
-        </div>
-        <div className="flex items-center gap-2 md:gap-3 shrink-0">
-          <ThemeToggle />
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-[800px] px-4 py-12">
-        <div className="mb-8 text-center">
-          <div className="mb-3 flex items-center justify-center gap-2">
-            <IconActivity className="h-6 w-6 text-teal" />
-            <h1 className="font-display text-3xl font-bold text-fg">Downtime Detector</h1>
-          </div>
-          <p className="text-sm text-muted">Check if any website is up. Monitor your own domains 24/7.</p>
-        </div>
-
-        {/* Guest Check */}
-        <div className="mb-8">
-          <div className="rounded-xl border border-border bg-surface p-6">
-            <div className="flex gap-3">
+    <div className="tool-page-scroll">
+      <div className="tool-page-container">
+        <ToolPageIntro
+          eyebrow="CHECK / UNDERSTAND / MONITOR"
+          title="Is your website responding?"
+          description="Check its HTTP response from our server, or save a monitor to keep a history of your own sites."
+        />
+        <div className="monitor-check-layout">
+          <section className="tool-panel p-5 sm:p-7">
+            <p className="eyebrow mb-3">QUICK WEBSITE CHECK</p>
+            <h2 className="mb-5 text-xl font-semibold tracking-tight">
+              Start with an address.
+            </h2>
+            <form
+              className="flex flex-wrap gap-3"
+              onSubmit={(e) => {
+                e.preventDefault()
+                if (url.trim() && !checking) void doCheck(url)
+              }}
+            >
+              <label htmlFor="website-url" className="sr-only">
+                Website address
+              </label>
               <input
+                id="website-url"
                 type="text"
+                inputMode="url"
+                autoCapitalize="none"
+                spellCheck={false}
+                autoComplete="url"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter" && url.trim() && !checking) doCheck(url) }}
-                placeholder="https://example.com"
-                className="flex-1 rounded-lg border border-border bg-bg px-4 py-2.5 text-sm text-fg outline-none placeholder:text-tertiary focus:border-teal/50 font-mono"
+                placeholder="example.com or https://example.com"
+                className="workspace-input min-w-[180px] flex-1"
+                required
+                maxLength={2048}
               />
               <button
-                onClick={() => doCheck(url)}
+                type="submit"
                 disabled={!url.trim() || checking}
-                className="rounded-lg bg-teal px-5 py-2.5 text-sm font-medium text-bg transition-all hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary"
               >
-                {checking ? "Checking..." : "Check Now"}
+                {checking ? 'Checking…' : 'Check website'}
+                <IconArrowRight className="h-4 w-4" />
               </button>
-            </div>
-          </div>
+            </form>
+            <p className="mt-3 text-xs leading-relaxed text-muted">
+              No signup for a quick check · Up to 10 checks per hour · Public
+              websites only
+            </p>
+            {checking && (
+              <p role="status" className="mt-5 text-sm text-teal">
+                Checking the response. This can take up to 10 seconds…
+              </p>
+            )}
+          </section>
+          <aside className="tool-panel p-5 sm:p-7">
+            <h2 className="text-sm font-semibold">
+              A check is a useful signal.
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted">
+              We report the HTTP status, response time, and server location. A
+              blocked request does not always mean your website is offline.
+            </p>
+            <p className="mt-3 text-xs leading-relaxed text-muted">
+              This is a single-location check. It does not test certificate
+              expiry or every visitor’s connection.
+            </p>
+          </aside>
         </div>
-
         {error && (
-          <div className="mb-6 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+          <p
+            role="alert"
+            className="mt-5 rounded-xl border border-danger p-4 text-sm text-danger"
+          >
             {error}
-          </div>
+          </p>
         )}
-
         {result && (
-          <div className="mb-8 rounded-xl border border-border bg-surface p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="font-mono text-sm text-fg">{result.url.replace(/^https?:\/\//, "")}</span>
-                {statusBadge(result.is_up)}
-              </div>
-              <span className="font-mono text-xs text-tertiary">
-                {new Date(result.checked_at).toLocaleTimeString()}
-              </span>
-            </div>
-
-            <div className="mb-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
-              <div className="rounded-lg bg-bg p-3">
-                <div className="text-[11px] text-tertiary mb-1">Response</div>
-                <div className="font-mono text-sm text-fg">{result.response_ms}ms</div>
-              </div>
-              <div className="rounded-lg bg-bg p-3">
-                <div className="text-[11px] text-tertiary mb-1">HTTP Status</div>
-                <div className="font-mono text-sm text-fg">{result.status_code ?? "N/A"}</div>
-              </div>
-              <div className="rounded-lg bg-bg p-3">
-                <div className="text-[11px] text-tertiary mb-1">SSL</div>
-                <div className="font-mono text-sm text-fg">{result.is_up ? "Valid" : "N/A"}</div>
-              </div>
-            </div>
-
-            {history && history.days.length > 0 && (
-              <div className="border-t border-border pt-4">
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-[11px] text-tertiary">30-day uptime: {history.uptimePercent}%</span>
-                </div>
-                <Sparkline days={history.days.map(d => ({ up: d.up, total: d.up + d.down }))} />
-              </div>
-            )}
-
-            {!isAuthenticated && (
-              <div className="mt-4 border-t border-border pt-4 text-center">
-                <Link
-                  href="/sign-in"
-                  className="inline-flex items-center gap-2 text-sm text-teal hover:underline"
+          <section className="tool-panel mt-6 p-5 sm:p-7" aria-live="polite">
+            <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
+              <div className="min-w-0">
+                <span
+                  className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${result.is_up ? 'bg-teal-subtle text-teal' : 'bg-raised text-amber'}`}
                 >
-                  Sign in to monitor this site 24/7 <IconArrowRight className="h-3.5 w-3.5" />
-                </Link>
+                  {result.is_up
+                    ? 'Responding successfully'
+                    : 'Needs a closer look'}
+                </span>
+                <h2 className="mt-3 break-all text-lg font-semibold">
+                  {result.url}
+                </h2>
+                <p className="mt-2 text-xs text-muted">
+                  Checked {new Date(result.checked_at).toLocaleTimeString()}
+                </p>
               </div>
-            )}
-          </div>
-        )}
-
-        {/* Authenticated Dashboard */}
-        {isAuthenticated && (
-          <div>
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-display text-lg font-semibold text-fg">My Monitored Sites</h2>
               <button
-                onClick={() => setShowAddModal(true)}
-                className="flex items-center gap-1.5 rounded-lg bg-teal px-3.5 py-2 text-xs font-medium text-bg transition-all hover:brightness-110"
+                className="tool-button"
+                disabled={checking}
+                onClick={() => doCheck(result.url)}
               >
-                <IconPlus className="h-3.5 w-3.5" /> Add Site
+                <IconRefresh className="h-4 w-4" />
+                Check again
               </button>
             </div>
-
-            {loadingSites ? (
-              <div className="py-12 text-center">
-                <div className="spinner mx-auto" />
+            <div className="grid grid-cols-3 gap-3">
+              <div className="metric-card">
+                <span>Response time</span>
+                <strong className="!text-xl">
+                  {result.response_ms}
+                  <small> ms</small>
+                </strong>
               </div>
-            ) : sites.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-border bg-surface p-12 text-center">
-                <IconActivity className="mx-auto mb-3 h-8 w-8 text-tertiary" />
-                <p className="text-sm text-muted">No sites monitored yet. Add your first site to start tracking uptime.</p>
+              <div className="metric-card">
+                <span>HTTP status</span>
+                <strong className="!text-xl">
+                  {result.status_code ?? '—'}
+                </strong>
               </div>
-            ) : (
-              <div className="grid gap-4">
-                {sites.map((site) => (
-                  <div
-                    key={site.id}
-                    className="rounded-xl border border-border bg-surface p-5 transition-all hover:border-border-strong"
-                  >
-                    <div className="mb-3 flex items-center justify-between">
-                      <div className="flex items-center gap-3 min-w-0">
-                        {editingSiteId === site.id ? (
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="text"
-                              value={editName}
-                              onChange={(e) => setEditName(e.target.value)}
-                              className="rounded border border-border bg-bg px-2 py-1 text-sm text-fg outline-none w-40"
-                              autoFocus
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter") updateDisplayName(site.id, editName)
-                                if (e.key === "Escape") setEditingSiteId(null)
+              <div className="metric-card">
+                <span>Server region</span>
+                <strong className="!text-base break-words">
+                  {result.region || 'Server'}
+                </strong>
+              </div>
+            </div>
+            {result.error_message && (
+              <p className="mt-4 rounded-lg bg-bg p-4 text-sm text-muted">
+                {result.error_message}
+              </p>
+            )}
+            {history && history.days.length > 0 && (
+              <div className="mt-5 border-t border-border pt-5">
+                <p className="mb-3 text-xs text-muted">
+                  Sampled availability over 30 days: {history.uptimePercent}% ·
+                  your saved checks
+                </p>
+                <Sparkline
+                  days={history.days.map((day) => ({
+                    up: day.up,
+                    total: day.up + day.down,
+                  }))}
+                />
+              </div>
+            )}
+          </section>
+        )}
+        <section className="tool-panel mt-6 p-5 sm:p-7">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="eyebrow mb-2">YOUR WEBSITE WATCHLIST</p>
+              <h2 className="text-xl font-semibold tracking-tight">
+                Keep the bigger picture.
+              </h2>
+              <p className="mt-2 text-sm text-muted">
+                Saved monitors keep check history in your account.
+              </p>
+            </div>
+            {isAuthenticated && (
+              <button
+                className="btn-primary"
+                onClick={() => setShowAddModal(!showAddModal)}
+                aria-expanded={showAddModal}
+              >
+                <IconPlus className="h-4 w-4" />
+                Add a monitor
+              </button>
+            )}
+          </div>
+          {status === 'loading' ? (
+            <p role="status" className="py-5 text-sm text-muted">
+              Loading account…
+            </p>
+          ) : !isAuthenticated ? (
+            <EmptyToolState
+              title="Your sites, in one place."
+              description="Quick checks work without an account. Sign in when you want to save monitors and review their history."
+            >
+              <Link
+                className="btn-primary"
+                href="/sign-in?callbackUrl=%2Ftools%2Fdowntime-detector"
+              >
+                Sign in to save monitors ↗
+              </Link>
+            </EmptyToolState>
+          ) : (
+            <>
+              {showAddModal && (
+                <form
+                  className="mb-6 rounded-xl border border-border-strong bg-bg p-4 sm:p-5"
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    void addSite()
+                  }}
+                >
+                  <h3 className="mb-4 text-base font-semibold">
+                    Add a website monitor
+                  </h3>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <label className="text-sm">
+                      Website address
+                      <input
+                        className="workspace-input mt-2"
+                        value={addUrl}
+                        onChange={(e) => setAddUrl(e.target.value)}
+                        placeholder="https://example.com"
+                        inputMode="url"
+                        autoCapitalize="none"
+                        required
+                        maxLength={2048}
+                      />
+                    </label>
+                    <label className="text-sm">
+                      Display name{' '}
+                      <span className="text-muted">(optional)</span>
+                      <input
+                        className="workspace-input mt-2"
+                        value={addName}
+                        onChange={(e) => setAddName(e.target.value)}
+                        placeholder="My portfolio"
+                        maxLength={100}
+                      />
+                    </label>
+                  </div>
+                  <div className="mt-4 flex gap-3">
+                    <button
+                      type="submit"
+                      className="btn-primary"
+                      disabled={adding || !addUrl.trim()}
+                    >
+                      {adding ? 'Adding…' : 'Add & check website'}
+                    </button>
+                    <button
+                      type="button"
+                      className="tool-button"
+                      onClick={() => setShowAddModal(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              )}
+              {loadingSites ? (
+                <p
+                  role="status"
+                  className="py-8 text-center text-sm text-muted"
+                >
+                  Loading your monitors…
+                </p>
+              ) : sites.length === 0 ? (
+                <EmptyToolState
+                  title="Your watchlist is ready."
+                  description="Add a website above to start collecting a history of its responses."
+                />
+              ) : (
+                <div className="grid gap-4 xl:grid-cols-2">
+                  {sites.map((site) => (
+                    <article key={site.id} className="monitor-card">
+                      <div className="mb-4 flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          {editingSiteId === site.id ? (
+                            <form
+                              className="flex flex-wrap gap-2"
+                              onSubmit={(e) => {
+                                e.preventDefault()
+                                void updateDisplayName(site.id, editName)
                               }}
-                            />
-                            <button
-                              onClick={() => updateDisplayName(site.id, editName)}
-                              className="text-teal hover:text-green-400"
                             >
-                              <IconCheck className="h-4 w-4" />
-                            </button>
-                          </div>
-                        ) : (
-                          <span className="font-mono text-sm font-medium text-fg truncate">
-                            {site.displayName || site.url.replace(/^https?:\/\//, "")}
-                          </span>
-                        )}
-                        {site.lastCheck
-                          ? statusBadge(site.lastCheck.isUp)
-                          : <span className="text-[11px] text-tertiary">Pending</span>
-                        }
+                              <input
+                                aria-label="Monitor display name"
+                                value={editName}
+                                onChange={(e) => setEditName(e.target.value)}
+                                className="workspace-input !w-auto min-w-0 flex-1"
+                                maxLength={100}
+                              />
+                              <button type="submit" className="tool-button">
+                                Save
+                              </button>
+                              <button
+                                type="button"
+                                className="tool-button"
+                                onClick={() => setEditingSiteId(null)}
+                              >
+                                Cancel
+                              </button>
+                            </form>
+                          ) : (
+                            <>
+                              <Link
+                                href={`/tools/downtime-detector/${site.id}`}
+                                className="break-words text-base font-semibold hover:text-teal"
+                              >
+                                {site.displayName ||
+                                  site.url.replace(/^https?:\/\//, '')}
+                              </Link>
+                              <p className="mt-2 break-all text-xs text-muted">
+                                {site.url}
+                              </p>
+                            </>
+                          )}
+                        </div>
+                        <span
+                          className={`monitor-dot ${site.lastCheck?.isUp ? 'up' : ''}`}
+                          aria-label={
+                            site.lastCheck
+                              ? site.lastCheck.isUp
+                                ? 'Last check succeeded'
+                                : 'Last check failed'
+                              : 'Awaiting first check'
+                          }
+                        />
                       </div>
-                      <div className="flex items-center gap-1 shrink-0">
+                      <div className="mb-4 flex flex-wrap gap-3 text-xs text-muted">
+                        <span>
+                          {site.uptimePercent == null
+                            ? 'No check history'
+                            : `${site.uptimePercent}% sampled availability`}
+                        </span>
+                        <span>
+                          {site.lastCheck
+                            ? `Checked ${formatTimeAgo(site.lastCheck.checkedAt)}`
+                            : 'Not checked yet'}
+                        </span>
+                      </div>
+                      <div className="monitor-actions">
                         <button
+                          className="tool-button"
                           onClick={() => checkSiteNow(site.id)}
                           disabled={checkingSiteId === site.id}
-                          className="rounded-md p-1.5 text-tertiary hover:text-fg hover:bg-raised transition-colors disabled:opacity-50"
-                          title="Check now"
                         >
-                          <IconRefresh className={`h-4 w-4 ${checkingSiteId === site.id ? "animate-spin" : ""}`} />
+                          <IconRefresh className="h-4 w-4" />
+                          {checkingSiteId === site.id ? 'Checking…' : 'Check'}
                         </button>
                         <button
-                          onClick={() => { setEditingSiteId(site.id); setEditName(site.displayName || site.url.replace(/^https?:\/\//, "")) }}
-                          className="rounded-md p-1.5 text-tertiary hover:text-fg hover:bg-raised transition-colors"
-                          title="Edit name"
+                          className="tool-button"
+                          onClick={() => {
+                            setEditingSiteId(site.id)
+                            setEditName(site.displayName || '')
+                          }}
                         >
                           <IconEdit className="h-4 w-4" />
+                          Rename
                         </button>
                         <button
-                          onClick={() => setDeleteConfirmId(site.id)}
-                          className="rounded-md p-1.5 text-tertiary hover:text-red-400 hover:bg-raised transition-colors"
-                          title="Delete"
+                          className="tool-button"
+                          onClick={() => {
+                            if (
+                              confirm(
+                                'Remove this monitor and its check history?'
+                              )
+                            )
+                              void deleteSite(site.id)
+                          }}
+                          aria-label={`Remove monitor ${site.displayName || site.url}`}
                         >
                           <IconTrash className="h-4 w-4" />
                         </button>
                         <Link
                           href={`/tools/downtime-detector/${site.id}`}
-                          className="rounded-md p-1.5 text-tertiary hover:text-fg hover:bg-raised transition-colors"
-                          title="View details"
+                          className="tool-button ml-auto"
                         >
+                          History
                           <IconExternalLink className="h-4 w-4" />
                         </Link>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-4 text-[11px] text-tertiary">
-                      <span className="font-mono text-[10px] text-tertiary truncate max-w-[200px]">{site.url}</span>
-                      {site.uptimePercent !== null && (
-                        <span className="font-mono">{site.uptimePercent}% uptime</span>
-                      )}
-                      {site.lastCheck && (
-                        <span>Checked {formatTimeAgo(site.lastCheck.checkedAt)}</span>
-                      )}
-                      {site.lastCheck?.responseMs !== null && site.lastCheck?.responseMs !== undefined && (
-                        <span className="font-mono">{site.lastCheck.responseMs}ms</span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+                    </article>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </section>
       </div>
-
-      {/* Add Site Modal */}
-      {showAddModal && (
-        <div
-          className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4"
-          onClick={() => setShowAddModal(false)}
-        >
-          <div
-            className="w-full max-w-sm rounded-xl border border-border bg-surface p-6 shadow-lg"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-display text-base font-semibold text-fg">Add Site</h3>
-              <button onClick={() => setShowAddModal(false)} className="text-tertiary hover:text-fg">
-                <IconX className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="mb-3">
-              <label className="mb-1 block text-xs text-tertiary">URL</label>
-              <input
-                type="text"
-                value={addUrl}
-                onChange={(e) => setAddUrl(e.target.value)}
-                placeholder="https://example.com"
-                className="w-full rounded-lg border border-border bg-bg px-3 py-2 text-sm text-fg outline-none placeholder:text-tertiary focus:border-teal/50 font-mono"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="mb-1 block text-xs text-tertiary">Display Name (optional)</label>
-              <input
-                type="text"
-                value={addName}
-                onChange={(e) => setAddName(e.target.value)}
-                placeholder="My Blog"
-                className="w-full rounded-lg border border-border bg-bg px-3 py-2 text-sm text-fg outline-none placeholder:text-tertiary focus:border-teal/50"
-              />
-            </div>
-            <button
-              onClick={addSite}
-              disabled={!addUrl.trim() || adding}
-              className="w-full rounded-lg bg-teal px-4 py-2.5 text-sm font-medium text-bg transition-all hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {adding ? "Checking site..." : "Add & Check Now"}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Confirm */}
-      {deleteConfirmId && (
-        <div
-          className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4"
-          onClick={() => setDeleteConfirmId(null)}
-        >
-          <div
-            className="w-full max-w-xs rounded-xl border border-border bg-surface p-6 shadow-lg"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="mb-2 font-display text-base font-semibold text-fg">Remove site?</h3>
-            <p className="mb-4 text-sm text-muted">All check history will be deleted. This cannot be undone.</p>
-            <div className="flex gap-2">
-              <button
-                onClick={() => deleteSite(deleteConfirmId)}
-                className="flex-1 rounded-lg bg-red-500/20 px-4 py-2 text-sm font-medium text-red-400 border border-red-500/30 hover:bg-red-500/30 transition-colors"
-              >
-                Delete
-              </button>
-              <button
-                onClick={() => setDeleteConfirmId(null)}
-                className="flex-1 rounded-lg border border-border px-4 py-2 text-sm text-muted hover:text-fg transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

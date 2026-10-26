@@ -1,29 +1,27 @@
-"use client"
+'use client'
 
-import { useState, useEffect, useRef, useCallback } from "react"
-import Link from "next/link"
+import { useState, useEffect, useRef, useCallback } from 'react'
+import Link from 'next/link'
 import {
   IconPlayerPlay,
   IconPlayerPause,
   IconRefresh,
-  IconClock,
-  IconCheck,
-  IconSettings,
-  IconList,
-  IconCalendarEvent,
-  IconCircle,
-  IconBook2,
-  IconLayoutSidebarRightCollapse,
-} from "@tabler/icons-react"
-import { StreakPill } from "@/components/ui/StreakPill"
-import { SettingsDrawer } from "@/components/ui/SettingsDrawer"
-import { ToolBreadcrumbs } from "@/components/ui/ToolBreadcrumbs"
-import { UserGuideModal } from "@/components/ui/UserGuideModal"
-import { ThemeToggle } from "@/components/ui/ThemeToggle"
-import { useSync } from "@/hooks/useSync"
+} from '@tabler/icons-react'
 
-const CIRCUMFERENCE = 2 * Math.PI * 98
-const STORAGE_KEY = "bns_pomo_"
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
+import { SettingsDrawer } from '@/components/ui/SettingsDrawer'
+
+import { UserGuideModal } from '@/components/ui/UserGuideModal'
+
+import { downloadFile, csvCell } from '@/lib/download'
+import {
+  ToolPageIntro,
+  EmptyToolState,
+} from '@/components/workspace/ToolPageIntro'
+import { useLocalSetting } from '@/hooks/useLocalSetting'
+import { useSync } from '@/hooks/useSync'
+
+const STORAGE_KEY = 'bns_pomo_'
 
 interface PomodoroSession {
   id: string
@@ -37,22 +35,18 @@ interface PomodoroSession {
 function formatTime(sec: number): string {
   const m = Math.floor(sec / 60)
   const s = sec % 60
-  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 }
 
 function formatHour(ts: number): string {
-  return new Date(ts).toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
+  return new Date(ts).toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
   })
 }
 
-function formatDuration(duration: number): string {
-  return formatTime(duration)
-}
-
 function loadJSON<T>(key: string, fallback: T): T {
-  if (typeof window === "undefined") return fallback
+  if (typeof window === 'undefined') return fallback
   try {
     const raw = localStorage.getItem(key)
     return raw ? JSON.parse(raw) : fallback
@@ -62,32 +56,8 @@ function loadJSON<T>(key: string, fallback: T): T {
 }
 
 function saveJSON(key: string, value: unknown) {
-  if (typeof window === "undefined") return
+  if (typeof window === 'undefined') return
   localStorage.setItem(key, JSON.stringify(value))
-}
-
-function loadStreak(): { streak: number; days: string[] } {
-  if (typeof window === "undefined") return { streak: 0, days: [] }
-  const s = parseInt(localStorage.getItem("bns_streak") || "0", 10) || 0
-  const d: string[] = JSON.parse(localStorage.getItem("bns_streak_days") || "[]")
-  return { streak: s, days: d }
-}
-
-function saveStreak(streak: number, days: string[]) {
-  localStorage.setItem("bns_streak", String(streak))
-  localStorage.setItem("bns_streak_days", JSON.stringify(days))
-}
-
-function updateStreak(): { streak: number; days: string[] } {
-  const today = new Date().toLocaleDateString("en-CA")
-  const { streak, days } = loadStreak()
-  if (days.includes(today)) return { streak, days }
-  const yesterday = new Date(Date.now() - 86400000).toLocaleDateString("en-CA")
-  const newDays = [...days, today]
-  const newStreak =
-    days.length === 0 || days[days.length - 1] === yesterday ? streak + 1 : 1
-  saveStreak(newStreak, newDays)
-  return { streak: newStreak, days: newDays }
 }
 
 function playBeep() {
@@ -108,48 +78,63 @@ function playBeep() {
 }
 
 export default function PomodoroPage() {
-  const today = new Date().toLocaleDateString("en-CA")
+  const today = new Date().toLocaleDateString('en-CA')
 
   useSync([
-    "bns_pomo_focusTime",
-    "bns_pomo_shortBreak",
-    "bns_pomo_longBreak",
-    "bns_pomo_longBreakInterval",
+    'bns_pomo_focusTime',
+    'bns_pomo_shortBreak',
+    'bns_pomo_longBreak',
+    'bns_pomo_longBreakInterval',
     `bns_pomo_sessions_${today}`,
-    "bns_pomo_tasks",
-    "bns_pomo_currentTask",
+    'bns_pomo_tasks',
+    'bns_pomo_currentTask',
     `bns_pomo_totalFocus_${today}`,
-    "bns_streak",
-    "bns_streak_days",
+    'bns_streak',
+    'bns_streak_days',
   ])
 
-  const [focusTime, setFocusTime] = useState(() => loadJSON(STORAGE_KEY + "focusTime", 25) as number)
-  const [shortBreak, setShortBreak] = useState(() => loadJSON(STORAGE_KEY + "shortBreak", 5) as number)
-  const [longBreak, setLongBreak] = useState(() => loadJSON(STORAGE_KEY + "longBreak", 15) as number)
-  const [longBreakInterval, setLongBreakInterval] = useState(() => loadJSON(STORAGE_KEY + "longBreakInterval", 4) as number)
+  const [focusTime, setFocusTime] = useLocalSetting(
+    STORAGE_KEY + 'focusTime',
+    25
+  )
+  const [shortBreak, setShortBreak] = useLocalSetting(
+    STORAGE_KEY + 'shortBreak',
+    5
+  )
+  const [longBreak, setLongBreak] = useLocalSetting(
+    STORAGE_KEY + 'longBreak',
+    15
+  )
+  const [longBreakInterval, setLongBreakInterval] = useLocalSetting(
+    STORAGE_KEY + 'longBreakInterval',
+    4
+  )
 
   const [timeLeft, setTimeLeft] = useState(focusTime * 60)
   const [isRunning, setIsRunning] = useState(false)
-  const [sessionType, setSessionType] = useState<"focus" | "break">("focus")
+  const [sessionType, setSessionType] = useState<'focus' | 'break'>('focus')
   const [sessionNumber, setSessionNumber] = useState(1)
-  const [completedSessions, setCompletedSessions] = useState<PomodoroSession[]>([])
+  const [completedSessions, setCompletedSessions] = useState<PomodoroSession[]>(
+    []
+  )
   const [tasks, setTasks] = useState<string[]>([])
-  const [currentTask, setCurrentTask] = useState("")
+  const [currentTask, setCurrentTask] = useState('')
   const [totalFocusToday, setTotalFocusToday] = useState(0)
   const [sessionStartTime, setSessionStartTime] = useState<number | null>(null)
-  const [streak, setStreak] = useState(0)
   const [countdown, setCountdown] = useState(0)
   const [isLongBreak, setIsLongBreak] = useState(false)
   const [pendingTransition, setPendingTransition] = useState<{
-    type: "focus" | "break"
+    type: 'focus' | 'break'
     time: number
   } | null>(null)
-  const [isMobile, setIsMobile] = useState(false)
-  const [mobileTab, setMobileTab] = useState<"timer" | "log" | "tasks">("timer")
-  const [sidebarOpen, setSidebarOpen] = useState(true)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [userGuideOpen, setUserGuideOpen] = useState(false)
+  const [notificationState, setNotificationState] = useState(
+    typeof Notification === 'undefined'
+      ? 'unsupported'
+      : Notification.permission
+  )
 
   const focusSeconds = focusTime * 60
   const shortBreakSeconds = shortBreak * 60
@@ -158,39 +143,82 @@ export default function PomodoroPage() {
   const focusRef = useRef(focusSeconds)
   const shortRef = useRef(shortBreakSeconds)
   const longRef = useRef(longBreakSeconds)
-  useEffect(() => { focusRef.current = focusSeconds }, [focusSeconds])
-  useEffect(() => { shortRef.current = shortBreakSeconds }, [shortBreakSeconds])
-  useEffect(() => { longRef.current = longBreakSeconds }, [longBreakSeconds])
+  useEffect(() => {
+    focusRef.current = focusSeconds
+  }, [focusSeconds])
+  useEffect(() => {
+    shortRef.current = shortBreakSeconds
+  }, [shortBreakSeconds])
+  useEffect(() => {
+    longRef.current = longBreakSeconds
+  }, [longBreakSeconds])
 
+  const deadlineRef = useRef<number | null>(null)
+  const settingsLoaded = useRef(false)
+  const [timerReady, setTimerReady] = useState(false)
+  useEffect(() => {
+    if (settingsLoaded.current) return
+    settingsLoaded.current = true
+    const draft = loadJSON<{
+      date: string
+      timeLeft: number
+      deadline: number | null
+      running: boolean
+      type: 'focus' | 'break'
+      number: number
+      long: boolean
+      started: number | null
+    } | null>(STORAGE_KEY + 'activeTimer', null)
+    if (
+      draft &&
+      draft.date === today &&
+      Number.isFinite(draft.timeLeft) &&
+      draft.timeLeft >= 0 &&
+      draft.timeLeft <= 7200 &&
+      (draft.type === 'focus' || draft.type === 'break')
+    ) {
+      setSessionType(draft.type)
+      setSessionNumber(draft.number || 1)
+      setIsLongBreak(!!draft.long)
+      setSessionStartTime(draft.started)
+      setTimeLeft(
+        draft.running && draft.deadline
+          ? Math.max(0, Math.ceil((draft.deadline - Date.now()) / 1000))
+          : draft.timeLeft
+      )
+      setIsRunning(draft.running)
+    } else setTimeLeft(loadJSON<number>(STORAGE_KEY + 'focusTime', 25) * 60)
+    setTimerReady(true)
+  }, [today])
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768)
-    check()
-    window.addEventListener("resize", check)
-    return () => window.removeEventListener("resize", check)
-  }, [])
+    const restore = () => {
+      const loadedSessions = loadJSON<PomodoroSession[]>(
+        STORAGE_KEY + 'sessions_' + today,
+        []
+      )
+      setCompletedSessions(loadedSessions)
 
-  useEffect(() => {
-    setStreak(loadStreak().streak)
-    const s = updateStreak()
-    setStreak(s.streak)
+      const loadedTasks = loadJSON<string[]>(STORAGE_KEY + 'tasks', [])
+      setTasks(loadedTasks)
 
-    const loadedSessions = loadJSON<PomodoroSession[]>(
-      STORAGE_KEY + "sessions_" + today,
-      []
-    )
-    setCompletedSessions(loadedSessions)
+      const loadedCurrentTask = loadJSON<string>(
+        STORAGE_KEY + 'currentTask',
+        ''
+      )
+      setCurrentTask(loadedCurrentTask)
 
-    const loadedTasks = loadJSON<string[]>(STORAGE_KEY + "tasks", [])
-    setTasks(loadedTasks)
-
-    const loadedCurrentTask = loadJSON<string>(STORAGE_KEY + "currentTask", "")
-    setCurrentTask(loadedCurrentTask)
-
-    const loadedTotalFocus = loadJSON<number>(STORAGE_KEY + "totalFocus_" + today, 0)
-    setTotalFocusToday(loadedTotalFocus)
+      const loadedTotalFocus = loadJSON<number>(
+        STORAGE_KEY + 'totalFocus_' + today,
+        0
+      )
+      setTotalFocusToday(loadedTotalFocus)
+    }
+    restore()
+    window.addEventListener('bns:sync', restore)
+    return () => window.removeEventListener('bns:sync', restore)
   }, [today])
 
   const persist = useCallback(
@@ -204,10 +232,10 @@ export default function PomodoroPage() {
       const t = partial?.tasks ?? tasks
       const ct = partial?.currentTask ?? currentTask
       const tf = partial?.totalFocus ?? totalFocusToday
-      saveJSON(STORAGE_KEY + "sessions_" + today, s)
-      saveJSON(STORAGE_KEY + "tasks", t)
-      saveJSON(STORAGE_KEY + "currentTask", ct)
-      saveJSON(STORAGE_KEY + "totalFocus_" + today, tf)
+      saveJSON(STORAGE_KEY + 'sessions_' + today, s)
+      saveJSON(STORAGE_KEY + 'tasks', t)
+      saveJSON(STORAGE_KEY + 'currentTask', ct)
+      saveJSON(STORAGE_KEY + 'totalFocus_' + today, tf)
     },
     [completedSessions, tasks, currentTask, totalFocusToday, today]
   )
@@ -217,7 +245,7 @@ export default function PomodoroPage() {
       const now = Date.now()
       const session: PomodoroSession = {
         id: crypto.randomUUID(),
-        task: currentTask || "Untitled",
+        task: currentTask || 'Untitled',
         duration: focusSeconds,
         startTime: startTs,
         endTime: now,
@@ -248,7 +276,7 @@ export default function PomodoroPage() {
     setIsRunning(false)
     setSessionStartTime(null)
     setIsLongBreak(false)
-    setTimeLeft(sessionType === "focus" ? focusRef.current : shortRef.current)
+    setTimeLeft(sessionType === 'focus' ? focusRef.current : shortRef.current)
     setCountdown(0)
     setPendingTransition(null)
   }, [sessionType])
@@ -258,85 +286,134 @@ export default function PomodoroPage() {
     if (!val) return
     const next = [...tasks, val]
     setTasks(next)
-    saveJSON(STORAGE_KEY + "tasks", next)
-    if (inputRef.current) inputRef.current.value = ""
-  }, [tasks])
+    saveJSON(STORAGE_KEY + 'tasks', next)
+    if (!currentTask) {
+      setCurrentTask(val)
+      saveJSON(STORAGE_KEY + 'currentTask', val)
+    }
+    if (inputRef.current) inputRef.current.value = ''
+  }, [tasks, currentTask])
 
-  const selectTask = useCallback(
-    (task: string) => {
-      setCurrentTask(task)
-      saveJSON(STORAGE_KEY + "currentTask", task)
-    },
-    []
-  )
+  const selectTask = useCallback((task: string) => {
+    setCurrentTask(task)
+    saveJSON(STORAGE_KEY + 'currentTask', task)
+  }, [])
 
   const removeTask = useCallback(
     (idx: number) => {
       const next = tasks.filter((_, i) => i !== idx)
       setTasks(next)
-      saveJSON(STORAGE_KEY + "tasks", next)
+      saveJSON(STORAGE_KEY + 'tasks', next)
     },
     [tasks]
   )
 
-  const totalTime = sessionType === "focus" ? focusSeconds : shortBreakSeconds
+  const totalTime =
+    sessionType === 'focus'
+      ? focusSeconds
+      : isLongBreak
+        ? longBreakSeconds
+        : shortBreakSeconds
   const progress = timeLeft / totalTime
-  const dashoffset = CIRCUMFERENCE * (1 - progress)
   const nextSessionLabel =
-    sessionType === "focus"
-      ? `Break ${sessionNumber >= 4 ? "(long)" : ""}`
-      : "Focus"
+    sessionType === 'focus'
+      ? `Break ${sessionNumber % longBreakInterval === 0 ? '(long)' : ''}`
+      : 'Focus'
 
   useEffect(() => {
-    if (isRunning && countdown === 0) {
-      timerRef.current = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            if (timerRef.current) clearInterval(timerRef.current)
-            return 0
-          }
-          return prev - 1
-        })
-      }, 1000)
-    }
+    if (!isRunning || countdown > 0) return
+    deadlineRef.current = Date.now() + timeLeft * 1000
+    const tick = () =>
+      setTimeLeft(
+        Math.max(0, Math.ceil((deadlineRef.current! - Date.now()) / 1000))
+      )
+    timerRef.current = setInterval(tick, 250)
+    document.addEventListener('visibilitychange', tick)
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
+      document.removeEventListener('visibilitychange', tick)
     }
+    // Anchor once when a run starts; ticks must not move the deadline.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning, countdown])
 
   useEffect(() => {
-    if (timeLeft > 0 || countdown > 0) return
+    if (!timerReady) return
+    if (countdown > 0 || timeLeft <= 0) {
+      localStorage.removeItem(STORAGE_KEY + 'activeTimer')
+      return
+    }
+    saveJSON(STORAGE_KEY + 'activeTimer', {
+      date: today,
+      timeLeft,
+      deadline: isRunning ? deadlineRef.current : null,
+      running: isRunning,
+      type: sessionType,
+      number: sessionNumber,
+      long: isLongBreak,
+      started: sessionStartTime,
+    })
+  }, [
+    timerReady,
+    countdown,
+    timeLeft,
+    isRunning,
+    sessionType,
+    sessionNumber,
+    isLongBreak,
+    sessionStartTime,
+    today,
+  ])
+
+  useEffect(() => {
+    if (timeLeft > 0 || countdown > 0 || !isRunning) return
     playBeep()
-    if (typeof Notification !== "undefined" && Notification.permission === "granted") {
-      const title = sessionType === "focus" ? "Focus session complete!" : "Break over!"
+    if (
+      typeof Notification !== 'undefined' &&
+      Notification.permission === 'granted'
+    ) {
+      const title =
+        sessionType === 'focus' ? 'Focus session complete!' : 'Break over!'
       new Notification(title, {
-        body: sessionType === "focus" ? "Time for a break." : "Ready to focus again.",
-        icon: "/favicon.ico",
+        body:
+          sessionType === 'focus'
+            ? 'Time for a break.'
+            : 'Ready to focus again.',
+        icon: '/favicon.ico',
       })
     }
 
-    if (sessionType === "focus") {
+    if (sessionType === 'focus') {
       const st = sessionStartTime ?? Date.now()
       logSession(st)
       const isLong = sessionNumber % longBreakInterval === 0
       setIsLongBreak(isLong)
       setPendingTransition({
-        type: "break",
+        type: 'break',
         time: isLong ? longRef.current : shortRef.current,
       })
       setSessionNumber((n) => n + 1)
     } else {
-      setPendingTransition({ type: "focus", time: focusRef.current })
+      setPendingTransition({ type: 'focus', time: focusRef.current })
     }
     setSessionStartTime(null)
     setCountdown(3)
-  }, [timeLeft, countdown, logSession, longBreakInterval, sessionNumber, sessionStartTime, sessionType])
+  }, [
+    timeLeft,
+    countdown,
+    logSession,
+    longBreakInterval,
+    sessionNumber,
+    sessionStartTime,
+    sessionType,
+    isRunning,
+  ])
 
   useEffect(() => {
     if (countdown <= 0 || !pendingTransition) return
     const id = setTimeout(() => {
       if (countdown === 1) {
-        if (pendingTransition.type === "focus") setIsLongBreak(false)
+        if (pendingTransition.type === 'focus') setIsLongBreak(false)
         setSessionType(pendingTransition.type)
         setTimeLeft(pendingTransition.time)
         setIsRunning(true)
@@ -350,39 +427,58 @@ export default function PomodoroPage() {
     return () => clearTimeout(id)
   }, [countdown, pendingTransition])
 
-  useEffect(() => {
-    saveJSON(STORAGE_KEY + "focusTime", focusTime)
-  }, [focusTime])
-  useEffect(() => {
-    saveJSON(STORAGE_KEY + "shortBreak", shortBreak)
-  }, [shortBreak])
-  useEffect(() => {
-    saveJSON(STORAGE_KEY + "longBreak", longBreak)
-  }, [longBreak])
-  useEffect(() => {
-    saveJSON(STORAGE_KEY + "longBreakInterval", longBreakInterval)
-  }, [longBreakInterval])
-
   const pomodoroSettings = [
-    { key: "focusTime", label: "Focus duration", type: "number" as const, value: focusTime, min: 10, max: 120, suffix: "min" },
-    { key: "shortBreak", label: "Short break", type: "number" as const, value: shortBreak, min: 1, max: 30, suffix: "min" },
-    { key: "longBreak", label: "Long break", type: "number" as const, value: longBreak, min: 5, max: 60, suffix: "min" },
-    { key: "longBreakInterval", label: "Long break after", type: "number" as const, value: longBreakInterval, min: 1, max: 10, suffix: "sessions" },
+    {
+      key: 'focusTime',
+      label: 'Focus duration',
+      type: 'number' as const,
+      value: focusTime,
+      min: 10,
+      max: 120,
+      suffix: 'min',
+    },
+    {
+      key: 'shortBreak',
+      label: 'Short break',
+      type: 'number' as const,
+      value: shortBreak,
+      min: 1,
+      max: 30,
+      suffix: 'min',
+    },
+    {
+      key: 'longBreak',
+      label: 'Long break',
+      type: 'number' as const,
+      value: longBreak,
+      min: 5,
+      max: 60,
+      suffix: 'min',
+    },
+    {
+      key: 'longBreakInterval',
+      label: 'Long break after',
+      type: 'number' as const,
+      value: longBreakInterval,
+      min: 1,
+      max: 10,
+      suffix: 'sessions',
+    },
   ]
 
   const handleSettingsChange = (key: string, value: string | number) => {
     switch (key) {
-      case "focusTime":
+      case 'focusTime':
         setFocusTime(value as number)
         if (!isRunning) setTimeLeft((value as number) * 60)
         break
-      case "shortBreak":
+      case 'shortBreak':
         setShortBreak(value as number)
         break
-      case "longBreak":
+      case 'longBreak':
         setLongBreak(value as number)
         break
-      case "longBreakInterval":
+      case 'longBreakInterval':
         setLongBreakInterval(value as number)
         break
     }
@@ -390,503 +486,404 @@ export default function PomodoroPage() {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement) return
-      if (e.code === "Space") {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        e.target instanceof HTMLSelectElement ||
+        (e.target as HTMLElement)?.closest('button, a, [role=dialog]')
+      )
+        return
+      if (e.code === 'Space') {
         e.preventDefault()
         toggleTimer()
       }
-      if (e.key === "r" || e.key === "R") {
-        resetTimer()
+      if (e.key === 'r' || e.key === 'R') {
+        if (isRunning) setShowResetConfirm(true)
+        else resetTimer()
       }
-      if (e.code === "Space" && sessionStartTime === null) {
+      if (e.code === 'Space' && sessionStartTime === null) {
         setSessionStartTime(Date.now())
       }
     }
-    window.addEventListener("keydown", handler)
-    return () => window.removeEventListener("keydown", handler)
-  }, [toggleTimer, resetTimer, sessionStartTime])
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [toggleTimer, resetTimer, sessionStartTime, isRunning])
 
-  const displaySessionNum = ((sessionNumber - 1) % 4) + 1
+  const displaySessionNum = ((sessionNumber - 1) % longBreakInterval) + 1
   const sessionLabel =
-    sessionType === "focus"
-      ? `Focus · Session ${displaySessionNum} of 4`
-      : isLongBreak || (sessionType === "break" && sessionNumber % 4 === 0)
-        ? "Long Break"
-        : "Short Break"
+    sessionType === 'focus'
+      ? `Focus · Session ${displaySessionNum} of ${longBreakInterval}`
+      : isLongBreak ||
+          (sessionType === 'break' && sessionNumber % longBreakInterval === 0)
+        ? 'Long Break'
+        : 'Short Break'
 
-  const ringColor = sessionType === "focus" ? "var(--color-teal)" : "var(--color-amber)"
-  const ringBg = "var(--color-raised)"
+  const ringColor =
+    sessionType === 'focus' ? 'var(--color-teal)' : 'var(--color-amber)'
+  const ringBg = 'var(--color-raised)'
 
   return (
-    <div className="flex h-screen flex-col bg-bg">
-      {/* Top Bar */}
-      <div className="flex h-[52px] shrink-0 items-center justify-between border-b border-border bg-bg px-3 md:px-4">
-        <div className="flex items-center gap-2 md:gap-4 min-w-0">
-          <Link href="/" className="font-display text-sm font-semibold text-fg shrink-0">
-            build<span className="text-teal">n</span>scale
-          </Link>
-          <div className="h-4 w-px bg-border shrink-0" />
-          <ToolBreadcrumbs slug="pomodoro" />
-        </div>
-
-        {!isMobile && (
-          <div className="hidden md:flex gap-3 font-display text-[11px] text-tertiary">
-            <span>
-              <span className="rounded-[3px] border border-border bg-raised px-1 py-[1px] font-mono text-[10px] text-muted">Space</span> Start/Pause
-            </span>
-            <span>
-              <span className="rounded-[3px] border border-border bg-raised px-1 py-[1px] font-mono text-[10px] text-muted">R</span> Reset
-            </span>
-          </div>
-        )}
-
-        <div className="flex items-center gap-2 md:gap-3 shrink-0">
-          <StreakPill count={streak} />
-          <button onClick={() => setUserGuideOpen(true)} className="flex items-center gap-1 rounded-md border border-border px-2 py-1 text-[11px] text-muted hover:text-fg hover:bg-raised transition-colors">
-            <IconBook2 className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Guide</span>
-          </button>
-          <ThemeToggle />
-          <button onClick={() => setSettingsOpen(true)} className="text-tertiary hover:text-muted transition-colors">
-            <IconSettings className="h-[18px] w-[18px]" />
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <main className="relative flex flex-1 overflow-hidden">
-        <div className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-[700px] px-4">
-            {/* Timer Section */}
-            <div className="flex flex-col items-center pt-12 md:pt-20">
-              {/* Timer Ring */}
-              <div className="relative mb-8 flex h-[180px] w-[180px] md:h-[200px] md:w-[200px] flex-col items-center justify-center">
-                <svg
-                  className="absolute inset-0"
-                  viewBox="0 0 200 200"
-                  style={{ transform: "rotate(-90deg)" }}
-                >
-                  <circle
-                    cx="100"
-                    cy="100"
-                    r="98"
-                    fill="none"
-                    stroke={ringBg}
-                    strokeWidth="4"
-                  />
-                  <circle
-                    cx="100"
-                    cy="100"
-                    r="98"
-                    fill="none"
-                    stroke={ringColor}
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    strokeDasharray={String(CIRCUMFERENCE)}
-                    strokeDashoffset={String(dashoffset)}
-                    style={{
-                      transition: isRunning
-                        ? "stroke-dashoffset 1s linear"
-                        : "none",
-                    }}
-                  />
-                </svg>
-                <div className="font-display text-[40px] md:text-[48px] font-semibold text-fg">
-                  {countdown > 0
-                    ? formatTime(pendingTransition?.time ?? totalTime)
-                    : formatTime(timeLeft)}
-                </div>
-                <div className="text-xs text-tertiary text-center px-4">
-                  {countdown > 0
-                    ? `Starting ${nextSessionLabel} in ${countdown}…`
-                    : sessionLabel}
-                </div>
-              </div>
-
-              {/* Session Dots */}
-              <div className="mb-6 flex gap-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className={`h-2 w-2 rounded-full ${
-                      i < sessionNumber
-                        ? "bg-teal"
-                        : i === sessionNumber
-                          ? "border-2 border-teal"
-                          : "bg-raised"
-                    }`}
-                  />
-                ))}
-              </div>
-
-              {/* Controls */}
-              <div className="mb-8 md:mb-10 flex gap-3">
+    <div className="tool-page-scroll">
+      <div className="tool-page-container">
+        <ToolPageIntro
+          eyebrow="FOCUS / ONE THING AT A TIME"
+          title="Make room for your next small win."
+          description="Choose a task. Give it your attention. A break is part of the plan."
+          onGuide={() => setUserGuideOpen(true)}
+          onSettings={() => setSettingsOpen(true)}
+          settingsDisabled={isRunning || countdown > 0}
+        />
+        <div className="focus-layout">
+          <section className="tool-panel focus-stage">
+            <div className="segmented-control mb-8" aria-label="Timer mode">
+              {(['focus', 'short', 'long'] as const).map((mode) => (
                 <button
-                  onClick={() => {
-                    if (typeof Notification !== "undefined" && Notification.permission === "default") {
-                      Notification.requestPermission()
-                    }
-                    toggleTimer()
-                  }}
-                  className="flex items-center gap-2 rounded-md bg-teal px-6 py-2.5 text-sm font-medium text-bg transition-all duration-180 hover:brightness-110"
-                >
-                  {isRunning ? (
-                    <>
-                      <IconPlayerPause className="h-4 w-4" /> Pause
-                    </>
-                  ) : (
-                    <>
-                      <IconPlayerPlay className="h-4 w-4" />{" "}
-                      {countdown > 0 ? "Starting…" : "Start"}
-                    </>
-                  )}
-                </button>
-                <button
-                  onClick={() => {
-                    if (isRunning && countdown === 0) {
-                      setShowResetConfirm(true)
-                    } else {
-                      resetTimer()
-                    }
-                  }}
-                  className="flex items-center gap-2 rounded-md border border-border px-4 py-2.5 text-sm text-muted transition-all duration-180 hover:text-fg"
-                >
-                  <IconRefresh className="h-4 w-4" />
-                </button>
-              </div>
-
-              {/* Current Task */}
-              <div className="mb-8 md:mb-10 text-center">
-                <div className="text-xs text-tertiary">Working on:</div>
-                <div className="mt-1 text-base font-medium text-fg">
-                  {currentTask || "No task selected"}
-                </div>
-                <button
-                  onClick={() => inputRef.current?.focus()}
-                  className="mt-1 text-xs text-teal hover:underline"
-                >
-                  Change task
-                </button>
-              </div>
-
-              {/* Task Log */}
-              <section className="w-full pb-12 md:pb-20">
-                <h2 className="mb-4 border-b border-border pb-2 text-xs uppercase tracking-[0.08em] text-muted">
-                  Today&apos;s log
-                </h2>
-
-                {completedSessions.length === 0 && !isRunning ? (
-                  <div className="py-12 text-center font-mono text-xs text-tertiary">
-                    No sessions yet. Start your first Pomodoro above.
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-collapse text-xs min-w-[400px]">
-                      <thead>
-                        <tr>
-                          <th className="px-2 md:px-3 py-2 text-left font-display text-[11px] font-normal uppercase text-tertiary">#</th>
-                          <th className="px-2 md:px-3 py-2 text-left font-display text-[11px] font-normal uppercase text-tertiary">Task</th>
-                          <th className="px-2 md:px-3 py-2 text-left font-display text-[11px] font-normal uppercase text-tertiary">Duration</th>
-                          <th className="px-2 md:px-3 py-2 text-left font-display text-[11px] font-normal uppercase text-tertiary">Time</th>
-                          <th className="px-2 md:px-3 py-2 text-left font-display text-[11px] font-normal uppercase text-tertiary">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {completedSessions.map((s, i) => (
-                          <tr key={s.id} className="border-b border-border text-muted">
-                            <td className="px-2 md:px-3 py-3">{i + 1}</td>
-                            <td className="px-2 md:px-3 py-3 max-w-[120px] truncate">{s.task}</td>
-                            <td className="px-2 md:px-3 py-3 whitespace-nowrap">{formatDuration(s.duration)}</td>
-                            <td className="px-2 md:px-3 py-3 whitespace-nowrap">
-                              {formatHour(s.startTime)}–{formatHour(s.endTime)}
-                            </td>
-                            <td className="px-2 md:px-3 py-3 text-teal whitespace-nowrap">
-                              <IconCheck className="mr-1 inline h-3 w-3" /> Done
-                            </td>
-                          </tr>
-                        ))}
-                        {isRunning && sessionStartTime && (
-                          <tr className="border-l-2 border-teal bg-surface text-fg">
-                            <td className="px-2 md:px-3 py-3">{completedSessions.length + 1}</td>
-                            <td className="px-2 md:px-3 py-3 max-w-[120px] truncate">{currentTask || "Untitled"}</td>
-                            <td className="px-2 md:px-3 py-3 whitespace-nowrap">
-                              {formatTime(focusSeconds - timeLeft > 0 ? focusSeconds - timeLeft : 0)}
-                            </td>
-                            <td className="px-2 md:px-3 py-3 whitespace-nowrap">
-                              {formatHour(sessionStartTime)}–now
-                            </td>
-                            <td className="px-2 md:px-3 py-3 text-teal whitespace-nowrap">
-                              <IconClock className="mr-1 inline h-3 w-3" /> Active
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-
-                <div className="mt-4 font-display text-xs text-teal">
-                  Total focus today: {Math.floor(totalFocusToday / 60)} min
-                </div>
-              </section>
-            </div>
-          </div>
-        </div>
-
-        {/* Sidebar */}
-        <aside className={`shrink-0 border-l border-border bg-surface overflow-y-auto transition-all duration-280 ${
-          isMobile
-            ? "hidden"
-            : sidebarOpen
-              ? "w-[220px] lg:w-[240px] p-5"
-              : "w-0 overflow-hidden border-l-0"
-        }`}>
-          {sidebarOpen && (
-          <>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xs uppercase tracking-[0.08em] text-muted">Queue</h3>
-            <button onClick={() => setSidebarOpen(false)} className="text-tertiary hover:text-muted transition-colors">
-              <IconLayoutSidebarRightCollapse className="h-4 w-4" />
-            </button>
-          </div>
-
-          <div className="mb-4 flex items-center rounded-md border border-border bg-raised px-3 py-2">
-            <input
-              ref={inputRef}
-              type="text"
-              placeholder="Add task..."
-              onKeyDown={(e) => {
-                if (e.key === "Enter") addTask()
-              }}
-              className="w-full bg-transparent text-xs text-fg outline-none placeholder:text-tertiary"
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            {tasks.length === 0 && (
-              <div className="rounded-md border border-dashed border-border px-3 py-2 text-xs text-tertiary">
-                No tasks yet
-              </div>
-            )}
-            {tasks.map((task, idx) => (
-              <div
-                key={idx}
-                onClick={() => selectTask(task)}
-                className={`flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-xs transition-all ${
-                  currentTask === task
-                    ? "border border-teal/40 bg-teal/5 text-fg"
-                    : "border border-border bg-raised text-muted hover:text-fg"
-                }`}
-              >
-                <span className="flex-1 truncate">{task}</span>
-                {currentTask === task && (
-                  <span className="text-[10px] text-teal shrink-0">Active</span>
-                )}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    removeTask(idx)
-                    if (currentTask === task) {
-                      setCurrentTask("")
-                      saveJSON(STORAGE_KEY + "currentTask", "")
-                    }
-                  }}
-                  className="text-tertiary hover:text-danger shrink-0"
-                >
-                  &times;
-                </button>
-              </div>
-            ))}
-          </div>
-
-          </>
-          )}
-        </aside>
-        {!isMobile && !sidebarOpen && (
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="shrink-0 border-l border-border bg-surface px-1 text-tertiary hover:text-muted transition-colors"
-            aria-label="Open queue"
-          >
-            <IconLayoutSidebarRightCollapse className="h-4 w-4 rotate-180" />
-          </button>
-        )}
-      </main>
-
-      {/* Mobile Tab Bar */}
-      {isMobile && (
-        <div className="grid h-14 shrink-0 grid-cols-3 border-t border-border bg-bg pb-[env(safe-area-inset-bottom)]">
-          {(
-            [
-              { key: "timer" as const, icon: IconCalendarEvent, label: "Timer" },
-              { key: "log" as const, icon: IconList, label: "Log" },
-              { key: "tasks" as const, icon: IconCircle, label: "Tasks" },
-            ]
-          ).map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setMobileTab(tab.key)}
-              className={`flex flex-col items-center justify-center gap-1 text-[10px] ${
-                mobileTab === tab.key ? "text-teal" : "text-tertiary"
-              }`}
-            >
-              <tab.icon className="h-[18px] w-[18px]" />
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Mobile Task Overlay */}
-      {isMobile && mobileTab === "tasks" && (
-        <div className="absolute inset-x-0 bottom-14 top-[52px] z-20 overflow-y-auto bg-surface p-5">
-          <h3 className="mb-4 text-xs uppercase tracking-[0.08em] text-muted">Queue</h3>
-          <div className="mb-4 flex items-center rounded-md border border-border bg-raised px-3 py-2">
-            <input
-              placeholder="Add task..."
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  const input = e.target as HTMLInputElement
-                  const val = input.value.trim()
-                  if (val) {
-                    const next = [...tasks, val]
-                    setTasks(next)
-                    saveJSON(STORAGE_KEY + "tasks", next)
-                    input.value = ""
+                  key={mode}
+                  disabled={isRunning || countdown > 0}
+                  aria-pressed={
+                    mode === 'focus'
+                      ? sessionType === 'focus'
+                      : sessionType === 'break' &&
+                        (mode === 'long' ? isLongBreak : !isLongBreak)
                   }
-                }
-              }}
-              className="w-full bg-transparent text-xs text-fg outline-none placeholder:text-tertiary"
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            {tasks.map((task, idx) => (
-              <div
-                key={idx}
-                onClick={() => selectTask(task)}
-                className={`flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-xs ${
-                  currentTask === task
-                    ? "border border-teal/40 bg-teal/5 text-fg"
-                    : "border border-border bg-raised text-muted"
-                }`}
-              >
-                <span className="flex-1 truncate">{task}</span>
-                {currentTask === task && (
-                  <span className="text-[10px] text-teal">Active</span>
-                )}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    removeTask(idx)
-                    if (currentTask === task) {
-                      setCurrentTask("")
-                      saveJSON(STORAGE_KEY + "currentTask", "")
-                    }
+                  onClick={() => {
+                    setSessionType(mode === 'focus' ? 'focus' : 'break')
+                    setIsLongBreak(mode === 'long')
+                    setTimeLeft(
+                      mode === 'focus'
+                        ? focusSeconds
+                        : mode === 'long'
+                          ? longBreakSeconds
+                          : shortBreakSeconds
+                    )
+                    setSessionStartTime(null)
                   }}
-                  className="text-tertiary hover:text-danger ml-auto"
                 >
-                  &times;
+                  {mode === 'focus'
+                    ? 'Focus'
+                    : mode === 'short'
+                      ? 'Short break'
+                      : 'Long break'}
                 </button>
+              ))}
+            </div>
+            <div className="focus-clock">
+              <svg
+                className="absolute inset-0 -rotate-90"
+                viewBox="0 0 200 200"
+                aria-hidden="true"
+              >
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="94"
+                  fill="none"
+                  stroke={ringBg}
+                  strokeWidth="3"
+                />
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="94"
+                  fill="none"
+                  stroke={ringColor}
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeDasharray={2 * Math.PI * 94}
+                  strokeDashoffset={
+                    2 * Math.PI * 94 * (1 - Math.min(1, Math.max(0, progress)))
+                  }
+                />
+              </svg>
+              <span className="mb-2 text-xs font-medium uppercase tracking-widest text-muted">
+                {countdown
+                  ? 'Next session'
+                  : sessionType === 'focus'
+                    ? 'Time to focus'
+                    : 'Take a breath'}
+              </span>
+              <span
+                role="timer"
+                aria-label="Time remaining"
+                className="focus-digits"
+              >
+                {formatTime(
+                  countdown ? (pendingTransition?.time ?? totalTime) : timeLeft
+                )}
+              </span>
+              <span className="mt-3 text-xs text-muted">
+                {countdown
+                  ? `Starting ${nextSessionLabel} in ${countdown}…`
+                  : sessionLabel}
+              </span>
+            </div>
+            <div className="mt-6 flex items-center justify-center gap-2">
+              {Array.from({ length: longBreakInterval }, (_, index) => (
+                <span
+                  key={index}
+                  aria-hidden="true"
+                  className={`h-2 w-2 rounded-full ${index < displaySessionNum - 1 ? 'bg-teal' : 'bg-raised'}`}
+                />
+              ))}
+            </div>
+            <div className="mb-7 mt-7 flex justify-center gap-3">
+              <button
+                className="btn-primary min-w-[150px]"
+                disabled={countdown > 0}
+                onClick={() => {
+                  toggleTimer()
+                }}
+              >
+                {isRunning ? (
+                  <IconPlayerPause className="h-5 w-5" />
+                ) : (
+                  <IconPlayerPlay className="h-5 w-5" />
+                )}
+                {countdown
+                  ? 'Starting…'
+                  : isRunning
+                    ? 'Pause'
+                    : timeLeft < totalTime
+                      ? 'Resume'
+                      : sessionType === 'focus'
+                        ? 'Start focus'
+                        : 'Start break'}
+              </button>
+              <button
+                className="tool-button"
+                aria-label="Reset current timer"
+                onClick={() =>
+                  isRunning ? setShowResetConfirm(true) : resetTimer()
+                }
+              >
+                <IconRefresh className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="focus-current-task">
+              <span className="text-[10px] uppercase tracking-widest text-muted">
+                WORKING ON
+              </span>
+              <p className="mt-2 break-words text-base font-medium">
+                {currentTask || 'A little uninterrupted time'}
+              </p>
+              <button
+                className="mt-3 text-xs text-teal"
+                onClick={() => {
+                  inputRef.current?.focus()
+                  inputRef.current?.scrollIntoView({
+                    block: 'center',
+                    behavior: 'smooth',
+                  })
+                }}
+              >
+                Choose or add a task ↓
+              </button>
+            </div>
+            <p className="mt-5 text-center text-xs text-muted">
+              Space to start or pause · Pause before changing settings
+            </p>
+            <div className="mt-3 text-center text-xs text-muted">
+              {notificationState === 'default' ? (
+                <button
+                  className="tool-button"
+                  onClick={() => {
+                    void Notification.requestPermission().then((value) =>
+                      setNotificationState(value)
+                    )
+                  }}
+                >
+                  Enable session notifications
+                </button>
+              ) : notificationState === 'granted' ? (
+                'Session notifications are enabled.'
+              ) : notificationState === 'denied' ? (
+                'Notifications are blocked in your browser. The timer still works.'
+              ) : (
+                'Session alerts use the timer sound.'
+              )}
+            </div>
+          </section>
+          <div className="space-y-5">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="metric-card">
+                <span>Focus today</span>
+                <strong>
+                  {Math.floor(totalFocusToday / 60)}
+                  <small> min</small>
+                </strong>
               </div>
-            ))}
+              <div className="metric-card">
+                <span>Sessions finished</span>
+                <strong>{completedSessions.length}</strong>
+              </div>
+            </div>
+            <section className="tool-panel p-5 sm:p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-base font-semibold">Your focus queue</h2>
+                <span className="text-xs text-muted">{tasks.length} tasks</span>
+              </div>
+              <form
+                className="mb-4 flex gap-2"
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  addTask()
+                }}
+              >
+                <input
+                  ref={inputRef}
+                  aria-label="New focus task"
+                  placeholder="One thing to work on…"
+                  maxLength={200}
+                  className="workspace-input min-w-0 flex-1"
+                />
+                <button
+                  type="submit"
+                  aria-label="Add focus task"
+                  className="btn-primary !px-3"
+                >
+                  +
+                </button>
+              </form>
+              {tasks.length === 0 ? (
+                <p className="rounded-lg border border-dashed border-border p-5 text-center text-sm leading-relaxed text-muted">
+                  Add a task, or just start the timer.
+                  <br />
+                  You do not need a perfect plan.
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {tasks.map((task, index) => (
+                    <div
+                      key={index}
+                      className={`focus-queue-item ${task === currentTask ? 'active' : ''}`}
+                    >
+                      <button
+                        aria-pressed={task === currentTask}
+                        className="flex min-w-0 flex-1 items-center gap-3 py-3 text-left"
+                        onClick={() => selectTask(task)}
+                      >
+                        <span
+                          className={`h-2 w-2 shrink-0 rounded-full ${task === currentTask ? 'bg-teal' : 'bg-border'}`}
+                        />
+                        <span className="break-words text-sm">{task}</span>
+                      </button>
+                      <button
+                        className="workspace-icon-button"
+                        aria-label={`Remove ${task} from queue`}
+                        onClick={() => {
+                          removeTask(index)
+                          if (task === currentTask) {
+                            setCurrentTask('')
+                            saveJSON(STORAGE_KEY + 'currentTask', '')
+                          }
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+            <div className="tool-panel p-5 text-sm leading-relaxed text-muted">
+              <p className="mb-2 font-medium text-fg">A sustainable rhythm.</p>
+              Finish a session, step away for a break, and return when you are
+              ready. Your session log saves in this browser.
+            </div>
           </div>
         </div>
-      )}
-
-      {/* Mobile Log Overlay */}
-      {isMobile && mobileTab === "log" && (
-        <div className="absolute inset-x-0 bottom-14 top-[52px] z-20 overflow-y-auto bg-bg p-5">
-          <h2 className="mb-4 text-xs uppercase tracking-[0.08em] text-muted">Today&apos;s log</h2>
-          {completedSessions.length === 0 ? (
-            <div className="py-12 text-center font-mono text-xs text-tertiary">No sessions yet.</div>
+        <section className="tool-panel mt-6 p-5 sm:p-6">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="font-semibold">Today’s focus log</h2>
+              <p className="mt-1 text-xs text-muted">
+                Completed sessions, one useful block at a time.
+              </p>
+            </div>
+            <button
+              className="tool-button"
+              disabled={!completedSessions.length}
+              onClick={() =>
+                downloadFile(
+                  `focus-${today}.csv`,
+                  [
+                    ['Task', 'Seconds', 'Started', 'Finished'],
+                    ...completedSessions.map((item) => [
+                      item.task,
+                      item.duration,
+                      new Date(item.startTime).toISOString(),
+                      new Date(item.endTime).toISOString(),
+                    ]),
+                  ]
+                    .map((row) => row.map(csvCell).join(','))
+                    .join('\n'),
+                  'text/csv;charset=utf-8'
+                )
+              }
+            >
+              Export CSV
+            </button>
+          </div>
+          {!completedSessions.length ? (
+            <EmptyToolState
+              title="Your first session starts here."
+              description="Completed focus sessions will appear in this log. You can pause whenever you need to."
+            />
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse text-xs">
-                <thead>
-                  <tr>
-                    <th className="px-2 py-2 text-left font-display text-[11px] font-normal uppercase text-tertiary">#</th>
-                    <th className="px-2 py-2 text-left font-display text-[11px] font-normal uppercase text-tertiary">Task</th>
-                    <th className="px-2 py-2 text-left font-display text-[11px] font-normal uppercase text-tertiary">Dur</th>
-                    <th className="px-2 py-2 text-left font-display text-[11px] font-normal uppercase text-tertiary">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {completedSessions.map((s, i) => (
-                    <tr key={s.id} className="border-b border-border text-muted">
-                      <td className="px-2 py-3">{i + 1}</td>
-                      <td className="px-2 py-3 truncate max-w-[100px]">{s.task}</td>
-                      <td className="px-2 py-3 whitespace-nowrap">{formatDuration(s.duration)}</td>
-                      <td className="px-2 py-3 text-teal whitespace-nowrap">
-                        <IconCheck className="mr-1 inline h-3 w-3" /> Done
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="space-y-3">
+              {completedSessions.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3 last:border-0"
+                >
+                  <div className="min-w-0">
+                    <p className="break-words text-sm font-medium">
+                      {item.task}
+                    </p>
+                    <p className="mt-1 text-xs text-muted">
+                      {formatHour(item.startTime)}–{formatHour(item.endTime)}
+                    </p>
+                  </div>
+                  <span className="rounded-full bg-teal-subtle px-3 py-1.5 text-xs text-teal">
+                    {Math.round(item.duration / 60)} min · Done
+                  </span>
+                </div>
+              ))}
             </div>
           )}
-          <div className="mt-4 font-display text-xs text-teal">
-            Total focus today: {Math.floor(totalFocusToday / 60)} min
-          </div>
+        </section>
+        <div className="tool-next-step">
+          <span>A good week is made of small sessions.</span>
+          <Link href="/tools/weekly-review">See your weekly progress →</Link>
         </div>
-      )}
-
-      {/* Reset Confirmation */}
-      {showResetConfirm && (
-        <div
-          className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4"
-          onClick={() => setShowResetConfirm(false)}
-        >
-          <div
-            className="w-full max-w-xs rounded-lg border border-border bg-surface p-5 shadow-lg"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="mb-2 font-display text-base font-semibold text-fg">Reset timer?</h3>
-            <p className="mb-4 text-sm text-muted">
-              You have an active session running. Resetting will lose your progress.
-            </p>
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  resetTimer()
-                  setShowResetConfirm(false)
-                }}
-                className="flex-1 rounded-md bg-danger px-4 py-2 text-sm font-medium text-white"
-              >
-                Reset
-              </button>
-              <button
-                onClick={() => setShowResetConfirm(false)}
-                className="flex-1 rounded-md border border-border px-4 py-2 text-sm text-muted"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Settings Drawer */}
-      <SettingsDrawer
-        open={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
-        title="Pomodoro Settings"
-        settings={pomodoroSettings}
-        onChange={handleSettingsChange}
-        onReset={() => {
-          setFocusTime(25)
-          setShortBreak(5)
-          setLongBreak(15)
-          setLongBreakInterval(4)
-          if (!isRunning) setTimeLeft(25 * 60)
-        }}
-      />
-
-      <UserGuideModal
-        open={userGuideOpen}
-        onClose={() => setUserGuideOpen(false)}
-        toolId="pomodoro"
-      />
+        <ConfirmDialog
+          open={showResetConfirm}
+          title="Reset this session?"
+          description="This clears the current countdown. Completed sessions stay in your log."
+          confirmLabel="Reset timer"
+          onConfirm={resetTimer}
+          onClose={() => setShowResetConfirm(false)}
+        />
+        <SettingsDrawer
+          open={settingsOpen}
+          onClose={() => setSettingsOpen(false)}
+          title="Focus preferences"
+          settings={pomodoroSettings}
+          onChange={handleSettingsChange}
+          onReset={() => {
+            setFocusTime(25)
+            setShortBreak(5)
+            setLongBreak(15)
+            setLongBreakInterval(4)
+            if (!isRunning) setTimeLeft(25 * 60)
+          }}
+        />
+        <UserGuideModal
+          open={userGuideOpen}
+          onClose={() => setUserGuideOpen(false)}
+          toolId="pomodoro"
+        />
+      </div>
     </div>
   )
 }
