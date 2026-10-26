@@ -105,3 +105,16 @@ model UptimeCheck {
   @@index([url, checkedAt(sort: Desc)])
   @@map("uptime_checks")
 }
+
+// Immutable, versioned source payloads. No existing user data changes.
+model BenchmarkSnapshot {
+  id             String   @id @default(cuid())
+  source         String
+  sourceRevision String
+  sourceUpdatedAt DateTime?
+  retrievedAt    DateTime @default(now())
+  payload        Json
+
+  @@unique([source, sourceRevision])
+  @@index([source, retrievedAt(sort: Desc)])
+}

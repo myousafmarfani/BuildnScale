@@ -11,7 +11,9 @@
     "postinstall": "prisma generate",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/*.test.mjs",
-    "test:browser": "node tests/workspace.e2e.mjs"
+    "test:browser": "node tests/workspace.e2e.mjs",
+    "test:benchmarks": "node tests/benchmarks.e2e.mjs",
+    "benchmarks:seed": "node scripts/seed-benchmarks.mjs"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",

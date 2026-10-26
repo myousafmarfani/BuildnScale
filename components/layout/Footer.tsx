@@ -45,6 +45,9 @@ export function Footer() {
             </h2>
             <div className="grid gap-2.5">
               {[
+                ['/leaderboard', 'AI benchmarks'],
+                ['/compare', 'Compare AI models'],
+                ['/leaderboard/methodology', 'Benchmark methodology'],
                 ['/blog', 'Build log'],
                 ['/roadmap', 'Roadmap'],
                 ['/changelog', 'Changelog'],

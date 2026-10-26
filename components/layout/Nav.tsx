@@ -30,6 +30,7 @@ export function Nav() {
         <div className="hidden items-center gap-7 md:flex">
           {[
             ['/tools', 'Tools'],
+            ['/leaderboard', 'AI benchmarks'],
             ['/blog', 'Build log'],
             ['/roadmap', 'Roadmap'],
           ].map(([href, label]) => (
@@ -85,6 +86,7 @@ export function Nav() {
           <div className="mb-4 flex flex-wrap gap-5">
             {[
               ['/tools', 'All tools'],
+              ['/leaderboard', 'AI benchmarks'],
               ['/blog', 'Build log'],
               ['/roadmap', 'Roadmap'],
               [

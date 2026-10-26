@@ -1,7 +1,7 @@
 # BuildnScale
 
-Free, open-source productivity and developer tools for planning work, staying
-focused, and handling everyday development tasks.
+Free, open-source productivity and developer tools, with sourced AI coding
+benchmarks and model comparisons for developers building applications and agents.
 
 [Open the platform](https://www.buildnscale.dev) ·
 [Browse tools](https://www.buildnscale.dev/tools) ·
@@ -30,6 +30,17 @@ and optional sync for supported productivity data.
 
 The workspace includes tool search, favorites, a collapsible sidebar, mobile
 navigation, and light and dark themes.
+
+## AI benchmarks
+
+[Explore benchmarks](https://www.buildnscale.dev/leaderboard) ·
+[Compare models](https://www.buildnscale.dev/compare) ·
+[Methodology](https://www.buildnscale.dev/leaderboard/methodology)
+
+The initial coding dataset is an attributed historical EvalPlus snapshot. Source
+dates and missing measurements are explicit; BuildnScale does not claim to have
+run these evaluations. Current-data feeds require permitted source access.
+See [benchmark operations](docs/ai-benchmarks.md) for imports and deployment.
 
 ## Run locally
 

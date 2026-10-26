@@ -34,3 +34,15 @@ their code or a bundled application.
 This file documents the bundled fonts and the handling of package-managed
 software. It is not a replacement for the license/NOTICE files in individual
 packages or a claim of a complete transitive dependency audit.
+
+## EvalPlus benchmark results
+
+`data/benchmarks/upstream/evalplus.json` is an unmodified copy of EvalPlus results
+from `evalplus/evalplus.github.io` revision
+`87418456d3a8c2bc6265f24ff91d2dd0e7993f4b`, retrieved 26 October 2026.
+Copyright remains with the EvalPlus contributors. Distributed under Apache-2.0;
+the full license is in `data/benchmarks/licenses/EvalPlus-Apache-2.0.txt`.
+The normalized snapshot and displayed rankings are transformations by BuildnScale.
+No EvalPlus evaluations were rerun. Model weights, task text, and logos are not included.
+
+Source: https://github.com/evalplus/evalplus.github.io

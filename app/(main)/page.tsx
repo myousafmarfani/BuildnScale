@@ -33,6 +33,7 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
       />
+      <div className="border-b border-border bg-teal-subtle"><div className="container-site flex flex-wrap items-center justify-between gap-3 py-3 text-sm"><p>Choosing an AI model for your next build?</p><Link className="font-medium text-teal" href="/leaderboard">Explore sourced AI benchmarks →</Link></div></div>
       <section className="home-hero">
         <div className="container-site grid items-center gap-14 lg:grid-cols-[1.1fr_1fr]">
           <div>

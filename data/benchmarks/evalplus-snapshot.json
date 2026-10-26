@@ -1,0 +1,2012 @@
+{
+  "schemaVersion": 1,
+  "source": "evalplus",
+  "sourceRevision": "87418456d3a8c2bc6265f24ff91d2dd0e7993f4b",
+  "sourceURL": "https://github.com/evalplus/evalplus.github.io/blob/87418456d3a8c2bc6265f24ff91d2dd0e7993f4b/results.json",
+  "sourceUpdatedAt": "2024-12-26T17:02:22Z",
+  "retrievedAt": "2026-10-26T09:40:00Z",
+  "license": "Apache-2.0",
+  "attribution": "EvalPlus contributors — results redistributed under Apache-2.0. Normalized by BuildnScale; no evaluations rerun.",
+  "models": [
+    {
+      "id": "opencoder-8b-instruct",
+      "name": "OpenCoder-8B-Instruct",
+      "publisher": "infly",
+      "link": "https://huggingface.co/infly/OpenCoder-8B-Instruct",
+      "instructionTuned": true,
+      "parametersB": 8,
+      "scores": {
+        "humaneval": 81.7,
+        "humaneval+": 77.4,
+        "mbpp": 82,
+        "mbpp+": 71.4
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "artigenz-coder-ds-6-7b",
+      "name": "Artigenz-Coder-DS-6.7B",
+      "publisher": "Artigenz",
+      "link": "https://huggingface.co/Artigenz/Artigenz-Coder-DS-6.7B",
+      "instructionTuned": true,
+      "parametersB": 6.7,
+      "scores": {
+        "humaneval": 75.6,
+        "humaneval+": 72.6,
+        "mbpp": 80.7,
+        "mbpp+": 69.6
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "code-13b",
+      "name": "Code-13B",
+      "publisher": "ajibawa-2023",
+      "link": "https://huggingface.co/ajibawa-2023/Code-13B",
+      "instructionTuned": true,
+      "parametersB": 13,
+      "scores": {
+        "humaneval": 56.1,
+        "humaneval+": 52.4,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "code-290k-6-7b-instruct",
+      "name": "Code-290k-6.7B-Instruct",
+      "publisher": "ajibawa-2023",
+      "link": "https://huggingface.co/ajibawa-2023/Code-290k-6.7B-Instruct",
+      "instructionTuned": true,
+      "parametersB": 6.7,
+      "scores": {
+        "humaneval": 64.6,
+        "humaneval+": 59.7,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "code-33b",
+      "name": "Code-33B",
+      "publisher": "ajibawa-2023",
+      "link": "https://huggingface.co/ajibawa-2023/Code-33B",
+      "instructionTuned": true,
+      "parametersB": 33,
+      "scores": {
+        "humaneval": 54.9,
+        "humaneval+": 49.4,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codegen-16b",
+      "name": "CodeGen-16B",
+      "publisher": "Not specified",
+      "link": "https://arxiv.org/abs/2203.13474",
+      "instructionTuned": false,
+      "parametersB": 16,
+      "scores": {
+        "humaneval": 32.9,
+        "humaneval+": 28,
+        "mbpp": 54.2,
+        "mbpp+": 45.5
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codegen-2b",
+      "name": "CodeGen-2B",
+      "publisher": "Not specified",
+      "link": "https://arxiv.org/abs/2203.13474",
+      "instructionTuned": false,
+      "parametersB": 2,
+      "scores": {
+        "humaneval": 24.4,
+        "humaneval+": 22.6,
+        "mbpp": 46.3,
+        "mbpp+": 36
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codegen-6b",
+      "name": "CodeGen-6B",
+      "publisher": "Not specified",
+      "link": "https://arxiv.org/abs/2203.13474",
+      "instructionTuned": false,
+      "parametersB": 6,
+      "scores": {
+        "humaneval": 29.3,
+        "humaneval+": 25.6,
+        "mbpp": 50.8,
+        "mbpp+": 42.9
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codegen2-16b",
+      "name": "CodeGen2-16B",
+      "publisher": "Not specified",
+      "link": "https://arxiv.org/abs/2305.02309",
+      "instructionTuned": false,
+      "parametersB": 16,
+      "scores": {
+        "humaneval": 19.5,
+        "humaneval+": 16.5,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codegen2-1b",
+      "name": "CodeGen2-1B",
+      "publisher": "Not specified",
+      "link": "https://arxiv.org/abs/2305.02309",
+      "instructionTuned": false,
+      "parametersB": 1,
+      "scores": {
+        "humaneval": 11,
+        "humaneval+": 9.1,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codegen2-3b",
+      "name": "CodeGen2-3B",
+      "publisher": "Not specified",
+      "link": "https://arxiv.org/abs/2305.02309",
+      "instructionTuned": false,
+      "parametersB": 3,
+      "scores": {
+        "humaneval": 15.9,
+        "humaneval+": 12.8,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codegen2-7b",
+      "name": "CodeGen2-7B",
+      "publisher": "Not specified",
+      "link": "https://arxiv.org/abs/2305.02309",
+      "instructionTuned": false,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 18.3,
+        "humaneval+": 17.7,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codellama-13b",
+      "name": "CodeLlama-13B",
+      "publisher": "Not specified",
+      "link": "https://about.fb.com/news/2023/08/code-llama-ai-for-coding/amp/",
+      "instructionTuned": false,
+      "parametersB": 13,
+      "scores": {
+        "humaneval": 42.7,
+        "humaneval+": 38.4,
+        "mbpp": 63.5,
+        "mbpp+": 52.6
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codellama-34b",
+      "name": "CodeLlama-34B",
+      "publisher": "Not specified",
+      "link": "https://about.fb.com/news/2023/08/code-llama-ai-for-coding/amp/",
+      "instructionTuned": false,
+      "parametersB": 34,
+      "scores": {
+        "humaneval": 51.8,
+        "humaneval+": 43.9,
+        "mbpp": 69.3,
+        "mbpp+": 56.3
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codellama-70b",
+      "name": "CodeLlama-70B",
+      "publisher": "codellama",
+      "link": "https://huggingface.co/codellama/CodeLlama-70b-Python-hf",
+      "instructionTuned": false,
+      "parametersB": 70,
+      "scores": {
+        "humaneval": 55.5,
+        "humaneval+": 50.6,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codellama-70b-instruct",
+      "name": "CodeLlama-70B-Instruct",
+      "publisher": "codellama",
+      "link": "https://huggingface.co/codellama/CodeLlama-70b-Instruct-hf",
+      "instructionTuned": true,
+      "parametersB": 70,
+      "scores": {
+        "humaneval": 72,
+        "humaneval+": 65.9,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codellama-7b",
+      "name": "CodeLlama-7B",
+      "publisher": "Not specified",
+      "link": "https://about.fb.com/news/2023/08/code-llama-ai-for-coding/amp/",
+      "instructionTuned": false,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 37.8,
+        "humaneval+": 35.4,
+        "mbpp": 59.5,
+        "mbpp+": 46.8
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "qwen2-5-coder-32b-instruct",
+      "name": "Qwen2.5-Coder-32B-Instruct",
+      "publisher": "Qwen",
+      "link": "https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct",
+      "instructionTuned": true,
+      "parametersB": 32,
+      "scores": {
+        "humaneval": 92.1,
+        "humaneval+": 87.2,
+        "mbpp": 90.5,
+        "mbpp+": 77
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codeqwen1-5-7b",
+      "name": "CodeQwen1.5-7B",
+      "publisher": "Qwen",
+      "link": "https://huggingface.co/Qwen/CodeQwen1.5-7B",
+      "instructionTuned": false,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 51.8,
+        "humaneval+": 45.7,
+        "mbpp": 73.5,
+        "mbpp+": 60.8
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codeqwen1-5-7b-chat",
+      "name": "CodeQwen1.5-7B-Chat",
+      "publisher": "Qwen",
+      "link": "https://huggingface.co/Qwen/CodeQwen1.5-7B-Chat",
+      "instructionTuned": true,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 83.5,
+        "humaneval+": 78.7,
+        "mbpp": 79.4,
+        "mbpp+": 69
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "qwen1-5-72b-chat",
+      "name": "Qwen1.5-72B-Chat",
+      "publisher": "Qwen",
+      "link": "https://huggingface.co/Qwen/Qwen1.5-72B-Chat",
+      "instructionTuned": true,
+      "parametersB": 72,
+      "scores": {
+        "humaneval": 68.3,
+        "humaneval+": 59.1,
+        "mbpp": 72.5,
+        "mbpp+": 61.6
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codet5-plus-16b",
+      "name": "CodeT5+-16B",
+      "publisher": "Not specified",
+      "link": "https://blog.salesforceairesearch.com/codet5/",
+      "instructionTuned": false,
+      "parametersB": 16,
+      "scores": {
+        "humaneval": 31.7,
+        "humaneval+": 26.8,
+        "mbpp": 56.6,
+        "mbpp+": 47.1
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codet5-plus-2b",
+      "name": "CodeT5+-2B",
+      "publisher": "Not specified",
+      "link": "https://blog.salesforceairesearch.com/codet5/",
+      "instructionTuned": false,
+      "parametersB": 2,
+      "scores": {
+        "humaneval": 25,
+        "humaneval+": 22,
+        "mbpp": 48.4,
+        "mbpp+": 38.1
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codet5-plus-6b",
+      "name": "CodeT5+-6B",
+      "publisher": "Not specified",
+      "link": "https://blog.salesforceairesearch.com/codet5/",
+      "instructionTuned": false,
+      "parametersB": 6,
+      "scores": {
+        "humaneval": 29.3,
+        "humaneval+": 24.4,
+        "mbpp": 52.9,
+        "mbpp+": 41.5
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "command-r-plus",
+      "name": "Command-R+",
+      "publisher": "CohereForAI",
+      "link": "https://huggingface.co/CohereForAI/c4ai-command-r-plus",
+      "instructionTuned": true,
+      "parametersB": 104,
+      "scores": {
+        "humaneval": 64,
+        "humaneval+": 56.7,
+        "mbpp": 74.3,
+        "mbpp+": 63.5
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "deepseek-v3-nov-2024",
+      "name": "DeepSeek-V3 (Nov 2024)",
+      "publisher": "deepseek-ai",
+      "link": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
+      "instructionTuned": true,
+      "parametersB": 37,
+      "scores": {
+        "humaneval": 91.5,
+        "humaneval+": 86.6,
+        "mbpp": 87.6,
+        "mbpp+": 73
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "deepseek-v2-5-nov-2024",
+      "name": "DeepSeek-V2.5 (Nov 2024)",
+      "publisher": "deepseek-ai",
+      "link": "https://huggingface.co/deepseek-ai/DeepSeek-V2.5",
+      "instructionTuned": true,
+      "parametersB": 21,
+      "scores": {
+        "humaneval": 90.2,
+        "humaneval+": 83.5,
+        "mbpp": 87.6,
+        "mbpp+": 74.1
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gemini-1-5-pro-002",
+      "name": "Gemini 1.5 Pro 002",
+      "publisher": "Not specified",
+      "link": "https://ai.google.dev/",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 89,
+        "humaneval+": 79.3,
+        "mbpp": 89.7,
+        "mbpp+": 74.6
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gemini-1-5-flash-002",
+      "name": "Gemini 1.5 Flash 002",
+      "publisher": "Not specified",
+      "link": "https://ai.google.dev/",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 82.3,
+        "humaneval+": 75.6,
+        "mbpp": 84.7,
+        "mbpp+": 67.5
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "deepseek-coder-v2-instruct",
+      "name": "DeepSeek-Coder-V2-Instruct",
+      "publisher": "deepseek-ai",
+      "link": "https://huggingface.co/deepseek-ai/DeepSeek-Coder-V2-Instruct",
+      "instructionTuned": true,
+      "parametersB": 21,
+      "scores": {
+        "humaneval": 85.4,
+        "humaneval+": 82.3,
+        "mbpp": 89.4,
+        "mbpp+": 75.1
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "deepseek-coder-1-3b-base",
+      "name": "DeepSeek-Coder-1.3B-base",
+      "publisher": "deepseek-ai",
+      "link": "https://huggingface.co/deepseek-ai/deepseek-coder-1.3b-base",
+      "instructionTuned": false,
+      "parametersB": 1.3,
+      "scores": {
+        "humaneval": 28.7,
+        "humaneval+": 25.6,
+        "mbpp": 56.9,
+        "mbpp+": 47.9
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "deepseek-coder-1-3b-instruct",
+      "name": "DeepSeek-Coder-1.3B-instruct",
+      "publisher": "deepseek-ai",
+      "link": "https://huggingface.co/deepseek-ai/deepseek-coder-1.3b-instruct",
+      "instructionTuned": true,
+      "parametersB": 1.3,
+      "scores": {
+        "humaneval": 65.9,
+        "humaneval+": 60.4,
+        "mbpp": 65.3,
+        "mbpp+": 54.8
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "deepseek-coder-33b-base",
+      "name": "DeepSeek-Coder-33B-base",
+      "publisher": "deepseek-ai",
+      "link": "https://huggingface.co/deepseek-ai/deepseek-coder-33b-base",
+      "instructionTuned": false,
+      "parametersB": 33,
+      "scores": {
+        "humaneval": 51.2,
+        "humaneval+": 44.5,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "deepseek-coder-33b-instruct",
+      "name": "DeepSeek-Coder-33B-instruct",
+      "publisher": "deepseek-ai",
+      "link": "https://huggingface.co/deepseek-ai/deepseek-coder-33b-instruct",
+      "instructionTuned": true,
+      "parametersB": 33,
+      "scores": {
+        "humaneval": 81.1,
+        "humaneval+": 75,
+        "mbpp": 80.4,
+        "mbpp+": 70.1
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "deepseek-coder-6-7b-base",
+      "name": "DeepSeek-Coder-6.7B-base",
+      "publisher": "deepseek-ai",
+      "link": "https://huggingface.co/deepseek-ai/deepseek-coder-6.7b-base",
+      "instructionTuned": false,
+      "parametersB": 6.7,
+      "scores": {
+        "humaneval": 47.6,
+        "humaneval+": 39.6,
+        "mbpp": 72,
+        "mbpp+": 58.7
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "deepseek-coder-6-7b-instruct",
+      "name": "DeepSeek-Coder-6.7B-instruct",
+      "publisher": "deepseek-ai",
+      "link": "https://huggingface.co/deepseek-ai/deepseek-coder-6.7b-instruct",
+      "instructionTuned": true,
+      "parametersB": 6.7,
+      "scores": {
+        "humaneval": 74.4,
+        "humaneval+": 71.3,
+        "mbpp": 74.9,
+        "mbpp+": 65.6
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "deepseek-coder-7b-instruct-v1-5",
+      "name": "DeepSeek-Coder-7B-instruct-v1.5",
+      "publisher": "deepseek-ai",
+      "link": "https://huggingface.co/deepseek-ai/deepseek-coder-7b-instruct-v1.5",
+      "instructionTuned": true,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 75.6,
+        "humaneval+": 71.3,
+        "mbpp": 75.2,
+        "mbpp+": 62.2
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "claude-sonnet-3-5-june-2024",
+      "name": "Claude Sonnet 3.5 (June 2024)",
+      "publisher": "Not specified",
+      "link": "https://platform.openai.com/docs/models/",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 87.2,
+        "humaneval+": 81.7,
+        "mbpp": 89.4,
+        "mbpp+": 74.3
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "grok-beta",
+      "name": "Grok Beta",
+      "publisher": "Not specified",
+      "link": "https://x.ai/blog/grok-2",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 88.4,
+        "humaneval+": 80.5,
+        "mbpp": 86,
+        "mbpp+": 65.6
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "o1-preview-sept-2024",
+      "name": "O1 Preview (Sept 2024)",
+      "publisher": "Not specified",
+      "link": "https://platform.openai.com/docs/models/",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 96.3,
+        "humaneval+": 89,
+        "mbpp": 95.5,
+        "mbpp+": 80.2
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "o1-mini-sept-2024",
+      "name": "O1 Mini (Sept 2024)",
+      "publisher": "Not specified",
+      "link": "https://platform.openai.com/docs/models/",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 96.3,
+        "humaneval+": 89,
+        "mbpp": 93.1,
+        "mbpp+": 78.8
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gpt-4o-aug-2024",
+      "name": "GPT 4o (Aug 2024)",
+      "publisher": "Not specified",
+      "link": "https://platform.openai.com/docs/models/",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 92.7,
+        "humaneval+": 87.2,
+        "mbpp": 87.6,
+        "mbpp+": 72.2
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gpt-4o-mini-july-2024",
+      "name": "GPT 4o Mini (July 2024)",
+      "publisher": "Not specified",
+      "link": "https://platform.openai.com/docs/models/",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 88.4,
+        "humaneval+": 83.5,
+        "mbpp": 85.4,
+        "mbpp+": 72.2
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gpt-3-5-may-2023",
+      "name": "GPT-3.5 (May 2023)",
+      "publisher": "Not specified",
+      "link": "https://openai.com/blog/chatgpt",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 73.2,
+        "humaneval+": 66.5,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gpt-3-5-turbo-nov-2023",
+      "name": "GPT-3.5-Turbo (Nov 2023)",
+      "publisher": "Not specified",
+      "link": "https://openai.com/blog/new-models-and-developer-products-announced-at-devday",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 76.8,
+        "humaneval+": 70.7,
+        "mbpp": 82.5,
+        "mbpp+": 69.7
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gpt-4-may-2023",
+      "name": "GPT-4 (May 2023)",
+      "publisher": "Not specified",
+      "link": "https://openai.com/research/gpt-4",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 88.4,
+        "humaneval+": 79.3,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gpt-4-turbo-april-2024",
+      "name": "GPT-4-Turbo (April 2024)",
+      "publisher": "Not specified",
+      "link": "https://openai.com/blog/new-models-and-developer-products-announced-at-devday",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 90.2,
+        "humaneval+": 86.6,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gpt-4-turbo-nov-2023",
+      "name": "GPT-4-Turbo (Nov 2023)",
+      "publisher": "Not specified",
+      "link": "https://openai.com/blog/new-models-and-developer-products-announced-at-devday",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 85.4,
+        "humaneval+": 81.7,
+        "mbpp": 85.7,
+        "mbpp+": 73.3
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gpt-j-6b",
+      "name": "GPT-J-6B",
+      "publisher": "Not specified",
+      "link": "https://www.eleuther.ai/artifacts/gpt-j",
+      "instructionTuned": false,
+      "parametersB": 6,
+      "scores": {
+        "humaneval": 12.2,
+        "humaneval+": 11,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gpt-neo-2-7b",
+      "name": "GPT-Neo-2.7B",
+      "publisher": "Not specified",
+      "link": "https://www.eleuther.ai/artifacts/gpt-neo",
+      "instructionTuned": false,
+      "parametersB": 2.7,
+      "scores": {
+        "humaneval": 7.9,
+        "humaneval+": 6.7,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gemini-pro-1-0",
+      "name": "Gemini Pro 1.0",
+      "publisher": "Not specified",
+      "link": "https://deepmind.google/technologies/gemini/",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 63.4,
+        "humaneval+": 55.5,
+        "mbpp": 75.4,
+        "mbpp+": 61.4
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gemini-pro-1-5",
+      "name": "Gemini Pro 1.5",
+      "publisher": "Not specified",
+      "link": "https://blog.google/technology/ai/google-gemini-next-generation-model-february-2024/",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 68.3,
+        "humaneval+": 61,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "incoder-1-3b",
+      "name": "InCoder-1.3B",
+      "publisher": "Not specified",
+      "link": "https://arxiv.org/abs/2204.05999",
+      "instructionTuned": false,
+      "parametersB": 1.3,
+      "scores": {
+        "humaneval": 12.2,
+        "humaneval+": 11,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "incoder-6-7b",
+      "name": "InCoder-6.7B",
+      "publisher": "Not specified",
+      "link": "https://arxiv.org/abs/2204.05999",
+      "instructionTuned": false,
+      "parametersB": 6.7,
+      "scores": {
+        "humaneval": 15.9,
+        "humaneval+": 12.2,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "llama3-70b-instruct",
+      "name": "Llama3-70B-instruct",
+      "publisher": "meta-llama",
+      "link": "https://huggingface.co/meta-llama/Meta-Llama-3-70B-Instruct",
+      "instructionTuned": true,
+      "parametersB": 70,
+      "scores": {
+        "humaneval": 77.4,
+        "humaneval+": 72,
+        "mbpp": 82.3,
+        "mbpp+": 69
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "llama3-8b-base",
+      "name": "Llama3-8B-base",
+      "publisher": "meta-llama",
+      "link": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
+      "instructionTuned": false,
+      "parametersB": 8,
+      "scores": {
+        "humaneval": 33.5,
+        "humaneval+": 29.3,
+        "mbpp": 61.4,
+        "mbpp+": 51.6
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "llama3-1-8b-instruct",
+      "name": "Llama3.1-8B-instruct",
+      "publisher": "meta-llama",
+      "link": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+      "instructionTuned": true,
+      "parametersB": 8,
+      "scores": {
+        "humaneval": 69.5,
+        "humaneval+": 62.8,
+        "mbpp": 68.3,
+        "mbpp+": 55.6
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "llama3-8b-instruct",
+      "name": "Llama3-8B-instruct",
+      "publisher": "meta-llama",
+      "link": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
+      "instructionTuned": true,
+      "parametersB": 8,
+      "scores": {
+        "humaneval": 61.6,
+        "humaneval+": 56.7,
+        "mbpp": 64.6,
+        "mbpp+": 54.8
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "wavecoder-ultra-6-7b",
+      "name": "WaveCoder-Ultra-6.7B",
+      "publisher": "microsoft",
+      "link": "https://huggingface.co/microsoft/wavecoder-ultra-6.7b",
+      "instructionTuned": true,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 75,
+        "humaneval+": 69.5,
+        "mbpp": 74.9,
+        "mbpp+": 63.5
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "magicoder-s-cl-7b",
+      "name": "Magicoder-S-CL-7B",
+      "publisher": "ise-uiuc",
+      "link": "https://huggingface.co/ise-uiuc/Magicoder-S-CL-7B",
+      "instructionTuned": true,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 70.7,
+        "humaneval+": 67.7,
+        "mbpp": 70.6,
+        "mbpp+": 60.1
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "magicoder-s-ds-6-7b",
+      "name": "Magicoder-S-DS-6.7B",
+      "publisher": "ise-uiuc",
+      "link": "https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B",
+      "instructionTuned": true,
+      "parametersB": 6.7,
+      "scores": {
+        "humaneval": 76.8,
+        "humaneval+": 71.3,
+        "mbpp": 79.4,
+        "mbpp+": 69
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "mistral-large-mar-2024",
+      "name": "Mistral Large (Mar 2024)",
+      "publisher": "Not specified",
+      "link": "https://mistral.ai/news/mistral-large/",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 69.5,
+        "humaneval+": 62.2,
+        "mbpp": 72.8,
+        "mbpp+": 59.5
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "mistral-7b",
+      "name": "Mistral-7B",
+      "publisher": "Not specified",
+      "link": "https://mistral.ai/news/announcing-mistral-7b/",
+      "instructionTuned": false,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 28.7,
+        "humaneval+": 23.8,
+        "mbpp": 51.9,
+        "mbpp+": 42.1
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "mistral-codealpaca-7b",
+      "name": "Mistral-codealpaca-7B",
+      "publisher": "Nondzu",
+      "link": "https://huggingface.co/Nondzu/Mistral-7B-codealpaca-lora",
+      "instructionTuned": false,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 48.2,
+        "humaneval+": 42.1,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "mistralhermes-codepro-7b-v1",
+      "name": "MistralHermes-CodePro-7B-v1",
+      "publisher": "beowolx",
+      "link": "https://huggingface.co/beowolx/MistralHermes-CodePro-7B-v1",
+      "instructionTuned": true,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 47.6,
+        "humaneval+": 42.1,
+        "mbpp": 57.4,
+        "mbpp+": 46.4
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "databricks-dbrx-instruct",
+      "name": "databricks/dbrx-instruct",
+      "publisher": "databricks",
+      "link": "https://huggingface.co/databricks/dbrx-instruct",
+      "instructionTuned": true,
+      "parametersB": 36,
+      "scores": {
+        "humaneval": 75,
+        "humaneval+": 70.1,
+        "mbpp": 67.2,
+        "mbpp+": 55.8
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codestral-22b-v0-1",
+      "name": "Codestral-22B-v0.1",
+      "publisher": "mistralai",
+      "link": "https://huggingface.co/mistralai/Codestral-22B-v0.1",
+      "instructionTuned": true,
+      "parametersB": 22,
+      "scores": {
+        "humaneval": 79.9,
+        "humaneval+": 73.8,
+        "mbpp": 72.5,
+        "mbpp+": 61.9
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "mistral-7b-instruct-v0-2",
+      "name": "Mistral-7B-Instruct-v0.2",
+      "publisher": "mistralai",
+      "link": "https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2",
+      "instructionTuned": true,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 42.1,
+        "humaneval+": 36,
+        "mbpp": 44.7,
+        "mbpp+": 37
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "mixtral-8x22b-instruct-v0-1",
+      "name": "Mixtral-8x22B-Instruct-v0.1",
+      "publisher": "mistralai",
+      "link": "https://huggingface.co/mistralai/Mixtral-8x22B-Instruct-v0.1",
+      "instructionTuned": true,
+      "parametersB": 44,
+      "scores": {
+        "humaneval": 76.2,
+        "humaneval+": 72,
+        "mbpp": 73.8,
+        "mbpp+": 64.3
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "mixtral-8x7b-instruct-v0-1",
+      "name": "Mixtral-8x7B-Instruct-v0.1",
+      "publisher": "mistralai",
+      "link": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "instructionTuned": true,
+      "parametersB": 13,
+      "scores": {
+        "humaneval": 45.1,
+        "humaneval+": 39.6,
+        "mbpp": 59.5,
+        "mbpp+": 49.7
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "openchat-3-5-7b-0106",
+      "name": "OpenChat-3.5-7B-0106",
+      "publisher": "openchat",
+      "link": "https://huggingface.co/openchat/openchat-3.5-0106",
+      "instructionTuned": true,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 72.6,
+        "humaneval+": 67.7,
+        "mbpp": 63.8,
+        "mbpp+": 54.5
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "opencodeinterpreter-ds-33b",
+      "name": "OpenCodeInterpreter-DS-33B",
+      "publisher": "m-a-p",
+      "link": "https://huggingface.co/m-a-p/OpenCodeInterpreter-DS-33B",
+      "instructionTuned": true,
+      "parametersB": 33,
+      "scores": {
+        "humaneval": 79.3,
+        "humaneval+": 73.8,
+        "mbpp": 80.2,
+        "mbpp+": 68.5
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "opencodeinterpreter-ds-6-7b",
+      "name": "OpenCodeInterpreter-DS-6.7B",
+      "publisher": "m-a-p",
+      "link": "https://huggingface.co/m-a-p/OpenCodeInterpreter-DS-6.7B",
+      "instructionTuned": true,
+      "parametersB": 6.7,
+      "scores": {
+        "humaneval": 77.4,
+        "humaneval+": 72,
+        "mbpp": 76.5,
+        "mbpp+": 66.4
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "openhermes-2-5-code-290k-13b",
+      "name": "OpenHermes-2.5-Code-290k-13B",
+      "publisher": "ajibawa-2023",
+      "link": "https://huggingface.co/ajibawa-2023/OpenHermes-2.5-Code-290k-13B",
+      "instructionTuned": true,
+      "parametersB": 13,
+      "scores": {
+        "humaneval": 54.3,
+        "humaneval+": 48.8,
+        "mbpp": 52.4,
+        "mbpp+": 45.8
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "phind-codellama-34b-v2",
+      "name": "Phind-CodeLlama-34B-v2",
+      "publisher": "Phind",
+      "link": "https://huggingface.co/Phind/Phind-CodeLlama-34B-v2",
+      "instructionTuned": false,
+      "parametersB": 34,
+      "scores": {
+        "humaneval": 71.3,
+        "humaneval+": 67.1,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "polycoder-2-7b",
+      "name": "PolyCoder-2.7B",
+      "publisher": "Not specified",
+      "link": "https://github.com/VHellendoorn/Code-LMs",
+      "instructionTuned": false,
+      "parametersB": 2.7,
+      "scores": {
+        "humaneval": 6.1,
+        "humaneval+": 6.1,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "python-code-13b",
+      "name": "Python-Code-13B",
+      "publisher": "ajibawa-2023",
+      "link": "https://huggingface.co/ajibawa-2023/Python-Code-13B",
+      "instructionTuned": true,
+      "parametersB": 13,
+      "scores": {
+        "humaneval": 32.9,
+        "humaneval+": 30.5,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "solar-10-7b-instruct-v1-0",
+      "name": "SOLAR-10.7B-Instruct-v1.0",
+      "publisher": "upstage",
+      "link": "https://huggingface.co/upstage/SOLAR-10.7B-Instruct-v1.0",
+      "instructionTuned": true,
+      "parametersB": 10.7,
+      "scores": {
+        "humaneval": 43.3,
+        "humaneval+": 37.2,
+        "mbpp": 43.9,
+        "mbpp+": 36.2
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "santacoder-1-1b",
+      "name": "SantaCoder-1.1B",
+      "publisher": "Not specified",
+      "link": "https://arxiv.org/abs/2301.03988",
+      "instructionTuned": false,
+      "parametersB": 1.1,
+      "scores": {
+        "humaneval": 14.6,
+        "humaneval+": 14,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "stablelm-7b",
+      "name": "StableLM-7B",
+      "publisher": "stabilityai",
+      "link": "https://huggingface.co/stabilityai/stablelm-base-alpha-7b",
+      "instructionTuned": false,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 2.4,
+        "humaneval+": 2.4,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "starchat2-15b-v0-1",
+      "name": "starchat2-15b-v0.1",
+      "publisher": "HuggingFaceH4",
+      "link": "https://huggingface.co/HuggingFaceH4/starchat2-15b-v0.1",
+      "instructionTuned": true,
+      "parametersB": 15,
+      "scores": {
+        "humaneval": 73.8,
+        "humaneval+": 71.3,
+        "mbpp": 74.9,
+        "mbpp+": 64.6
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "starcoder-15b",
+      "name": "StarCoder-15B",
+      "publisher": "bigcode",
+      "link": "https://huggingface.co/bigcode/starcoder",
+      "instructionTuned": false,
+      "parametersB": 15,
+      "scores": {
+        "humaneval": 34.1,
+        "humaneval+": 29.3,
+        "mbpp": 55.1,
+        "mbpp+": 46.1
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "starcoder2-15b-instruct-v0-1",
+      "name": "starcoder2-15b-instruct-v0.1",
+      "publisher": "bigcode",
+      "link": "https://huggingface.co/bigcode/starcoder2-15b-instruct-v0.1",
+      "instructionTuned": true,
+      "parametersB": 15,
+      "scores": {
+        "humaneval": 67.7,
+        "humaneval+": 60.4,
+        "mbpp": 78,
+        "mbpp+": 65.1
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "starcoder2-15b",
+      "name": "StarCoder2-15B",
+      "publisher": "bigcode",
+      "link": "https://huggingface.co/bigcode/starcoder2-15b",
+      "instructionTuned": false,
+      "parametersB": 15,
+      "scores": {
+        "humaneval": 46.3,
+        "humaneval+": 37.8,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "starcoder2-3b",
+      "name": "StarCoder2-3B",
+      "publisher": "bigcode",
+      "link": "https://huggingface.co/bigcode/starcoder2-3b",
+      "instructionTuned": false,
+      "parametersB": 3,
+      "scores": {
+        "humaneval": 31.7,
+        "humaneval+": 27.4,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "starcoder2-7b",
+      "name": "StarCoder2-7B",
+      "publisher": "bigcode",
+      "link": "https://huggingface.co/bigcode/starcoder2-7b",
+      "instructionTuned": false,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 35.4,
+        "humaneval+": 29.9,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "starcoderbase-1b",
+      "name": "StarCoderBase-1B",
+      "publisher": "bigcode",
+      "link": "https://huggingface.co/bigcode/starcoderbase-1b",
+      "instructionTuned": false,
+      "parametersB": 1,
+      "scores": {
+        "humaneval": 14.6,
+        "humaneval+": 12.2,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "starcoderbase-3b",
+      "name": "StarCoderBase-3B",
+      "publisher": "bigcode",
+      "link": "https://huggingface.co/bigcode/starcoderbase-3b",
+      "instructionTuned": false,
+      "parametersB": 3,
+      "scores": {
+        "humaneval": 17.7,
+        "humaneval+": 15.9,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "starcoderbase-7b",
+      "name": "StarCoderBase-7B",
+      "publisher": "bigcode",
+      "link": "https://huggingface.co/bigcode/starcoderbase-7b",
+      "instructionTuned": false,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 24.4,
+        "humaneval+": 21.3,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "vicuna-13b",
+      "name": "Vicuna-13B",
+      "publisher": "Not specified",
+      "link": "https://lmsys.org/blog/2023-03-30-vicuna/",
+      "instructionTuned": false,
+      "parametersB": 13,
+      "scores": {
+        "humaneval": 17.1,
+        "humaneval+": 15.9,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "vicuna-7b",
+      "name": "Vicuna-7B",
+      "publisher": "Not specified",
+      "link": "https://lmsys.org/blog/2023-03-30-vicuna/",
+      "instructionTuned": false,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 11.6,
+        "humaneval+": 11.6,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "whiterabbitneo-33b-v1",
+      "name": "WhiteRabbitNeo-33B-v1",
+      "publisher": "WhiteRabbitNeo",
+      "link": "https://huggingface.co/WhiteRabbitNeo/WhiteRabbitNeo-33B-v1",
+      "instructionTuned": true,
+      "parametersB": 33,
+      "scores": {
+        "humaneval": 72,
+        "humaneval+": 65.9,
+        "mbpp": 79.4,
+        "mbpp+": 66.9
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "wizardcoder-15b-v1-0",
+      "name": "WizardCoder-15B-V1.0",
+      "publisher": "WizardLM",
+      "link": "https://huggingface.co/WizardLM/WizardCoder-15B-V1.0",
+      "instructionTuned": true,
+      "parametersB": 15,
+      "scores": {
+        "humaneval": 56.7,
+        "humaneval+": 50.6,
+        "mbpp": 64.3,
+        "mbpp+": 54.2
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "wizardcoder-33b-v1-1",
+      "name": "WizardCoder-33B-V1.1",
+      "publisher": "WizardLM",
+      "link": "https://huggingface.co/WizardLM/WizardCoder-33B-V1.1",
+      "instructionTuned": true,
+      "parametersB": 33,
+      "scores": {
+        "humaneval": 79.9,
+        "humaneval+": 73.2,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "wizardcoder-python-34b-v1-0",
+      "name": "WizardCoder-Python-34B-V1.0",
+      "publisher": "WizardLM",
+      "link": "https://huggingface.co/WizardLM/WizardCoder-Python-34B-V1.0",
+      "instructionTuned": true,
+      "parametersB": 34,
+      "scores": {
+        "humaneval": 73.2,
+        "humaneval+": 64.6,
+        "mbpp": 75.1,
+        "mbpp+": 63.2
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "wizardcoder-python-7b-v1-0",
+      "name": "WizardCoder-Python-7B-V1.0",
+      "publisher": "WizardLM",
+      "link": "https://huggingface.co/WizardLM/WizardCoder-Python-7B-V1.0",
+      "instructionTuned": true,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 50.6,
+        "humaneval+": 45.1,
+        "mbpp": 58.5,
+        "mbpp+": 49.5
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "xwincoder-34b",
+      "name": "XwinCoder-34B",
+      "publisher": "Xwin-LM",
+      "link": "https://huggingface.co/Xwin-LM/XwinCoder-34B",
+      "instructionTuned": true,
+      "parametersB": 34,
+      "scores": {
+        "humaneval": 75.6,
+        "humaneval+": 69.5,
+        "mbpp": 77,
+        "mbpp+": 64.8
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "zephyr-7b",
+      "name": "Zephyr β-7B",
+      "publisher": "HuggingFaceH4",
+      "link": "https://huggingface.co/HuggingFaceH4/zephyr-7b-beta",
+      "instructionTuned": false,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 30,
+        "humaneval+": 23.2,
+        "mbpp": 42.1,
+        "mbpp+": 34.7
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "claude-2-mar-2024",
+      "name": "claude-2 (Mar 2024)",
+      "publisher": "Not specified",
+      "link": "https://www.anthropic.com/news/claude-2",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 69.5,
+        "humaneval+": 61.6,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "claude-3-haiku-mar-2024",
+      "name": "claude-3-haiku (Mar 2024)",
+      "publisher": "Not specified",
+      "link": "https://www.anthropic.com/news/claude-3-family",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 76.8,
+        "humaneval+": 68.9,
+        "mbpp": 80.2,
+        "mbpp+": 68.8
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "claude-3-opus-mar-2024",
+      "name": "claude-3-opus (Mar 2024)",
+      "publisher": "Not specified",
+      "link": "https://www.anthropic.com/news/claude-3-family",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 82.9,
+        "humaneval+": 77.4,
+        "mbpp": 89.4,
+        "mbpp+": 73.3
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "claude-3-sonnet-mar-2024",
+      "name": "claude-3-sonnet (Mar 2024)",
+      "publisher": "Not specified",
+      "link": "https://www.anthropic.com/news/claude-3-family",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 70.7,
+        "humaneval+": 64,
+        "mbpp": 83.6,
+        "mbpp+": 69.3
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "claude-instant-1-mar-2024",
+      "name": "claude-instant-1 (Mar 2024)",
+      "publisher": "Not specified",
+      "link": "https://www.anthropic.com/news/releasing-claude-instant-1-2",
+      "instructionTuned": true,
+      "parametersB": null,
+      "scores": {
+        "humaneval": 57.3,
+        "humaneval+": 50.6,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "code-millenials-34b",
+      "name": "code-millenials-34B",
+      "publisher": "budecosystem",
+      "link": "https://huggingface.co/budecosystem/code-millenials-34b",
+      "instructionTuned": true,
+      "parametersB": 34,
+      "scores": {
+        "humaneval": 74.4,
+        "humaneval+": 70.7,
+        "mbpp": 76.2,
+        "mbpp+": 64.6
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codegemma-2b",
+      "name": "codegemma-2b",
+      "publisher": "google",
+      "link": "https://huggingface.co/google/codegemma-2b",
+      "instructionTuned": false,
+      "parametersB": 2,
+      "scores": {
+        "humaneval": 26.8,
+        "humaneval+": 20.7,
+        "mbpp": 55.6,
+        "mbpp+": 46.6
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codegemma-7b",
+      "name": "codegemma-7b",
+      "publisher": "google",
+      "link": "https://huggingface.co/google/codegemma-7b",
+      "instructionTuned": false,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 44.5,
+        "humaneval+": 41.5,
+        "mbpp": 65.1,
+        "mbpp+": 52.4
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "codegemma-7b-it",
+      "name": "codegemma-7b-it",
+      "publisher": "google",
+      "link": "https://huggingface.co/google/codegemma-7b-it",
+      "instructionTuned": true,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 60.4,
+        "humaneval+": 51.8,
+        "mbpp": 70.4,
+        "mbpp+": 56.9
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "dolphin-2-6-mixtral-8x7b",
+      "name": "dolphin-2.6-mixtral-8x7b",
+      "publisher": "cognitivecomputations",
+      "link": "https://huggingface.co/cognitivecomputations/dolphin-2.6-mixtral-8x7b",
+      "instructionTuned": true,
+      "parametersB": 13,
+      "scores": {
+        "humaneval": 64,
+        "humaneval+": 57.3,
+        "mbpp": 70.6,
+        "mbpp+": 59
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gemma-1-1-2b-it",
+      "name": "gemma-1.1-2b-it",
+      "publisher": "google",
+      "link": "https://huggingface.co/google/gemma-1.1-2b-it",
+      "instructionTuned": true,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 22.6,
+        "humaneval+": 17.7,
+        "mbpp": 29.8,
+        "mbpp+": 23.3
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gemma-1-1-7b-it",
+      "name": "gemma-1.1-7b-it",
+      "publisher": "google",
+      "link": "https://huggingface.co/google/gemma-1.1-7b-it",
+      "instructionTuned": true,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 42.7,
+        "humaneval+": 35.4,
+        "mbpp": 57.1,
+        "mbpp+": 45
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gemma-2b",
+      "name": "gemma-2b",
+      "publisher": "google",
+      "link": "https://huggingface.co/google/gemma-2b",
+      "instructionTuned": false,
+      "parametersB": 2,
+      "scores": {
+        "humaneval": 25,
+        "humaneval+": 20.7,
+        "mbpp": 41.8,
+        "mbpp+": 34.1
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gemma-2b-it",
+      "name": "gemma-2b-it",
+      "publisher": "google",
+      "link": "https://huggingface.co/google/gemma-2b-it",
+      "instructionTuned": true,
+      "parametersB": 2,
+      "scores": {
+        "humaneval": 17.7,
+        "humaneval+": 15.2,
+        "mbpp": null,
+        "mbpp+": null
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gemma-7b",
+      "name": "gemma-7b",
+      "publisher": "google",
+      "link": "https://huggingface.co/google/gemma-7b",
+      "instructionTuned": false,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 35.4,
+        "humaneval+": 28.7,
+        "mbpp": 52.6,
+        "mbpp+": 43.4
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "gemma-7b-it",
+      "name": "gemma-7b-it",
+      "publisher": "google",
+      "link": "https://huggingface.co/google/gemma-7b-it",
+      "instructionTuned": true,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 28.7,
+        "humaneval+": 25,
+        "mbpp": 47.1,
+        "mbpp+": 36.8
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "phi-3-mini-4k-instruct",
+      "name": "Phi-3-mini-4k-instruct",
+      "publisher": "microsoft",
+      "link": "https://huggingface.co/microsoft/Phi-3-mini-4k-instruct",
+      "instructionTuned": true,
+      "parametersB": 3.8,
+      "scores": {
+        "humaneval": 64.6,
+        "humaneval+": 59.1,
+        "mbpp": 65.9,
+        "mbpp+": 54.2
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "phi-2-2-7b",
+      "name": "phi-2-2.7B",
+      "publisher": "microsoft",
+      "link": "https://huggingface.co/microsoft/phi-2",
+      "instructionTuned": false,
+      "parametersB": 2.7,
+      "scores": {
+        "humaneval": 49.4,
+        "humaneval+": 45.1,
+        "mbpp": 64,
+        "mbpp+": 54.2
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "speechless-code-mistral-7b-v1-0",
+      "name": "speechless-code-mistral-7B-v1.0",
+      "publisher": "uukuguy",
+      "link": "https://huggingface.co/uukuguy/speechless-code-mistral-7b-v1.0",
+      "instructionTuned": true,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 48.2,
+        "humaneval+": 41.5,
+        "mbpp": 57.4,
+        "mbpp+": 48.7
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "speechless-codellama-34b-v2-0",
+      "name": "speechless-codellama-34B-v2.0",
+      "publisher": "uukuguy",
+      "link": "https://huggingface.co/uukuguy/speechless-codellama-34b-v2.0",
+      "instructionTuned": true,
+      "parametersB": 34,
+      "scores": {
+        "humaneval": 77.4,
+        "humaneval+": 72,
+        "mbpp": 73.8,
+        "mbpp+": 61.4
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "speechless-coder-ds-6-7b",
+      "name": "speechless-coder-ds-6.7B",
+      "publisher": "uukuguy",
+      "link": "https://huggingface.co/uukuguy/speechless-coder-ds-6.7b",
+      "instructionTuned": true,
+      "parametersB": 6.7,
+      "scores": {
+        "humaneval": 71.3,
+        "humaneval+": 65.9,
+        "mbpp": 75.9,
+        "mbpp+": 64.4
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "speechless-coding-7b-16k-tora",
+      "name": "speechless-coding-7B-16k-tora",
+      "publisher": "uukuguy",
+      "link": "https://huggingface.co/uukuguy/speechless-coding-7b-16k-tora",
+      "instructionTuned": true,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 54.9,
+        "humaneval+": 50.6,
+        "mbpp": 64.2,
+        "mbpp+": 50.6
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "speechless-starcoder2-15b",
+      "name": "speechless-starcoder2-15b",
+      "publisher": "uukuguy",
+      "link": "https://huggingface.co/uukuguy/speechless-starcoder2-15b",
+      "instructionTuned": true,
+      "parametersB": 15,
+      "scores": {
+        "humaneval": 67.1,
+        "humaneval+": 62.8,
+        "mbpp": 73.5,
+        "mbpp+": 62.4
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "speechless-starcoder2-7b",
+      "name": "speechless-starcoder2-7b",
+      "publisher": "uukuguy",
+      "link": "https://huggingface.co/uukuguy/speechless-starcoder2-7b",
+      "instructionTuned": true,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 56.1,
+        "humaneval+": 51.8,
+        "mbpp": 66.7,
+        "mbpp+": 56.3
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "stable-code-3b",
+      "name": "stable-code-3B",
+      "publisher": "stabilityai",
+      "link": "https://huggingface.co/stabilityai/stable-code-3b",
+      "instructionTuned": false,
+      "parametersB": 3,
+      "scores": {
+        "humaneval": 29.3,
+        "humaneval+": 25.6,
+        "mbpp": 54.8,
+        "mbpp+": 45.8
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "xdan-l1-chat-rl-v1-7b",
+      "name": "xDAN-L1-Chat-RL-v1-7B",
+      "publisher": "xDAN-AI",
+      "link": "https://huggingface.co/xDAN-AI/xDAN-L1-Chat-RL-v1",
+      "instructionTuned": true,
+      "parametersB": 7,
+      "scores": {
+        "humaneval": 40.2,
+        "humaneval+": 32.9,
+        "mbpp": 50.3,
+        "mbpp+": 41.3
+      },
+      "pricing": null,
+      "speed": null
+    },
+    {
+      "id": "zyte-1b",
+      "name": "zyte-1B",
+      "publisher": "aihub-app",
+      "link": "https://huggingface.co/aihub-app/zyte-1B",
+      "instructionTuned": true,
+      "parametersB": 1,
+      "scores": {
+        "humaneval": 2.4,
+        "humaneval+": 1.8,
+        "mbpp": 9.8,
+        "mbpp+": 7.5
+      },
+      "pricing": null,
+      "speed": null
+    }
+  ]
+}
