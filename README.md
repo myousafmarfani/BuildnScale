@@ -267,3 +267,7 @@ pnpm build
 ```
 
 See [upgrade review](docs/workspace-upgrade.md) for findings, product reasoning, and remaining validation.
+
+## Tool detail workspace
+
+Every tool now shares desktop/mobile navigation and a searchable workspace menu. Each tool has a task-specific layout. See [the tool experience redesign](docs/tool-experience-redesign.md) for architecture, design references, and browser test commands.

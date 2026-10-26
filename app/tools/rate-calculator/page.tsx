@@ -1,16 +1,13 @@
 'use client'
 
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
-import Link from 'next/link'
-import { IconSettings, IconBook2 } from '@tabler/icons-react'
-import { ToolBreadcrumbs } from '@/components/ui/ToolBreadcrumbs'
-import { SettingsDrawer } from '@/components/ui/SettingsDrawer'
+import { useState, useMemo, useCallback, useRef } from 'react'
+
 import { Toast } from '@/components/ui/Toast'
 import { UserGuideModal } from '@/components/ui/UserGuideModal'
-import { ThemeToggle } from '@/components/ui/ThemeToggle'
+
+import { ToolPageIntro } from '@/components/workspace/ToolPageIntro'
 import { useLocalSetting } from '@/hooks/useLocalSetting'
 import { useSync } from '@/hooks/useSync'
-import { cn } from '@/lib/utils'
 
 const STORAGE_KEY = 'bns_ratecalc_'
 
@@ -18,7 +15,8 @@ const PROFIT_MARGINS = [0, 10, 20, 30] as const
 
 function formatCurrency(n: number, currency: string = '$'): string {
   if (n >= 1000000) return `${currency}${(n / 1000000).toFixed(1)}M`
-  if (n >= 1000) return `${currency}${n.toLocaleString('en-US')}`
+  if (n >= 1000)
+    return `${currency}${n.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
   return `${currency}${n.toFixed(0)}`
 }
 
@@ -44,6 +42,7 @@ function generateInvoiceHTML(
   currency: string,
   invoiceNumber: number
 ): string {
+  currency = escapeHTML(currency)
   const invoiceNum = `INV-${String(invoiceNumber).padStart(4, '0')}`
   return `<!DOCTYPE html>
 <html>
@@ -143,8 +142,6 @@ export default function RateCalculatorPage() {
     STORAGE_KEY + 'currency',
     '$'
   )
-  const [isMobile, setIsMobile] = useState(false)
-  const [settingsOpen, setSettingsOpen] = useState(false)
   const [toast, setToast] = useState<{
     message: string
     variant: 'success' | 'error' | 'info'
@@ -152,24 +149,18 @@ export default function RateCalculatorPage() {
   const [userGuideOpen, setUserGuideOpen] = useState(false)
   const invoiceCountRef = useRef(0)
 
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768)
-    check()
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
-
   const calculations = useMemo(() => {
-    const totalNeeded = monthlyIncome + expenses
+    const totalNeeded = Math.max(0, monthlyIncome) + Math.max(0, expenses)
     const annualNeeded = totalNeeded * 12
-    const billableHoursPerYear = hoursPerWeek * weeksPerYear
+    const billableHoursPerYear =
+      Math.max(1, hoursPerWeek) * Math.max(1, weeksPerYear)
     const hourlyRate = Math.ceil(
       (annualNeeded / Math.max(1, billableHoursPerYear)) *
         (1 + profitMargin / 100)
     )
     const dayRate = hourlyRate * (hoursPerWeek / 5)
     const weekRate = hourlyRate * hoursPerWeek
-    const monthRate = hourlyRate * hoursPerWeek * 4
+    const monthRate = (hourlyRate * billableHoursPerYear) / 12
     const yearRate = hourlyRate * billableHoursPerYear
     const invoiceTotal = hourlyRate * hoursBilled
 
@@ -222,388 +213,299 @@ export default function RateCalculatorPage() {
     })
   }, [calculations, hoursBilled, clientName, projectDescription, currency])
 
-  const incomeSliderPercent = ((monthlyIncome - 500) / (30000 - 500)) * 100
-
   return (
-    <div className="flex h-screen flex-col bg-bg">
-      {/* Top Bar */}
-      <div className="flex h-[52px] shrink-0 items-center justify-between border-b border-border bg-bg px-3 md:px-4">
-        <div className="flex items-center gap-2 md:gap-4 min-w-0">
-          <Link
-            href="/"
-            className="font-display text-sm font-semibold text-fg shrink-0"
-          >
-            build<span className="text-teal">n</span>scale
-          </Link>
-          <div className="h-4 w-px bg-border shrink-0" />
-          <ToolBreadcrumbs slug="rate-calculator" />
-        </div>
-        <div className="flex items-center gap-2 md:gap-3 shrink-0">
-          <button
-            onClick={() => setUserGuideOpen(true)}
-            className="flex items-center gap-1 rounded-md border border-border px-2 py-1 text-[11px] text-muted hover:text-fg hover:bg-raised transition-colors"
-          >
-            <IconBook2 className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Guide</span>
-          </button>
-          <ThemeToggle />
-          <button
-            onClick={() => setSettingsOpen(true)}
-            className="text-tertiary hover:text-muted transition-colors"
-          >
-            <IconSettings className="h-[18px] w-[18px]" />
-          </button>
-        </div>
-      </div>
-
-      {/* Main */}
-      <main className="flex-1 overflow-y-auto bg-bg">
-        <div className="mx-auto max-w-[860px] px-4 md:px-5 py-8 md:py-12">
-          <div
-            className={cn('flex gap-6 md:gap-8', isMobile ? 'flex-col' : '')}
-          >
-            {/* Left: Inputs */}
-            <div
-              className={cn(isMobile ? 'w-full' : 'w-full md:w-[55%] shrink-0')}
+    <div className="tool-page-scroll">
+      <div className="tool-page-container">
+        <ToolPageIntro
+          eyebrow="PRICE YOUR TIME / WITH INTENTION"
+          title="Build a rate around your real life."
+          description="Start with what you need to earn. Account for the time you can actually bill. These are planning estimates, not tax advice."
+          onGuide={() => setUserGuideOpen(true)}
+        >
+          <label className="tool-field-inline">
+            Currency
+            <select
+              aria-label="Invoice and rate currency"
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
             >
-              <div className="rounded-lg border border-border bg-surface p-5 md:p-7">
-                <h2 className="mb-6 text-xs uppercase tracking-[0.08em] text-muted">
-                  Your numbers
-                </h2>
-
-                {/* Monthly Target Income */}
-                <div className="mb-6">
-                  <label className="mb-2 block text-xs text-muted">
-                    Monthly target income
-                  </label>
-                  <div className="flex items-baseline gap-2 rounded-md border border-border bg-raised px-3 py-3">
-                    <span className="font-display text-xs text-tertiary">
-                      {currency}
-                    </span>
-                    <input
-                      type="text"
-                      value={monthlyIncome.toLocaleString('en-US')}
-                      onChange={(e) => {
-                        const v = parseInt(
-                          e.target.value.replace(/[^0-9]/g, ''),
-                          10
-                        )
-                        if (!isNaN(v))
-                          setMonthlyIncome(Math.min(Math.max(v, 0), 999999))
-                      }}
-                      className="w-full bg-transparent font-display text-lg text-fg outline-none"
-                    />
-                  </div>
-                  <div className="relative mt-3 h-1 w-full rounded-full bg-border">
-                    <div
-                      className="absolute left-0 top-0 h-full rounded-full bg-teal"
-                      style={{
-                        width: `${Math.min(incomeSliderPercent, 100)}%`,
-                      }}
-                    />
-                    <input
-                      type="range"
-                      min={500}
-                      max={30000}
-                      step={100}
-                      value={monthlyIncome}
-                      onChange={(e) =>
-                        setMonthlyIncome(parseInt(e.target.value, 10))
-                      }
-                      className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-                    />
-                    <div
-                      className="absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-teal"
-                      style={{
-                        left: `calc(${Math.min(incomeSliderPercent, 100)}% - 6px)`,
-                      }}
-                    />
-                  </div>
-                </div>
-
-                {/* Monthly Expenses */}
-                <div className="mb-6">
-                  <label className="mb-2 block text-xs text-muted">
-                    Monthly expenses
-                  </label>
-                  <div className="flex items-baseline gap-2 rounded-md border border-border bg-raised px-3 py-3">
-                    <span className="font-display text-xs text-tertiary">
-                      {currency}
-                    </span>
-                    <input
-                      type="text"
-                      value={expenses.toLocaleString('en-US')}
-                      onChange={(e) => {
-                        const v = parseInt(
-                          e.target.value.replace(/[^0-9]/g, ''),
-                          10
-                        )
-                        if (!isNaN(v))
-                          setExpenses(Math.min(Math.max(v, 0), 99999))
-                      }}
-                      className="w-full bg-transparent font-display text-lg text-fg outline-none"
-                    />
-                  </div>
-                  <div className="mt-1.5 text-[11px] text-tertiary">
-                    Rent, tools, taxes, health insurance…
-                  </div>
-                </div>
-
-                {/* Billable Hours Per Week */}
-                <div className="mb-6">
-                  <label className="mb-2 block text-xs text-muted">
-                    Billable hours per week
-                  </label>
-                  <div className="flex items-baseline gap-2 rounded-md border border-border bg-raised px-3 py-3">
-                    <input
-                      type="number"
-                      value={hoursPerWeek}
-                      onChange={(e) =>
-                        setHoursPerWeek(
-                          Math.min(
-                            Math.max(parseInt(e.target.value, 10) || 1, 1),
-                            168
-                          )
-                        )
-                      }
-                      className="w-full bg-transparent font-display text-lg text-fg outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                    />
-                    <span className="font-display text-xs text-tertiary">
-                      hours
-                    </span>
-                  </div>
-                  <div className="mt-1.5 text-[11px] text-tertiary">
-                    Leave 8h/week for admin, sales, breaks
-                  </div>
-                </div>
-
-                {/* Weeks Per Year */}
-                <div className="mb-6">
-                  <label className="mb-2 block text-xs text-muted">
-                    Weeks worked per year
-                  </label>
-                  <div className="flex items-baseline gap-2 rounded-md border border-border bg-raised px-3 py-3">
-                    <input
-                      type="number"
-                      value={weeksPerYear}
-                      onChange={(e) =>
-                        setWeeksPerYear(
-                          Math.min(
-                            Math.max(parseInt(e.target.value, 10) || 1, 1),
-                            52
-                          )
-                        )
-                      }
-                      className="w-full bg-transparent font-display text-lg text-fg outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                    />
-                    <span className="font-display text-xs text-tertiary">
-                      weeks
-                    </span>
-                  </div>
-                  <div className="mt-1.5 text-[11px] text-tertiary">
-                    After holidays and sick days
-                  </div>
-                </div>
-
-                {/* Profit Margin */}
-                <div className="mb-6">
-                  <label className="mb-2 block text-xs text-muted">
-                    Desired profit margin
-                  </label>
-                  <div className="grid grid-cols-4 gap-1 rounded-md border border-border bg-raised p-1">
-                    {PROFIT_MARGINS.map((m) => (
-                      <button
-                        key={m}
-                        onClick={() => setProfitMargin(m)}
-                        className={cn(
-                          'rounded-sm px-2 py-1.5 text-xs transition-all',
-                          profitMargin === m
-                            ? 'bg-teal font-medium text-bg'
-                            : 'text-muted hover:text-fg'
-                        )}
-                      >
-                        {m}%
-                      </button>
-                    ))}
-                  </div>
-                </div>
+              {[
+                ['$', 'USD · $'],
+                ['€', 'EUR · €'],
+                ['£', 'GBP · £'],
+                ['PKR ', 'PKR · Rs'],
+                ['CA$', 'CAD · CA$'],
+                ['A$', 'AUD · A$'],
+              ].map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </ToolPageIntro>
+        <div className="rate-layout">
+          <div className="space-y-5">
+            <section className="tool-panel p-5 sm:p-7">
+              <p className="eyebrow mb-2">01 / WHAT YOU NEED</p>
+              <h2 className="mb-6 text-xl font-semibold tracking-tight">
+                Set your monthly target.
+              </h2>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <RateField
+                  label="Take-home income goal"
+                  hint="Your personal monthly target, before any taxes you need to budget."
+                  value={monthlyIncome}
+                  onChange={setMonthlyIncome}
+                  min={0}
+                  max={9999999}
+                  suffix={currency}
+                />
+                <RateField
+                  label="Monthly business expenses"
+                  hint="Software, equipment, workspace, and other regular costs."
+                  value={expenses}
+                  onChange={setExpenses}
+                  min={0}
+                  max={9999999}
+                  suffix={currency}
+                />
               </div>
-
-              <div className="mt-6 text-center font-display text-[11px] text-tertiary">
-                Based on {weeksPerYear} billable weeks · {hoursPerWeek}h/week ·{' '}
-                {currency}
-                {calculations.totalNeeded.toLocaleString('en-US')}/mo need
+            </section>
+            <section className="tool-panel p-5 sm:p-7">
+              <p className="eyebrow mb-2">02 / WHAT YOU CAN BILL</p>
+              <h2 className="mb-6 text-xl font-semibold tracking-tight">
+                Leave room for being human.
+              </h2>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <RateField
+                  label="Billable hours each week"
+                  hint="Exclude admin, marketing, learning, and unpaid meetings."
+                  value={hoursPerWeek}
+                  onChange={setHoursPerWeek}
+                  min={1}
+                  max={80}
+                  suffix="hours"
+                />
+                <RateField
+                  label="Working weeks each year"
+                  hint="Allow time for holidays, illness, and quieter periods."
+                  value={weeksPerYear}
+                  onChange={setWeeksPerYear}
+                  min={1}
+                  max={52}
+                  suffix="weeks"
+                />
               </div>
+              <fieldset className="mt-6">
+                <legend className="mb-2 text-sm font-medium">
+                  Add a pricing buffer
+                </legend>
+                <p className="mb-3 text-xs leading-relaxed text-muted">
+                  A markup above your break-even target for uncertainty and
+                  growth.
+                </p>
+                <div className="segmented-control">
+                  {PROFIT_MARGINS.map((value) => (
+                    <button
+                      type="button"
+                      key={value}
+                      aria-pressed={profitMargin === value}
+                      onClick={() => setProfitMargin(value)}
+                    >
+                      {value}%
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+            </section>
+          </div>
+          <aside className="rate-result tool-panel">
+            <div className="rate-result-top">
+              <p className="eyebrow mb-4">YOUR ESTIMATED HOURLY RATE</p>
+              <p className="rate-number">
+                {formatCurrency(calculations.hourlyRate, currency)}
+                <span>/hr</span>
+              </p>
+              <p className="mt-4 text-sm leading-relaxed text-muted">
+                A starting point based on your goals, availability, and{' '}
+                {profitMargin}% buffer.
+              </p>
             </div>
-
-            {/* Right: Results */}
-            <div className={cn('flex-1', isMobile ? 'w-full mb-24' : '')}>
-              <div className="rounded-lg border border-teal-muted bg-teal-subtle p-5 md:p-7 flex flex-col items-center">
-                <span className="mb-6 font-display text-xs uppercase text-teal">
-                  Your Rate
+            <dl className="rate-breakdown">
+              <div>
+                <dt>Per billable day</dt>
+                <dd>{formatCurrency(calculations.dayRate, currency)}</dd>
+              </div>
+              <div>
+                <dt>Monthly average revenue</dt>
+                <dd>{formatCurrency(calculations.monthRate, currency)}</dd>
+              </div>
+              <div>
+                <dt>Annual billable hours</dt>
+                <dd>{calculations.billableHoursPerYear.toLocaleString()}</dd>
+              </div>
+            </dl>
+            <div className="border-t border-border p-5">
+              <p className="text-xs leading-relaxed text-muted">
+                Formula: (monthly income + expenses) × 12 ÷ annual billable
+                hours, plus your buffer. Rounded up. Taxes and payment fees are
+                not included.
+              </p>
+              <a className="btn-primary mt-5 w-full" href="#invoice-builder">
+                Use this rate in an invoice ↓
+              </a>
+            </div>
+          </aside>
+        </div>
+        <section
+          id="invoice-builder"
+          className="tool-panel mt-6 scroll-mt-5 p-5 sm:p-7"
+        >
+          <div className="mb-6">
+            <p className="eyebrow mb-2">03 / PUT YOUR RATE TO WORK</p>
+            <h2 className="text-xl font-semibold tracking-tight">
+              Prepare a simple invoice.
+            </h2>
+            <p className="mt-2 text-sm text-muted">
+              Fill in the details, then print or save as PDF in your browser.
+            </p>
+          </div>
+          <div className="grid items-start gap-7 xl:grid-cols-[1.2fr_1fr]">
+            <div className="space-y-5">
+              <label className="block text-sm font-medium">
+                Client name
+                <input
+                  className="workspace-input mt-2"
+                  maxLength={150}
+                  placeholder="Who are you billing?"
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                />
+              </label>
+              <label className="block text-sm font-medium">
+                Project or service
+                <input
+                  className="workspace-input mt-2"
+                  maxLength={300}
+                  placeholder="e.g. Website development"
+                  value={projectDescription}
+                  onChange={(e) => setProjectDescription(e.target.value)}
+                />
+              </label>
+              <RateField
+                label="Hours to invoice"
+                hint="The work you completed for this client."
+                value={hoursBilled}
+                onChange={setHoursBilled}
+                min={0.5}
+                max={10000}
+                suffix="hours"
+                step={0.5}
+              />
+            </div>
+            <div className="invoice-summary">
+              <p className="mb-5 text-[10px] font-mono uppercase tracking-widest text-muted">
+                INVOICE SUMMARY
+              </p>
+              <p className="break-words text-base font-semibold">
+                {clientName || 'Your client'}
+              </p>
+              <p className="mt-2 break-words text-sm text-muted">
+                {projectDescription || 'Your project or service'}
+              </p>
+              <div className="my-6 flex justify-between border-y border-border py-4 text-sm text-muted">
+                <span>{Math.max(0, hoursBilled)} hours</span>
+                <span>
+                  × {formatCurrency(calculations.hourlyRate, currency)}/hr
                 </span>
-
-                {/* Primary Rate */}
-                <div className="mb-8 text-center">
-                  <div className="font-display text-5xl md:text-6xl font-bold leading-none text-fg">
-                    {formatCurrency(calculations.hourlyRate, currency)}
-                  </div>
-                  <div className="mt-1 text-lg text-teal">/ hour</div>
-                </div>
-
-                {/* Breakdown Grid */}
-                <div className="mb-8 grid w-full grid-cols-2 gap-3 md:gap-4">
-                  <div className="rounded-md border border-border bg-bg p-3">
-                    <span className="block font-display text-lg md:text-xl font-medium text-fg">
-                      {formatCurrency(calculations.dayRate, currency)}
-                    </span>
-                    <span className="text-[11px] text-tertiary">per day</span>
-                  </div>
-                  <div className="rounded-md border border-border bg-bg p-3">
-                    <span className="block font-display text-lg md:text-xl font-medium text-fg">
-                      {formatCurrency(calculations.weekRate, currency)}
-                    </span>
-                    <span className="text-[11px] text-tertiary">per week</span>
-                  </div>
-                  <div className="rounded-md border border-border bg-bg p-3">
-                    <span className="block font-display text-lg md:text-xl font-medium text-fg">
-                      {formatCurrency(calculations.monthRate, currency)}
-                    </span>
-                    <span className="text-[11px] text-tertiary">per month</span>
-                  </div>
-                  <div className="rounded-md border border-border bg-bg p-3">
-                    <span className="block font-display text-lg md:text-xl font-medium text-fg">
-                      {formatCurrency(calculations.yearRate, currency)}
-                    </span>
-                    <span className="text-[11px] text-tertiary">per year</span>
-                  </div>
-                </div>
-
-                {/* Divider */}
-                <div className="mb-8 w-full border-t border-dashed border-teal/40" />
-
-                {/* Invoice Section */}
-                <div className="w-full">
-                  <h3 className="mb-4 text-sm font-medium text-fg">
-                    Generate Invoice
-                  </h3>
-
-                  <div className="mb-4">
-                    <input
-                      value={clientName}
-                      onChange={(e) => setClientName(e.target.value)}
-                      placeholder="Client name"
-                      className="w-full rounded-md border border-border bg-raised px-3 py-2.5 text-sm text-fg outline-none placeholder:text-tertiary"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <input
-                      value={projectDescription}
-                      onChange={(e) => setProjectDescription(e.target.value)}
-                      placeholder="Project description"
-                      className="w-full rounded-md border border-border bg-raised px-3 py-2.5 text-sm text-fg outline-none placeholder:text-tertiary"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <input
-                      type="number"
-                      value={hoursBilled}
-                      onChange={(e) =>
-                        setHoursBilled(
-                          Math.min(
-                            Math.max(parseInt(e.target.value, 10) || 0, 0),
-                            1000
-                          )
-                        )
-                      }
-                      className="w-full rounded-md border border-border bg-raised px-3 py-2.5 text-sm text-fg outline-none"
-                    />
-                  </div>
-
-                  <div className="mb-4 text-right font-display text-lg text-teal">
-                    Total:{' '}
-                    {formatCurrencyDecimal(calculations.invoiceTotal, currency)}
-                  </div>
-
-                  <button
-                    onClick={generatePDF}
-                    className="mb-3 w-full rounded-md bg-teal py-3 text-sm font-semibold text-bg transition-all hover:brightness-110"
-                  >
-                    Generate PDF Invoice →
-                  </button>
-                </div>
               </div>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <span className="text-sm">Total due</span>
+                <strong className="text-3xl font-semibold tracking-tight">
+                  {formatCurrencyDecimal(calculations.invoiceTotal, currency)}
+                </strong>
+              </div>
+              <button
+                className="btn-primary mt-6 w-full"
+                disabled={
+                  !clientName.trim() ||
+                  !projectDescription.trim() ||
+                  hoursBilled <= 0
+                }
+                onClick={generatePDF}
+              >
+                Print / save invoice as PDF ↗
+              </button>
+              <p className="mt-3 text-xs leading-relaxed text-muted">
+                {!clientName.trim() || !projectDescription.trim()
+                  ? 'Add a client name and project to prepare your invoice.'
+                  : 'Opens a printable invoice in a new tab.'}
+              </p>
             </div>
           </div>
-        </div>
-      </main>
-
-      {/* Mobile Sticky Result Bar */}
-      {isMobile && (
-        <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-teal-muted bg-teal-subtle px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="font-display text-xl font-bold text-fg">
-              {formatCurrency(calculations.hourlyRate, currency)}
-              <span className="ml-1 text-xs font-normal text-teal">/ hour</span>
-            </div>
-            <button
-              onClick={generatePDF}
-              className="rounded-md bg-teal px-4 py-2 text-xs font-semibold text-bg"
-            >
-              Generate Invoice
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Toast */}
-      {toast && (
-        <Toast
-          message={toast.message}
-          variant={toast.variant}
-          visible={!!toast}
-          onDismiss={() => setToast(null)}
+        </section>
+        {toast && (
+          <Toast
+            message={toast.message}
+            variant={toast.variant}
+            visible={true}
+            onDismiss={() => setToast(null)}
+          />
+        )}
+        <UserGuideModal
+          open={userGuideOpen}
+          onClose={() => setUserGuideOpen(false)}
+          toolId="rate-calculator"
         />
-      )}
-
-      <SettingsDrawer
-        open={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
-        title="Calculator Settings"
-        settings={[
-          {
-            key: 'currency',
-            label: 'Currency symbol',
-            type: 'select',
-            value: currency,
-            options: [
-              { label: '$ (USD)', value: '$' },
-              { label: '€ (EUR)', value: '€' },
-              { label: '£ (GBP)', value: '£' },
-              { label: '¥ (JPY)', value: '¥' },
-            ],
-          },
-          {
-            key: 'defaultHours',
-            label: 'Default hours/week',
-            type: 'number',
-            value: hoursPerWeek,
-            min: 1,
-            max: 80,
-            suffix: 'hrs',
-          },
-        ]}
-        onChange={(key, val) => {
-          if (key === 'currency') setCurrency(val as string)
-          if (key === 'defaultHours') setHoursPerWeek(val as number)
-        }}
-      />
-
-      <UserGuideModal
-        open={userGuideOpen}
-        onClose={() => setUserGuideOpen(false)}
-        toolId="rate-calculator"
-      />
+      </div>
     </div>
+  )
+}
+function RateField({
+  label,
+  hint,
+  value,
+  onChange,
+  min,
+  max,
+  suffix,
+  step = 1,
+}: {
+  label: string
+  hint: string
+  value: number
+  onChange: (value: number) => void
+  min: number
+  max: number
+  suffix: string
+  step?: number
+}) {
+  return (
+    <label className="block">
+      <span className="text-sm font-medium">{label}</span>
+      <span className="mt-2 flex items-center gap-3 rounded-xl border border-border bg-bg px-4">
+        <input
+          aria-label={label}
+          type="number"
+          inputMode="decimal"
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          onChange={(e) => {
+            const next = Number(e.target.value)
+            if (Number.isFinite(next))
+              onChange(Math.max(0, Math.min(max, next)))
+          }}
+          onBlur={() => onChange(Math.max(min, Math.min(max, value)))}
+          className="min-h-[56px] min-w-0 w-full bg-transparent text-xl font-medium outline-none"
+        />
+        <span className="shrink-0 text-xs text-muted">{suffix}</span>
+      </span>
+      <span className="mt-2 block text-xs leading-relaxed text-muted">
+        {hint}
+      </span>
+    </label>
   )
 }

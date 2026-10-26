@@ -1,14 +1,8 @@
 'use client'
 import { useMemo, useRef, useState } from 'react'
-import Link from 'next/link'
-import {
-  IconBraces,
-  IconCopy,
-  IconDownload,
-  IconUpload,
-} from '@tabler/icons-react'
-import { ToolBreadcrumbs } from '@/components/ui/ToolBreadcrumbs'
-import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { ToolPageIntro } from '@/components/workspace/ToolPageIntro'
+import { IconCopy, IconDownload, IconUpload } from '@tabler/icons-react'
+
 import { transformJSON } from '@/lib/json-toolkit'
 import { downloadFile } from '@/lib/download'
 const SAMPLE =
@@ -32,30 +26,13 @@ export default function JSONToolkitPage() {
     if (fileRef.current) fileRef.current.value = ''
   }
   return (
-    <div className="flex min-h-dvh flex-col">
-      <header className="flex h-[60px] shrink-0 items-center justify-between gap-3 border-b border-border px-3 sm:px-6">
-        <div className="flex min-w-0 items-center gap-3">
-          <Link href="/" className="hidden font-semibold sm:block">
-            build<span className="text-teal">n</span>scale
-          </Link>
-          <ToolBreadcrumbs slug="json-toolkit" />
-        </div>
-        <ThemeToggle />
-      </header>
-      <main className="mx-auto w-full max-w-[1400px] flex-1 p-5 sm:p-8">
-        <div className="tool-intro">
-          <div>
-            <p className="eyebrow mb-3">DEVELOPER TOOLS / JSON</p>
-            <h1 className="section-title">Make sense of your JSON.</h1>
-            <p className="mt-3 text-sm text-muted">
-              Format, validate, or minify. Input stays in this tab and is
-              cleared when you leave.
-            </p>
-          </div>
-          <span className="tool-icon tone-purple">
-            <IconBraces className="h-6 w-6" />
-          </span>
-        </div>
+    <div className="tool-page-scroll">
+      <div className="tool-page-container">
+        <ToolPageIntro
+          eyebrow="PASTE / CHECK / CLEAN UP"
+          title="Make sense of your JSON."
+          description="Instant feedback, readable output, and one-click copy. Your input stays in this tab; it is never uploaded or saved."
+        />
         <div className="mb-5 flex flex-wrap items-center gap-3">
           <label className="flex items-center gap-2 text-sm text-muted">
             Output
@@ -110,7 +87,7 @@ export default function JSONToolkitPage() {
           />
         </div>
         <div className="grid gap-5 lg:grid-cols-2">
-          <section className="overflow-hidden rounded-xl border border-border bg-surface">
+          <section className="tool-panel overflow-hidden">
             <div className="flex justify-between border-b border-border px-4 py-3 text-xs text-muted">
               <label htmlFor="json-input">JSON INPUT</label>
               <span>
@@ -127,10 +104,10 @@ export default function JSONToolkitPage() {
               spellCheck={false}
               maxLength={1_000_000}
               placeholder={'Paste JSON here…\n\n{"hello": "world"}'}
-              className="min-h-[360px] w-full resize-y bg-transparent p-4 font-mono text-sm leading-7 outline-none lg:min-h-[480px]"
+              className="min-h-[280px] w-full resize-y bg-transparent p-4 font-mono text-sm leading-7 outline-none lg:min-h-[420px]"
             />
           </section>
-          <section className="overflow-hidden rounded-xl border border-border bg-surface">
+          <section className="tool-panel overflow-hidden">
             <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3 text-xs text-muted">
               <label htmlFor="json-output">OUTPUT</label>
               <div className="flex gap-3">
@@ -174,7 +151,7 @@ export default function JSONToolkitPage() {
               spellCheck={false}
               value={result.output}
               placeholder="Your formatted JSON appears here."
-              className="min-h-[360px] w-full resize-y bg-transparent p-4 font-mono text-sm leading-7 outline-none lg:min-h-[480px]"
+              className="min-h-[280px] w-full resize-y bg-transparent p-4 font-mono text-sm leading-7 outline-none lg:min-h-[420px]"
             />
           </section>
         </div>
@@ -195,7 +172,7 @@ export default function JSONToolkitPage() {
           commas. Formatting uses JavaScript number precision; large unsafe
           integers are rejected. Input is not saved.
         </p>
-      </main>
+      </div>
     </div>
   )
 }

@@ -389,3 +389,160 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* The tool workspace has one navigation shell; each tool owns its work area. */
+@layer components {
+  .tool-workspace { @apply flex flex-col bg-bg text-fg; height: 100dvh; overflow: hidden; }
+  .workspace-header { @apply z-[100] flex shrink-0 items-center justify-between gap-3 border-b border-border bg-surface px-3 sm:px-5; min-height: 64px; }
+  .workspace-header .brand { width: 204px; }
+  .workspace-body { @apply flex min-h-0 flex-1; }
+  .workspace-rail { @apply hidden w-[224px] shrink-0 flex-col border-r border-border bg-surface lg:flex; }
+  .workspace-nav-label { @apply px-3 pb-3 text-[10px] font-mono font-medium tracking-[0.13em] text-tertiary; }
+  .workspace-nav-item { @apply flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-raised hover:text-fg; }
+  .workspace-nav-item.active { @apply bg-teal-subtle font-medium text-teal; }
+  .workspace-content { @apply relative min-h-0 min-w-0 flex-1 overflow-hidden outline-none; }
+  .workspace-icon-button { @apply inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-muted transition-colors hover:bg-raised hover:text-fg; }
+  .workspace-search-button { @apply inline-flex min-h-11 items-center gap-2 rounded-lg border border-border bg-bg px-3 text-sm text-muted hover:border-border-strong; }
+  .workspace-search-button kbd { @apply ml-5 rounded border border-border px-1 text-[10px]; }
+  .workspace-dialog { @apply fixed z-[500] overflow-y-auto border border-border-strong bg-surface text-fg shadow-2xl; }
+  .workspace-dialog::backdrop { background: #07110db3; backdrop-filter: blur(4px); }
+  .workspace-menu { @apply left-0 top-0 m-0 h-dvh w-[min(340px,92vw)] max-w-none rounded-r-2xl; max-height: 100dvh; }
+  .workspace-command { @apply left-1/2 top-[10dvh] m-0 w-[min(560px,94vw)] -translate-x-1/2 rounded-2xl; }
+  .skip-tool-link { @apply fixed left-4 top-2 z-[600] -translate-y-20 rounded-lg bg-teal px-4 py-3 text-bg focus:translate-y-0; }
+  .tool-page-scroll { @apply h-full min-h-0 overflow-y-auto overscroll-y-contain; }
+  .tool-page-container { @apply mx-auto w-full max-w-[1200px] px-4 pb-10 pt-7 sm:px-7 lg:px-8; }
+  .tool-page-intro { @apply mb-7 flex flex-wrap items-start justify-between gap-5; }
+  .tool-page-title { font-size: clamp(24px,2.6vw,34px); line-height: 1.2; font-weight: 600; letter-spacing: -.04em; }
+  .tool-panel { @apply rounded-2xl border border-border bg-surface; }
+  .tool-button { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-muted transition-colors hover:border-border-strong hover:text-fg; }
+  .tool-workspace .btn-primary, .tool-workspace .btn-secondary { @apply min-h-11; }
+  .tool-workspace .workspace-input { @apply min-h-11; }
+  .tool-workspace input[type=date] { color-scheme: dark; }
+  [data-theme=light] .tool-workspace input[type=date] { color-scheme: light; }
+  .tool-empty-state { @apply rounded-2xl border border-dashed border-border px-5 py-10 text-center; }
+  .metric-card { @apply min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-5; }
+  .metric-card > span { @apply block text-xs text-muted; }
+  .metric-card > strong { @apply mt-2 block text-2xl font-semibold tracking-tight sm:text-3xl; }
+  .metric-card small { @apply text-xs font-normal tracking-normal text-muted; }
+  .segmented-control { @apply inline-flex max-w-full gap-1 rounded-lg border border-border bg-bg p-1; }
+  .segmented-control > button { @apply min-h-9 rounded-md px-3 py-2 text-sm text-muted; }
+  .segmented-control > button[aria-pressed=true] { @apply bg-raised font-medium text-fg; }
+  .tool-field-inline { @apply flex items-center gap-2 text-xs text-muted; }
+  .tool-field-inline select, .task-time-select { @apply min-h-9 max-w-full rounded-md border border-border bg-bg px-2 text-xs text-muted; }
+  .planner-task { @apply flex items-center gap-3 rounded-xl border border-border bg-surface p-4 sm:gap-4; }
+  .task-check { @apply flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-border-strong; }
+  .planner-task.is-complete .task-check, .task-check[aria-pressed=true] { @apply border-teal bg-teal text-bg; }
+  .task-title-input { @apply min-w-0 w-full rounded bg-transparent text-sm font-medium outline-none focus:bg-raised; }
+  .planner-task.is-complete .task-title-input { @apply text-muted line-through; }
+  .timeline-row { @apply flex min-h-[52px] items-stretch gap-3 border-b border-border last:border-b-0; }
+  .timeline-time { @apply w-20 shrink-0 border-r border-border px-2 text-left font-mono text-[11px] text-muted hover:bg-raised; }
+  .timeline-task { @apply mr-3 flex items-center gap-3 rounded-lg border-l-2 border-teal bg-teal-subtle px-3 py-2 text-sm; }
+  .tool-next-step { @apply mt-7 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4 text-sm text-muted; }
+  .tool-next-step a { @apply inline-flex min-h-9 items-center gap-2 text-teal; }
+  .workspace-status { @apply flex items-center gap-1.5 text-xs text-muted; }
+  .workspace-status::before { @apply h-1.5 w-1.5 rounded-full bg-teal content-['']; }
+  .tool-mobile-tabs { @apply flex shrink-0 border-t border-border bg-surface p-2; padding-bottom: max(8px,env(safe-area-inset-bottom)); }
+  .tool-mobile-tabs button { @apply min-h-11 flex-1 rounded-lg text-sm text-muted; }
+  .tool-mobile-tabs button[aria-pressed=true] { @apply bg-teal-subtle font-medium text-teal; }
+}
+@media (max-width: 380px) { .workspace-header { gap: 4px; } .workspace-header .workspace-icon-button { width: 36px; } .workspace-search-button { padding: 8px; } .metric-card { padding: 12px; } }
+@layer components {
+  .focus-layout { @apply grid items-start gap-5 xl:grid-cols-[1.2fr_1fr]; }
+  .focus-stage { @apply flex flex-col items-center p-5 sm:p-8; background-image: radial-gradient(ellipse at center top,var(--color-teal-subtle),transparent 65%); }
+  .focus-clock { @apply relative flex h-[240px] w-[240px] flex-col items-center justify-center sm:h-[280px] sm:w-[280px]; }
+  .focus-digits { @apply font-mono text-[52px] font-medium leading-none tracking-[-0.07em] sm:text-[64px]; font-variant-numeric: tabular-nums; }
+  .focus-current-task { @apply w-full max-w-md rounded-xl border border-border bg-bg p-4 text-center; }
+  .focus-queue-item { @apply flex items-center gap-2 rounded-xl border border-border bg-bg px-3; }
+  .focus-queue-item.active { @apply border-border-strong bg-teal-subtle; }
+  .tool-confirm-overlay { @apply fixed inset-0 z-[400] flex items-center justify-center bg-black/60 p-4; }
+}
+@layer components {
+  .notes-tool-page { @apply flex h-full min-h-0 flex-col; }
+  .notes-work-area { @apply flex min-h-0 flex-1 border-t border-border; }
+  .notes-list { @apply hidden w-[245px] shrink-0 overflow-y-auto border-r border-border bg-surface p-4 lg:block; }
+  .note-list-item { @apply block w-full rounded-xl border border-transparent p-4 text-left hover:bg-raised; }
+  .note-list-item.active { @apply border-border-strong bg-teal-subtle; }
+  .notes-document { @apply hidden min-h-0 min-w-0 flex-1 flex-col lg:flex; }
+  .note-document-toolbar { @apply flex min-h-16 shrink-0 flex-wrap items-center gap-3 border-b border-border px-4 py-2; }
+  .note-title { @apply mx-5 my-5 min-w-0 shrink-0 rounded-lg bg-transparent px-1 text-2xl font-semibold tracking-tight outline-none focus:bg-raised sm:mx-8; }
+  .note-content-panes { @apply flex min-h-0 flex-1; }
+  .note-editor-pane { @apply min-h-0 min-w-0 flex-1; }
+  .note-editor { @apply h-full min-h-[300px] w-full resize-none bg-transparent px-5 pb-8 pt-2 font-mono text-sm leading-7 outline-none sm:px-8; }
+  .note-preview-pane { @apply min-w-0 flex-1 overflow-y-auto border-l border-border bg-surface px-5 pb-8 pt-2 sm:px-8; }
+  .note-preview-pane .post-content { @apply text-sm leading-7; overflow-wrap: anywhere; }
+  .note-preview-pane .post-content pre { @apply overflow-x-auto; }
+  .note-status-bar { @apply flex shrink-0 flex-wrap justify-between gap-2 border-t border-border bg-surface px-5 py-3 text-[11px] text-muted; }
+  .notes-feedback { @apply shrink-0 border-t border-border px-5 py-2 text-xs; }
+  .habit-layout { @apply grid items-start gap-5 xl:grid-cols-[1.1fr_1fr]; }
+  .habit-row { @apply flex items-center gap-3 rounded-xl border border-border bg-bg p-3; }
+  .habit-row.checked { @apply bg-teal-subtle; }
+  .habit-check { @apply inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border-strong; }
+  .habit-check[aria-pressed=true] { @apply border-teal bg-teal text-bg; }
+  .habit-week-scroll { @apply overflow-x-auto; }
+  .habit-week-table { @apply w-full min-w-[350px] border-collapse text-xs; }
+  .habit-week-table th { @apply pb-3 font-normal text-muted; }
+  .habit-week-table small { @apply mt-1 block text-[10px]; }
+  .habit-week-table td { @apply border-t border-border py-2 text-center; }
+  .habit-week-table tbody th { @apply border-t border-border py-3 text-sm text-fg; }
+  .habit-week-table button { @apply mx-auto flex h-10 w-8 items-center justify-center rounded-lg bg-raised; }
+  .habit-week-table button[aria-pressed=true] { @apply bg-teal-subtle text-teal; }
+  .habit-heatmap { @apply grid w-max grid-flow-col grid-rows-7 gap-[4px]; }
+  .habit-heatmap span { @apply block h-[14px] w-[14px] rounded-[3px]; }
+}
+@media (min-width: 1024px) { .desktop-edit .note-preview-pane { display:none; } .desktop-preview .note-editor-pane { display:none; } }
+@media (max-width: 1023px) { .notes-list.mobile-visible { display:block; width:100%; border:0; } .notes-document.mobile-visible { display:flex; } .mobile-edit .note-preview-pane { display:none; } .mobile-preview .note-editor-pane { display:none; } .note-title { font-size: 24px; } }
+@layer components {
+  .review-layout { @apply grid items-stretch gap-5 xl:grid-cols-[1.4fr_1fr]; }
+  .review-chart { @apply flex h-[230px] items-end gap-3 sm:gap-6; }
+  .review-chart-column { @apply flex h-full min-w-0 flex-1 flex-col items-center gap-3; }
+  .review-bar-track { @apply relative w-full max-w-12 flex-1 overflow-hidden rounded-lg bg-raised; }
+  .review-bar { @apply absolute inset-x-0 bottom-0 rounded-lg bg-teal; min-height: 0; }
+}
+@layer components {
+  .rate-layout { @apply grid items-start gap-5 xl:grid-cols-[1.35fr_1fr]; }
+  .rate-result { @apply overflow-hidden xl:sticky xl:top-6; }
+  .rate-result-top { @apply bg-teal-subtle p-5 sm:p-7; }
+  .rate-number { @apply break-words text-5xl font-semibold leading-tight tracking-[-0.05em]; }
+  .rate-number span { @apply ml-1 text-lg font-normal tracking-normal text-muted; }
+  .rate-breakdown { @apply space-y-5 p-5 sm:p-7; }
+  .rate-breakdown > div { @apply flex flex-wrap justify-between gap-2 text-sm; }
+  .rate-breakdown dt { @apply text-muted; }
+  .rate-breakdown dd { @apply font-semibold; }
+  .invoice-summary { @apply rounded-xl border border-border bg-bg p-5 sm:p-6; }
+}
+@layer components {
+  .monitor-check-layout { @apply grid items-stretch gap-5 xl:grid-cols-[1.5fr_1fr]; }
+  .monitor-card { @apply min-w-0 rounded-xl border border-border bg-bg p-4 sm:p-5; }
+  .monitor-dot { @apply mt-1 h-3 w-3 shrink-0 rounded-full bg-amber; }
+  .monitor-dot.up { @apply bg-teal; }
+  .monitor-actions { @apply flex flex-wrap items-center gap-2 border-t border-border pt-4; }
+}
+@layer components {
+  .settings-dialog { @apply fixed right-0 top-0 z-[600] m-0 ml-auto h-dvh w-full max-w-sm overflow-y-auto border-l border-border-strong bg-surface text-fg shadow-2xl; max-height:100dvh; }
+  .settings-dialog::backdrop { background:#07110db3; backdrop-filter:blur(3px); }
+}
+@media (min-width:1024px) { .workspace-rail .workspace-nav-item { min-height:40px; font-size:13px; } }
+@layer components {
+  .tool-field-inline select, .task-time-select { min-height:44px; }
+  .workspace-header button[aria-label="Toggle theme"] { @apply flex h-11 w-11 items-center justify-center rounded-lg hover:bg-raised; }
+  .habit-week-table { min-width:430px; }
+  .habit-week-table button { height:44px; width:40px; }
+}
+.note-editor { min-height:0; }
+@media (max-width:1023px) and (max-height:650px) {
+  .notes-tool-page:has(.note-editor:focus) > div:first-child { display:none; }
+  .notes-tool-page .note-title { margin-top:12px; margin-bottom:12px; font-size:20px; }
+  .notes-tool-page .note-document-toolbar { min-height:48px; padding-top:2px; padding-bottom:2px; }
+}
+@layer components {
+  .guide-dialog { @apply fixed inset-0 z-[600] m-auto max-h-[85dvh] w-[calc(100%-32px)] max-w-lg overflow-y-auto rounded-2xl border border-border-strong bg-surface text-fg shadow-2xl; }
+  .guide-dialog::backdrop { background:#07110db3; backdrop-filter:blur(3px); }
+}
+@layer components {
+  .habit-layout > *, .focus-layout > *, .review-layout > *, .rate-layout > *, .monitor-check-layout > * { min-width:0; }
+  .note-preview-pane h1 { @apply mb-5 text-3xl font-semibold leading-tight tracking-tight; }
+  .note-preview-pane table { @apply w-full border-collapse text-sm; }
+  .note-preview-pane th, .note-preview-pane td { @apply border border-border p-2 text-left; }
+  .note-preview-pane code { @apply rounded bg-raised px-1 py-0.5 font-mono text-xs; }
+  .note-preview-pane pre { @apply my-4 rounded-lg bg-raised p-4; }
+}

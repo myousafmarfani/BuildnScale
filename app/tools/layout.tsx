@@ -1,3 +1,4 @@
+import { ToolWorkspace } from '@/components/workspace/ToolWorkspace'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -50,7 +51,7 @@ export default function ToolsLayout({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      {children}
+      <ToolWorkspace>{children}</ToolWorkspace>
     </>
   )
 }

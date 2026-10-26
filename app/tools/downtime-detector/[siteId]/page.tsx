@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { IconArrowLeft } from '@tabler/icons-react'
 import { useSession } from 'next-auth/react'
-import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 interface SiteDetail {
   siteId: string
@@ -188,7 +187,7 @@ export default function SiteDetailPage() {
   const rangeButton = (value: number, label: string) => (
     <button
       onClick={() => setRange(value)}
-      className={`rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
+      className={`min-h-11 rounded-md px-4 py-2 text-sm font-medium transition-all ${
         range === value
           ? 'bg-teal text-bg'
           : 'border border-border bg-raised text-muted hover:text-fg'
@@ -200,7 +199,7 @@ export default function SiteDetailPage() {
 
   if (authStatus === 'loading' || loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-bg">
+      <div className="flex h-full items-center justify-center bg-bg">
         <div className="spinner" />
       </div>
     )
@@ -208,7 +207,7 @@ export default function SiteDetailPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-bg">
+      <div className="tool-page-scroll">
         <div className="flex h-[52px] items-center border-b border-border px-4">
           <Link
             href="/tools/downtime-detector"
@@ -227,8 +226,8 @@ export default function SiteDetailPage() {
   if (!data) return null
 
   return (
-    <div className="min-h-screen bg-bg">
-      <div className="flex h-[52px] items-center justify-between border-b border-border px-4">
+    <div className="tool-page-scroll">
+      <div className="flex min-h-[56px] flex-wrap items-center gap-3 border-b border-border px-4 py-2">
         <div className="flex items-center gap-3">
           <Link
             href="/tools/downtime-detector"
@@ -237,18 +236,17 @@ export default function SiteDetailPage() {
             <IconArrowLeft className="h-4 w-4" /> Downtime Detector
           </Link>
           <div className="h-4 w-px bg-border" />
-          <span className="font-mono text-sm text-fg">
+          <span className="break-all text-sm text-fg">
             {data.displayName || data.url.replace(/^https?:\/\//, '')}
           </span>
         </div>
-        <ThemeToggle />
       </div>
 
-      <div className="mx-auto max-w-[800px] px-4 py-8">
+      <div className="tool-page-container">
         {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="font-display text-2xl font-bold text-fg">
+            <h1 className="tool-page-title">
               {data.displayName || data.url.replace(/^https?:\/\//, '')}
             </h1>
             <a
@@ -310,7 +308,13 @@ export default function SiteDetailPage() {
           <h2 className="mb-3 font-display text-sm font-semibold text-fg">
             Daily Uptime
           </h2>
-          <BarChart days={data.days} />
+          {data.days.length ? (
+            <BarChart days={data.days} />
+          ) : (
+            <p className="py-10 text-center text-sm text-muted">
+              No daily check history in this range yet.
+            </p>
+          )}
           <div className="mt-2 flex justify-between text-[10px] text-tertiary">
             <span>{data.days[0]?.date}</span>
             <span>{data.days[data.days.length - 1]?.date}</span>
@@ -322,7 +326,13 @@ export default function SiteDetailPage() {
           <h2 className="mb-3 font-display text-sm font-semibold text-fg">
             Response Time
           </h2>
-          <LineChart days={data.days} />
+          {data.days.some((day) => day.avgResponseMs != null) ? (
+            <LineChart days={data.days} />
+          ) : (
+            <p className="py-10 text-center text-sm text-muted">
+              Response times will appear after checks are recorded.
+            </p>
+          )}
         </div>
 
         {/* Incident Table */}

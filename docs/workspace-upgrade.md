@@ -34,3 +34,7 @@ No database migration is required. Existing auth, database, cron, and mail envir
 Browser interaction and visual QA require a reachable preview deployment. Localhost was unavailable to the connected browser in this environment. Authenticated database workflows require configured staging credentials and have not been exercised against production data.
 
 Review backup import, narrow-screen navigation, timer pause/resume and background-tab return, note reload/export, invoice printing, and signed-in monitor CRUD on staging before merging. Account sync preserves local values when both devices contain a key; manually clear a local workspace only after exporting a backup if a cloud restore is desired.
+
+## Follow-up: tool detail redesign
+
+The [tool experience redesign](tool-experience-redesign.md) supersedes the earlier visual-QA limitation for the local tool UI. All eight tools now have browser interaction and responsive Chromium checks. Authenticated monitoring is verified with mocked UI/API contracts; production credential/database verification remains separate.
