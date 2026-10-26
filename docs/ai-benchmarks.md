@@ -33,6 +33,21 @@ There is no cross-source overall score. Price estimates use explicit token budge
 Missing prices, speeds, model licenses, context limits, settings, and uncertainty
 are not invented. Client comparison state and filters do not require an account.
 
+## New empty Supabase database without a local setup
+
+For a newly created, empty Supabase project, open its SQL Editor as `postgres`,
+copy the complete [bootstrap SQL](../supabase/bootstrap/buildnscale.sql), and run
+it once. It creates all eight application tables, indexes, and foreign keys,
+enables RLS, and revokes browser-role access. The application uses server-side
+Prisma with the PostgreSQL credentials; Supabase Auth/Data API are not required.
+This replaces local `prisma db push` plus the benchmark-only migration for initial
+setup. It does not recover or migrate previous users or saved data.
+
+The script is transactional and stops if any BuildnScale table already exists.
+Do not run it against an established database; use reviewed incremental changes
+there. A successful run returns eight table names. Keep credentials out of SQL,
+Git, screenshots, and logs. Configure and verify Vercel's new connection separately.
+
 ## Deployment
 
 1. Deploy the feature branch to a preview and run the checks below. The bundled
