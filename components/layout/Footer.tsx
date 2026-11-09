@@ -13,14 +13,30 @@ export function Footer() {
               A little less friction.
               <br />A little more shipped.
             </p>
-            <a
-              className="mt-5 inline-flex items-center gap-2 text-sm text-teal"
-              href="https://github.com/myousafmarfani/BuildnScale"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Built in the open <IconArrowUpRight className="h-4 w-4" />
-            </a>
+            <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-4">
+              <a
+                className="inline-flex items-center gap-2 text-sm text-teal"
+                href="https://github.com/myousafmarfani/BuildnScale"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Built in the open <IconArrowUpRight className="h-4 w-4" />
+              </a>
+              <a
+                href="https://peerlist.io/myousafmarfani/project/buildnscale"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex max-w-full"
+              >
+                <img
+                  src="https://peerlist.io/api/v1/projects/embed/PRJHNN7KGPNOGE8AMCNARG66BJGDGG?showUpvote=false&theme=dark"
+                  alt="BuildnScale"
+                  loading="lazy"
+                  className="max-w-full"
+                  style={{ width: 'auto', height: '72px' }}
+                />
+              </a>
+            </div>
           </div>
           <div>
             <h2 className="mb-4 text-xs font-mono uppercase tracking-widest text-muted">
