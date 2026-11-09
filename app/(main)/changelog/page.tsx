@@ -105,7 +105,7 @@ export default function ChangelogPage() {
       <p className="mt-2 text-sm text-tertiary">
         Every release, documented. Follow along on{" "}
         <a
-          href="https://github.com/anomalyco/buildnscale"
+          href="https://github.com/myousafmarfani/BuildnScale"
           className="text-teal no-underline"
         >
           GitHub

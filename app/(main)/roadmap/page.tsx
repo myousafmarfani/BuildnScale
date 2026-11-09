@@ -100,7 +100,7 @@ export default function RoadmapPage() {
       <p className="mt-10 text-center text-sm text-tertiary">
         Have a feature request?{" "}
         <a
-          href="https://github.com/anomalyco/buildnscale/issues"
+          href="https://github.com/myousafmarfani/BuildnScale/issues"
           className="text-teal no-underline"
         >
           Open an issue on GitHub

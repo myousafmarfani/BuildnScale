@@ -16,8 +16,8 @@ const authors: Author[] = [
     bio: 'Founder at BuildnScale · Full-Stack and AI Engineer',
     avatar: '/author.avif',
     role: 'Founder at BuildnScale · Full-Stack and AI Engineer',
-    github: 'https://github.com/muhammadyousaf',
-    twitter: 'https://x.com/muhammadyousaf',
+    github: 'https://github.com/myousafmarfani',
+    twitter: 'https://x.com/myousafmarfani',
     website: 'https://www.buildnscale.dev',
   },
 ]
