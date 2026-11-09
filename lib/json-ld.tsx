@@ -23,7 +23,7 @@ export function organizationJsonLd() {
     "@type": "Organization",
     name: "buildnscale.dev",
     url: "https://www.buildnscale.dev",
-    logo: "https://www.buildnscale.dev/og-image.png",
+    logo: "https://www.buildnscale.dev/logo.png",
     description:
       "Free productivity tools for developers. Daily planner, Pomodoro timer, habit tracker, and more.",
     founder: {
@@ -70,7 +70,7 @@ export function blogPostingJsonLd(post: {
       name: "buildnscale.dev",
       logo: {
         "@type": "ImageObject",
-        url: "https://www.buildnscale.dev/og-image.png",
+        url: "https://www.buildnscale.dev/logo.png",
       },
     },
     url: `https://www.buildnscale.dev/blog/${post.slug}`,

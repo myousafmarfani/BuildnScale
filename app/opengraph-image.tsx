@@ -1,10 +1,15 @@
 import { ImageResponse } from "next/og"
+import { readFile } from "node:fs/promises"
+import { join } from "node:path"
 
 export const alt = "buildnscale.dev — Productivity tools for developers who ship"
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
 export default async function Image() {
+  const logo = await readFile(join(process.cwd(), "public/logo.png"))
+  const logoSrc = `data:image/png;base64,${logo.toString("base64")}`
+
   return new ImageResponse(
     (
       <div
@@ -108,7 +113,16 @@ export default async function Image() {
             color: "#525252",
           }}
         >
-          <span>buildnscale.dev</span>
+          <span style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <img
+              src={logoSrc}
+              width={24}
+              height={24}
+              alt=""
+              style={{ borderRadius: 5, objectFit: "contain", background: "#ffffff" }}
+            />
+            buildnscale.dev
+          </span>
           <span>&gt; No account required</span>
           <span>&gt; Free forever</span>
         </div>

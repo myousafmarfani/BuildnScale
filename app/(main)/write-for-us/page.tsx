@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import Link from "next/link"
+import { Brand } from "@/components/layout/Brand"
 import { breadcrumbJsonLd } from "@/lib/json-ld"
 
 export const metadata: Metadata = {
@@ -43,13 +43,7 @@ export default function WriteForUsPage() {
           ]))
         }}
       />
-      <Link
-        href="/"
-        className="font-display mx-auto mb-12 block w-fit text-base font-semibold text-fg no-underline"
-        tabIndex={-1}
-      >
-        build<span className="text-teal">n</span>scale
-      </Link>
+      <Brand className="mx-auto mb-12 w-fit" tabIndex={-1} />
 
       <h1 className="font-display text-3xl font-semibold text-fg sm:text-4xl">
         Write for Us

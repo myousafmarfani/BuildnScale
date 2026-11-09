@@ -1,28 +1,21 @@
 {
-  "name": "buildnscale.dev — Productivity tools for developers who ship",
-  "short_name": "buildnscale",
-  "description": "Free productivity tools for developers. Daily planner, Pomodoro timer, habit tracker, and more.",
-  "start_url": "/",
+  "name": "BuildnScale",
+  "short_name": "BnS",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "maskable"
     },
     {
       "src": "/web-app-manifest-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "maskable"
     }
   ],
-  "theme_color": "#0d0d0d",
-  "background_color": "#0d0d0d",
-  "display": "standalone",
-  "categories": [
-    "productivity",
-    "developer-tools",
-    "open-source developer tools"
-  ]
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone"
 }

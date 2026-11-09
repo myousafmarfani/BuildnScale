@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import Link from "next/link"
+import { Brand } from "@/components/layout/Brand"
 import { breadcrumbJsonLd } from "@/lib/json-ld"
 
 export const metadata: Metadata = {
@@ -32,12 +32,7 @@ export default function TermsPage() {
           ]))
         }}
       />
-      <Link
-        href="/"
-        className="font-display mx-auto mb-12 block w-fit text-base font-semibold text-fg no-underline"
-      >
-        build<span className="text-teal">n</span>scale
-      </Link>
+      <Brand className="mx-auto mb-12 w-fit" />
 
       <h1 className="font-display text-3xl font-semibold text-fg sm:text-4xl">Terms of Service</h1>
       <p className="mt-2 text-sm text-tertiary">Last updated: May 28, 2026</p>

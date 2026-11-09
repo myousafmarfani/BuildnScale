@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Brand } from '@/components/layout/Brand'
 import { signIn } from 'next-auth/react'
 import { IconEye, IconEyeOff } from '@tabler/icons-react'
 
@@ -49,9 +50,7 @@ export default function SignInPage() {
   return (
     <div className="flex min-h-screen items-center justify-center p-5">
       <div className="w-full max-w-[400px]">
-        <Link href="/" className="font-display mx-auto mb-12 block w-fit text-base font-semibold text-fg no-underline">
-          build<span className="text-teal">n</span>scale
-        </Link>
+        <Brand className="mx-auto mb-12 w-fit" />
 
         <div className="bg-surface border border-border rounded-xl p-8">
           <h1 className="font-display text-2xl font-semibold text-center text-fg">

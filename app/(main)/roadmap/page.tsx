@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import Link from "next/link"
+import { Brand } from "@/components/layout/Brand"
 
 export const metadata: Metadata = {
   title: "Roadmap — buildnscale.dev",
@@ -69,12 +69,7 @@ const items = [
 export default function RoadmapPage() {
   return (
     <main className="mx-auto max-w-3xl px-5 py-16 sm:py-24">
-      <Link
-        href="/"
-        className="font-display mx-auto mb-12 block w-fit text-base font-semibold text-fg no-underline"
-      >
-        build<span className="text-teal">n</span>scale
-      </Link>
+      <Brand className="mx-auto mb-12 w-fit" />
 
       <h1 className="font-display text-3xl font-semibold text-fg sm:text-4xl">Roadmap</h1>
       <p className="mt-2 text-sm text-tertiary">

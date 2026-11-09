@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     { url: "/web-app-manifest-192x192.png", type: "image/png", sizes: "192x192" },
   ],
   apple: [
-    { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
   ],
 },
   openGraph: {

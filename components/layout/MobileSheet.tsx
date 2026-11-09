@@ -2,6 +2,7 @@
 
 import { TOOLS } from "@/lib/tools-registry"
 import { ToolIcon } from "@/components/workspace/ToolIcon"
+import { Brand } from "@/components/layout/Brand"
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { useTheme } from "next-themes"
@@ -61,9 +62,7 @@ export function MobileSheet({ open, onOpenChange }: MobileSheetProps) {
         style={{ animation: "slide-in 0.28s ease-out" }}
       >
         <div className="mb-10 flex items-center justify-between">
-          <Link href="/" className="font-display text-sm font-semibold text-fg" onClick={() => onOpenChange(false)}>
-            build<span className="text-teal">n</span>scale
-          </Link>
+          <Brand className="text-sm" onClick={() => onOpenChange(false)} />
           <button onClick={() => onOpenChange(false)} aria-label="Close menu">
             <IconX className="h-5 w-5 text-muted" />
           </button>

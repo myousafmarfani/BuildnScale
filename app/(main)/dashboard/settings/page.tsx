@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
-import Link from 'next/link'
+import { Brand } from '@/components/layout/Brand'
 
 export default function SettingsPage() {
   const { data: session, status, update } = useSession()
@@ -140,9 +140,7 @@ export default function SettingsPage() {
   return (
     <div className="flex min-h-screen items-start justify-center p-5 pt-24">
       <div className="w-full max-w-[500px]">
-        <Link href="/dashboard" className="font-display mx-auto mb-10 block w-fit text-base font-semibold text-fg no-underline">
-          build<span className="text-teal">n</span>scale
-        </Link>
+        <Brand href="/dashboard" className="mx-auto mb-10 w-fit" />
 
         {message && (
           <div className={`mb-4 rounded-md border px-4 py-2.5 text-xs ${

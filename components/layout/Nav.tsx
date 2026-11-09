@@ -10,6 +10,7 @@ import {
   IconX,
 } from '@tabler/icons-react'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { Brand } from '@/components/layout/Brand'
 import { TOOLS } from '@/lib/tools-registry'
 import { ToolIcon } from '@/components/workspace/ToolIcon'
 
@@ -23,10 +24,7 @@ export function Nav() {
         className="container-site flex h-[calc(var(--site-header-height)-1px)] items-center gap-8"
         aria-label="Main navigation"
       >
-        <Link href="/" aria-label="BuildnScale home" className="brand">
-          <span className="brand-mark">b.</span>build
-          <span className="text-teal">n</span>scale
-        </Link>
+        <Brand priority />
         <div className="hidden items-center gap-7 md:flex">
           {[
             ['/tools', 'Tools'],

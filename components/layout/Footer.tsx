@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { IconArrowUpRight } from '@tabler/icons-react'
+import { Brand } from '@/components/layout/Brand'
 import { TOOLS } from '@/lib/tools-registry'
 export function Footer() {
   return (
@@ -7,9 +8,7 @@ export function Footer() {
       <div className="container-site py-14">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr]">
           <div>
-            <Link href="/" className="brand">
-              build<span className="text-teal">n</span>scale
-            </Link>
+            <Brand className="w-fit" />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted">
               A little less friction.
               <br />A little more shipped.

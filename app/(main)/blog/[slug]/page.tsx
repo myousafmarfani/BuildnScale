@@ -64,7 +64,7 @@ function blogPostJsonLd(post: {
       name: 'buildnscale.dev',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://www.buildnscale.dev/og-image.png',
+        url: 'https://www.buildnscale.dev/logo.png',
       },
     },
     url: `https://www.buildnscale.dev/blog/${post.slug}`,

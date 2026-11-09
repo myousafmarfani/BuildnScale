@@ -52,7 +52,8 @@ function generateInvoiceHTML(
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Helvetica', Arial, sans-serif; padding: 40px; color: #222; line-height: 1.5; }
   .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; }
-  .brand { font-size: 22px; font-weight: 700; color: #0d9488; }
+  .brand { display: flex; align-items: center; font-size: 22px; font-weight: 700; color: #0d9488; }
+  .brand img { width: 30px; height: 30px; margin-right: 9px; border-radius: 7px; background: #fff; }
   .brand span { color: #222; }
   .invoice-title { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-top: 4px; }
   .meta { margin-bottom: 32px; display: flex; gap: 48px; }
@@ -71,7 +72,7 @@ function generateInvoiceHTML(
 <body>
   <div class="header">
     <div>
-      <div class="brand">build<span>n</span>scale</div>
+      <div class="brand"><img src="https://www.buildnscale.dev/logo.png" alt="" />build<span>n</span>scale</div>
       <div class="invoice-title">Invoice</div>
     </div>
     <div style="text-align:right">

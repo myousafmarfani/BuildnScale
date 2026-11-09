@@ -22,6 +22,7 @@ import {
 } from '@tabler/icons-react'
 import { TOOLS, getTool } from '@/lib/tools-registry'
 import { ToolIcon } from './ToolIcon'
+import { Brand } from '@/components/layout/Brand'
 import { useLocalSetting } from '@/hooks/useLocalSetting'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
@@ -206,10 +207,7 @@ export function ToolWorkspace({ children }: { children: React.ReactNode }) {
               <IconLayoutSidebarLeftCollapse className="h-5 w-5" />
             )}
           </button>
-          <Link href="/" className="brand hidden lg:inline-flex">
-            <span className="brand-mark">b.</span>build
-            <span className="text-teal">n</span>scale
-          </Link>
+          <Brand href="/" className="hidden lg:flex" />
           <Link
             href="/tools"
             className="hidden text-sm text-muted hover:text-fg lg:block"
@@ -303,9 +301,7 @@ export function ToolWorkspace({ children }: { children: React.ReactNode }) {
         }}
       >
         <div className="flex items-center justify-between border-b border-border p-4">
-          <span className="brand">
-            build<span className="text-teal">n</span>scale
-          </span>
+          <Brand href={null} />
           <button
             className="workspace-icon-button"
             aria-label="Close workspace navigation"
