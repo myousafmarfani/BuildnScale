@@ -14,6 +14,22 @@ import { Brand } from '@/components/layout/Brand'
 import { TOOLS } from '@/lib/tools-registry'
 import { ToolIcon } from '@/components/workspace/ToolIcon'
 
+const NAV_ITEMS: Array<{ href: string; label: string; badge?: string }> = [
+  { href: '/tools', label: 'Tools' },
+  { href: '/leaderboard', label: 'AI benchmarks' },
+  { href: '/ai-costs', label: 'AI costs', badge: 'Beta' },
+  { href: '/blog', label: 'Build log' },
+  { href: '/roadmap', label: 'Roadmap' },
+]
+
+function NavBadge({ label }: { label: string }) {
+  return (
+    <span className="rounded-full bg-teal-subtle px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase leading-none tracking-wider text-teal">
+      {label}
+    </span>
+  )
+}
+
 export function Nav() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
@@ -21,24 +37,20 @@ export function Nav() {
   return (
     <header className="site-nav">
       <nav
-        className="container-site flex h-[calc(var(--site-header-height)-1px)] items-center gap-8"
+        className="container-site flex h-[calc(var(--site-header-height)-1px)] items-center gap-5 lg:gap-8"
         aria-label="Main navigation"
       >
         <Brand priority />
-        <div className="hidden items-center gap-7 md:flex">
-          {[
-            ['/tools', 'Tools'],
-            ['/leaderboard', 'AI benchmarks'],
-            ['/blog', 'Build log'],
-            ['/roadmap', 'Roadmap'],
-          ].map(([href, label]) => (
+        <div className="hidden items-center gap-7 lg:flex">
+          {NAV_ITEMS.map(({ href, label, badge }) => (
             <Link
               key={href}
               href={href}
               aria-current={pathname.startsWith(href) ? 'page' : undefined}
-              className={`text-sm ${pathname.startsWith(href) ? 'text-teal' : 'text-muted hover:text-fg'}`}
+              className={`inline-flex items-center gap-1.5 whitespace-nowrap text-sm ${pathname.startsWith(href) ? 'text-teal' : 'text-muted hover:text-fg'}`}
             >
               {label}
+              {badge ? <NavBadge label={badge} /> : null}
             </Link>
           ))}
         </div>
@@ -61,7 +73,7 @@ export function Nav() {
             <IconArrowUpRight className="h-4 w-4" />
           </Link>
           <button
-            className="md:hidden p-2"
+            className="p-2 lg:hidden"
             aria-label={open ? 'Close navigation' : 'Open navigation'}
             aria-expanded={open}
             aria-controls="mobile-navigation"
@@ -79,26 +91,27 @@ export function Nav() {
         <nav
           id="mobile-navigation"
           aria-label="Mobile navigation"
-          className="max-h-[calc(100dvh-72px)] overflow-y-auto border-t border-border bg-bg px-5 py-5 md:hidden"
+          className="max-h-[calc(100dvh-72px)] overflow-y-auto border-t border-border bg-bg px-5 py-5 lg:hidden"
         >
-          <div className="mb-4 flex flex-wrap gap-5">
+          <div className="mb-4 flex flex-wrap gap-x-5 gap-y-1">
             {[
-              ['/tools', 'All tools'],
-              ['/leaderboard', 'AI benchmarks'],
-              ['/blog', 'Build log'],
-              ['/roadmap', 'Roadmap'],
-              [
-                session ? '/dashboard' : '/sign-in',
-                session ? 'Dashboard' : 'Sign in',
-              ],
-            ].map(([href, label]) => (
+              ...NAV_ITEMS,
+              {
+                href: session ? '/dashboard' : '/sign-in',
+                label: session ? 'Dashboard' : 'Sign in',
+              },
+            ].map(({ href, label, badge }) => (
               <Link
                 key={href}
                 href={href}
                 onClick={() => setOpen(false)}
-                className="py-2 text-sm text-muted"
+                aria-current={pathname.startsWith(href) ? 'page' : undefined}
+                className={`inline-flex items-center gap-1.5 py-2 text-sm ${
+                  pathname.startsWith(href) ? 'text-teal' : 'text-muted'
+                }`}
               >
                 {label}
+                {badge ? <NavBadge label={badge} /> : null}
               </Link>
             ))}
           </div>

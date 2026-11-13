@@ -371,8 +371,9 @@
   .catalog-search input { @apply min-w-0 flex-1 bg-transparent text-sm text-fg outline-none placeholder:text-tertiary; }
   .catalog-search input:focus-visible { outline: none; }
   .catalog-search kbd { @apply rounded border border-border px-2 py-0.5 text-xs text-tertiary; }
-  .filter-chip { @apply inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-2 text-xs text-muted transition-colors hover:border-border-strong hover:text-fg; }
+  .filter-chip { @apply inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-border px-3 py-2 text-xs text-muted transition-colors hover:border-border-strong hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-bg; }
   .filter-chip.is-active { @apply border-teal bg-teal-subtle text-teal; }
+  .cost-dialog::backdrop { background-color: rgb(0 0 0 / 0.62); backdrop-filter: blur(3px); }
   .tool-card { @apply relative flex flex-col rounded-xl border border-border bg-surface p-6 transition-colors hover:border-border-strong; }
   .tool-icon { @apply inline-flex h-12 w-12 items-center justify-center rounded-xl; background: var(--tone-bg); color: var(--tone-fg); }
   .favorite-button { @apply relative z-10 rounded-lg p-2 transition-colors hover:bg-raised; }

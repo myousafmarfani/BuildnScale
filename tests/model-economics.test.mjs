@@ -7,6 +7,7 @@ import {
   ratesFor,
   sanitizeWorkload,
 } from '../lib/model-economics/estimate.mjs'
+import { PRESETS, findActivePreset, presetMatches } from '../lib/model-economics/presets.mjs'
 
 const snapshot = JSON.parse(
   fs.readFileSync(
@@ -177,6 +178,30 @@ test('workload sanitization clamps invalid and out-of-range values', () => {
     plan: 0,
     scheduled: true,
   })
+})
+
+test('preset highlight follows the workload and clears on manual edits', () => {
+  assert.equal(PRESETS.length, 3)
+  for (const preset of PRESETS) {
+    const selected = findActivePreset(PRESETS, { ...workload, ...preset.values })
+    assert.equal(selected?.id, preset.id)
+  }
+
+  const assistant = PRESETS.find((preset) => preset.id === 'assistant')
+  assert.equal(presetMatches(assistant, { ...workload, ...assistant.values }), true)
+
+  // Plan and scheduled-price toggles do not change the workload preset.
+  assert.equal(
+    findActivePreset(PRESETS, { ...workload, ...assistant.values, plan: 0 })?.id,
+    'assistant'
+  )
+
+  // The default workload is not a preset, and editing a preset field clears it.
+  assert.equal(findActivePreset(PRESETS, workload), null)
+  assert.equal(
+    findActivePreset(PRESETS, { ...workload, ...assistant.values, turns: 3 }),
+    null
+  )
 })
 
 test('snapshot carries a dated first-party source for every model', () => {

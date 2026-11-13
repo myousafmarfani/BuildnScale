@@ -3,8 +3,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import Link from 'next/link'
+import { IconCheck } from '@tabler/icons-react'
 import type { ModelPricing } from '@/lib/model-economics/types'
 import { estimateAll, sanitizeWorkload } from '@/lib/model-economics/estimate.mjs'
+import {
+  DEFAULT_WORKLOAD,
+  PRESETS,
+  findActivePreset,
+} from '@/lib/model-economics/presets.mjs'
 
 type Inputs = {
   tasks: number
@@ -17,34 +23,7 @@ type Inputs = {
   scheduled: boolean
 }
 
-const DEFAULTS: Inputs = {
-  tasks: 1_000,
-  turns: 3,
-  input: 8_000,
-  output: 700,
-  cache: 0,
-  retry: 2,
-  plan: 20,
-  scheduled: false,
-}
-
-const PRESETS: Array<{ id: string; label: string; values: Partial<Inputs> }> = [
-  {
-    id: 'assistant',
-    label: 'Support assistant',
-    values: { tasks: 4_000, turns: 2, input: 6_000, output: 500, cache: 40, retry: 2 },
-  },
-  {
-    id: 'agent',
-    label: 'Coding agent',
-    values: { tasks: 600, turns: 8, input: 30_000, output: 1_200, cache: 60, retry: 5 },
-  },
-  {
-    id: 'extraction',
-    label: 'Batch extraction',
-    values: { tasks: 50_000, turns: 1, input: 1_500, output: 250, cache: 0, retry: 1 },
-  },
-]
+const DEFAULTS: Inputs = DEFAULT_WORKLOAD
 
 const VIEW_KEY = 'bn_model_economics_view'
 const CALC_KEY = 'bn_model_economics_calculate'
@@ -158,6 +137,7 @@ export function CostCalculator({
   const shareRef = useRef<HTMLInputElement>(null)
 
   const safe = useMemo(() => sanitizeWorkload(inputs), [inputs])
+  const activePreset = useMemo(() => findActivePreset(PRESETS, safe), [safe])
   const rows = useMemo(() => estimateAll(models, safe), [models, safe])
   const eligible = rows.filter((row) => !row.overContext)
   const cheapest = eligible[0] ?? rows[0]
@@ -262,8 +242,7 @@ export function CostCalculator({
         <div className="border-b border-border px-5 py-5 sm:px-7">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="eyebrow">WORKLOAD → BILL</p>
-              <h2 id="calculator-heading" className="mt-2 font-display text-xl font-semibold text-fg sm:text-2xl">
+              <h2 id="calculator-heading" className="font-display text-xl font-semibold text-fg sm:text-2xl">
                 Estimate the monthly bill.
               </h2>
               <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted">
@@ -271,17 +250,29 @@ export function CostCalculator({
                 browser; no workload data is sent to us.
               </p>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {PRESETS.map((preset) => (
-                <button
-                  key={preset.id}
-                  type="button"
-                  className="filter-chip"
-                  onClick={() => applyPreset(preset.values)}
-                >
-                  {preset.label}
-                </button>
-              ))}
+            <div
+              className="flex flex-wrap gap-2"
+              role="group"
+              aria-label="Workload presets"
+            >
+              {PRESETS.map((preset) => {
+                const active = activePreset?.id === preset.id
+                return (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    aria-pressed={active}
+                    title={preset.hint}
+                    className={`filter-chip ${active ? 'is-active' : ''}`}
+                    onClick={() => applyPreset(preset.values)}
+                  >
+                    {active ? (
+                      <IconCheck className="h-3.5 w-3.5" aria-hidden="true" />
+                    ) : null}
+                    {preset.label}
+                  </button>
+                )
+              })}
             </div>
           </div>
         </div>

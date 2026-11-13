@@ -2,23 +2,15 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import snapshotData from "@/data/model-economics/models.json"
 import { CostCalculator } from "@/components/model-economics/CostCalculator"
+import { CostMethodDialog } from "@/components/model-economics/CostMethodDialog"
 import { estimateAll } from "@/lib/model-economics/estimate.mjs"
+import { DEFAULT_WORKLOAD } from "@/lib/model-economics/presets.mjs"
 import type { ModelEconomicsSnapshot } from "@/lib/model-economics/types"
 
 const snapshot = snapshotData as ModelEconomicsSnapshot
 
 const PAGE_URL = "https://www.buildnscale.dev/ai-costs"
 const CHECKED = snapshot.firstPartyCheckedAt
-const DEFAULT_WORKLOAD = {
-  tasks: 1_000,
-  turns: 3,
-  input: 8_000,
-  output: 700,
-  cache: 0,
-  retry: 2,
-  plan: 20,
-  scheduled: false,
-}
 const allDefaultRows = estimateAll(snapshot.models, DEFAULT_WORKLOAD)
 const eligibleDefaultRows = allDefaultRows.filter((row) => !row.overContext)
 const defaultLow = eligibleDefaultRows[0] ?? allDefaultRows[0]
@@ -247,62 +239,20 @@ export default function AICostsPage() {
           Gemini, and DeepSeek. Dated list prices, visible assumptions, no login.
         </p>
 
-        <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-xs text-tertiary">
-          <span className="text-muted">{snapshot.models.length} models</span>
-          <span>
-            Prices checked{" "}
-            <time dateTime={CHECKED}>{checkedLabel}</time>
-          </span>
-          <span>Runs in your browser</span>
-          <span>No provider keys</span>
-        </div>
-
-        <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted">
-          Default workload — 1,000 tasks × 3 turns, 8,000 input and 700 output tokens
-          per request, 2% retries:{" "}
-          <strong className="font-medium text-fg">
-            {money.format(defaultLow.monthly)}–{money.format(defaultHigh.monthly)} per
-            month
-          </strong>{" "}
-          across these models.
-        </p>
+        <CostMethodDialog
+          modelCount={snapshot.models.length}
+          checkedLabel={checkedLabel}
+          checkedISO={CHECKED}
+          defaultLow={money.format(defaultLow.monthly)}
+          defaultHigh={money.format(defaultHigh.monthly)}
+          workload={DEFAULT_WORKLOAD}
+        />
 
         <CostCalculator
           models={snapshot.models}
           checkedAt={checkedLabel}
           checkedISO={CHECKED}
         />
-
-        <section className="mt-14" aria-labelledby="math-heading">
-          <h2 id="math-heading" className="font-display text-2xl font-semibold text-fg">
-            How the math works
-          </h2>
-          <div className="mt-5 grid gap-3 md:grid-cols-3">
-            <div className="rounded-xl border border-border bg-surface p-4">
-              <p className="text-2xs font-medium uppercase tracking-wider text-teal">01 · Requests</p>
-              <p className="mt-2 font-mono text-sm text-fg">tasks × turns × (1 + retry rate)</p>
-              <p className="mt-2 text-xs leading-relaxed text-muted">
-                A retry is billed like a fresh request, output included.
-              </p>
-            </div>
-            <div className="rounded-xl border border-border bg-surface p-4">
-              <p className="text-2xs font-medium uppercase tracking-wider text-teal">02 · Per request</p>
-              <p className="mt-2 font-mono text-sm text-fg">
-                input × rate + output × rate
-              </p>
-              <p className="mt-2 text-xs leading-relaxed text-muted">
-                Cache hits use the cache-read rate. Cache writes and storage are excluded.
-              </p>
-            </div>
-            <div className="rounded-xl border border-border bg-surface p-4">
-              <p className="text-2xs font-medium uppercase tracking-wider text-teal">03 · Monthly</p>
-              <p className="mt-2 font-mono text-sm text-fg">requests × cost per request</p>
-              <p className="mt-2 text-xs leading-relaxed text-muted">
-                Cost per task divides by tasks, not by requests.
-              </p>
-            </div>
-          </div>
-        </section>
 
         <section className="mt-14" aria-labelledby="prices-heading">
           <div className="flex flex-wrap items-end justify-between gap-3">

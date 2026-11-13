@@ -85,9 +85,11 @@ Do not add a model unless its price and context are both available.
 
 ## Routes and components
 
-- `app/(main)/ai-costs/page.tsx` — server page, metadata, compact explanation,
-  calculator, price table, FAQ, and JSON-LD (`WebApplication`, `BreadcrumbList`,
-  `FAQPage`, `Dataset`).
+- `app/(main)/ai-costs/page.tsx` — server page, metadata, calculator, price table,
+  FAQ, and JSON-LD (`WebApplication`, `BreadcrumbList`, `FAQPage`, `Dataset`).
+- `components/model-economics/CostMethodDialog.tsx` — native `<dialog>` for the
+  dated facts, default workload range, and the cost-per-task method. The trigger
+  button keeps that detail out of the hero without removing it from the HTML.
 - `app/ai-costs/opengraph-image.tsx` and `twitter-image.tsx` — page-specific social
   cards. They live outside the `(main)` route group because Next 16 appends a hash
   suffix to metadata image routes inside route groups.
@@ -104,8 +106,9 @@ Do not add a model unless its price and context are both available.
   `OAI-SearchBot`, `ClaudeBot`, `PerplexityBot`, `CCBot`, and others); `/api/` and
   `/dashboard` stay disallowed.
 
-Do not add the page to the eight-tool catalog until the smoke test is accepted.
-Link it from the leaderboard and model pages only after the first review.
+The page appears in the main navigation with a Beta badge, but it stays out of
+the eight-tool catalog until the smoke test is accepted. Link it from the
+leaderboard and model pages only after the first review.
 
 ## Discoverability
 
