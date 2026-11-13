@@ -13,7 +13,7 @@ export function Footer() {
               A little less friction.
               <br />A little more shipped.
             </p>
-            <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-4">
+            <div className="mt-5 flex flex-col items-start gap-4">
               <a
                 className="inline-flex items-center gap-2 text-sm text-teal"
                 href="https://github.com/myousafmarfani/BuildnScale"
