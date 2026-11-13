@@ -21,6 +21,33 @@ export const metadata: Metadata = {
 
 const releases = [
   {
+    version: "1.2.0",
+    date: "November 13, 2026",
+    tag: "Open beta",
+    tagColor: "text-amber",
+    changes: [
+      "Model cost calculator at /ai-costs: cost per task and month across eight models with cache-hit, retry, long-context, and scheduled-price modelling",
+      "Dated first-party list prices cross-checked against OpenRouter, with visible assumptions and known limits",
+      "No-login calculator that keeps the workload in the browser; shareable links encode only the numbers",
+      "Roadmap rewritten around shipped work, maintenance, and problems under research instead of dated feature promises",
+    ],
+  },
+  {
+    version: "1.1.0",
+    date: "November 13, 2026",
+    tag: "AI benchmarks",
+    tagColor: "text-teal",
+    changes: [
+      "AI Benchmarks Leaderboard with Arena text, web development, and agent boards, including source dates and confidence intervals",
+      "Model pages, side-by-side comparisons, a dated archive, methodology notes, and an update history",
+      "Scheduled benchmark freshness checks with an explicit bundled fallback and attribution",
+      "Shared workspace redesign: tool search, favorites, recent tools, collapsible sidebar, and mobile navigation",
+      "JSON Toolkit for local format, validate, and minify workflows",
+      "Downtime Detector with server-side checks, saved monitors, history, and 30-day summaries",
+      "Accounts, optional cloud sync, dashboard, settings, and browser-data backup and restore",
+    ],
+  },
+  {
     version: "1.0.0",
     date: "May 28, 2026",
     tag: "Launch",

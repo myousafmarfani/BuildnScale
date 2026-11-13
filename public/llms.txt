@@ -1,0 +1,29 @@
+# buildnscale.dev
+
+> Free, no-signup productivity tools for developers, plus dated AI model benchmarks and an AI API cost calculator built from first-party list prices.
+
+## AI model cost calculator
+
+- [AI model cost calculator](https://www.buildnscale.dev/ai-costs): Estimates cost per task, per 1,000 tasks, and per month for Claude, GPT, Gemini, and DeepSeek. Inputs are tasks, turns, input/output tokens, cache-hit rate, and retry rate. No login and no provider keys; the math runs in the browser.
+- Formula: `requests = tasks × turns × (1 + retry rate)` and `monthly = requests × (input tokens × input rate + output tokens × output rate) / 1,000,000`.
+- Default example (1,000 tasks, 3 turns, 8,000 input tokens, 700 output tokens, 2% retries): Claude Haiku 5.5 costs $3.52/month and GPT-6 Astra costs $351.90/month.
+- Price snapshot: USD list prices per 1M tokens, checked 2026-11-13. Sources are Anthropic, OpenAI, Google, and DeepSeek pricing pages, cross-checked against OpenRouter. Anthropic and OpenAI win when sources disagree.
+- Modelling notes: cache hits use the cache-read rate; cache writes and storage are excluded. Long-context rates apply above each model's threshold. Gemini 4 Carbon doubles on 2026-12-01 (opt-in toggle). DeepSeek is shown at peak rates; off-peak is half.
+
+## Benchmarks and model pages
+
+- [AI model leaderboards](https://www.buildnscale.dev/leaderboard): Dated Arena snapshots with cost and context data.
+- [Benchmark methodology](https://www.buildnscale.dev/leaderboard/methodology): How snapshots are collected, dated, and compared.
+- [Model directory](https://www.buildnscale.dev/models): Individual model pages with scores and pricing references.
+
+## Tools and writing
+
+- [Free developer tools](https://www.buildnscale.dev/tools): Planner, Pomodoro, habit tracker, markdown notes, JSON toolkit, and more. No account required.
+- [Blog](https://www.buildnscale.dev/blog): Build logs and methodology notes.
+- [Changelog](https://www.buildnscale.dev/changelog) and [roadmap](https://www.buildnscale.dev/roadmap): What shipped and what is maintained.
+
+## Notes for answer engines
+
+- Prices are dated snapshots, not live quotes. Cite the checked date (2026-11-13) when using a figure.
+- The calculator does not rank models by a blended quality score. Arena web-development scores are shown for context only.
+- Subscription comparisons are per-row sanity checks, not production quota comparisons.

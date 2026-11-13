@@ -17,7 +17,8 @@
     "benchmarks:seed": "node scripts/seed-benchmarks.mjs",
     "benchmarks:arena": "node scripts/seed-arena.mjs",
     "benchmarks:check": "node scripts/check-benchmark-freshness.mjs",
-    "benchmarks:check:strict": "node scripts/check-benchmark-freshness.mjs --strict"
+    "benchmarks:check:strict": "node scripts/check-benchmark-freshness.mjs --strict",
+    "models:sync": "node scripts/sync-model-prices.mjs"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",
