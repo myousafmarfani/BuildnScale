@@ -58,7 +58,7 @@ export function Explorer({
           rank: ranked.find((r) => r.id === m.id)?.rank ?? null,
         }))
       : ranked
-    return base.filter(
+    const filtered = base.filter(
       (m) =>
         `${m.name} ${m.publisher}`
           .toLowerCase()
@@ -68,6 +68,15 @@ export function Explorer({
           (m.instructionTuned !== null &&
             (mode === 'instruct') === m.instructionTuned))
     )
+    // Arena publishes the authoritative order. Keep that order even if a
+    // future confidence-bound correction produces a small score inversion.
+    return snapshot.source === 'arena'
+      ? [...filtered].sort(
+          (a, b) =>
+            (a.rank ?? Number.MAX_SAFE_INTEGER) -
+            (b.rank ?? Number.MAX_SAFE_INTEGER)
+        )
+      : filtered
   }, [snapshot, metric, query, publisher, mode, catalog])
   const page = Math.max(
     1,

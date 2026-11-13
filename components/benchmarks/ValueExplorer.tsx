@@ -51,11 +51,11 @@ export function ValueExplorer({ snapshots }: { snapshots: Snapshot[] }) {
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
             The Arena and historical EvalPlus datasets do not provide token prices or
             output speed measurements. Price rankings will appear when an attributed,
-            permitted pricing source is connected. Coding scores remain
-            available now.
+            permitted pricing source is connected. Arena web development
+            ratings remain available now.
           </p>
           <Link className="btn-primary mt-6" href="/leaderboard/coding">
-            Explore coding results →
+            Explore web development ratings →
           </Link>
         </div>
       ) : (

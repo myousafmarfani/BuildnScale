@@ -44,7 +44,7 @@ export default async function Category({
   const snapshot = selectSnapshot(sources, query.source)
   return (
     <BenchmarkShell
-      active={category === 'value' ? 'Price & performance' : category === 'agents' ? 'Agents' : 'Coding'}
+      active={category === 'value' ? 'Price & performance' : category === 'agents' ? 'Agents' : 'Web development'}
     >
       <PageHeading
         title={
@@ -53,7 +53,9 @@ export default async function Category({
         description={
           category === 'value'
             ? 'Estimate workload costs with explicit token assumptions. Prices and benchmark scores answer different questions; compare both before choosing.'
-            : 'Inspect results for a specific evaluation. Source coverage, test suite, and prompting configuration matter as much as the score.'
+            : category === 'agents'
+              ? 'Compare Arena Agent IPS scores with their confidence intervals and observation counts. These are preference-derived agent scores, not pass rates.'
+              : 'Compare Arena Web Development preference ratings. These are not coding pass rates, repository issue-resolution scores, or a universal benchmark ranking.'
         }
       />
       {category === 'coding' && sources.length > 1 && (
@@ -66,7 +68,9 @@ export default async function Category({
             >
               {s.source === 'evalplus'
                 ? 'EvalPlus archive (2024)'
-                : s.source === 'arena' ? 'Arena latest published' : 'Artificial Analysis'}
+                : s.source === 'arena'
+                  ? 'Arena latest published'
+                  : 'Artificial Analysis'}
             </Link>
           ))}
         </nav>

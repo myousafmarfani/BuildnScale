@@ -28,7 +28,10 @@ test('AA display gate removes stored data from warm reads, profiles, and history
     process.env.DATABASE_URL='test-only'
     process.env.AA_PUBLIC_DISPLAY_ENABLED='true'
     process.env.AA_PERMISSION_REFERENCE='test-agreement'
-    assert.equal((await getSnapshots()).length,3)
+    const enabled = await getSnapshots()
+    assert.equal(enabled.length,3)
+    assert.equal(enabled.find(s=>s.source==='evalplus').storage,'database')
+    assert.equal(enabled.find(s=>s.source==='arena').storage,'bundled')
     assert.ok(await getModel('aa-model'))
     assert.ok((await getHistory()).some(s=>s.source==='artificial-analysis'))
     process.env.AA_PUBLIC_DISPLAY_ENABLED='false'

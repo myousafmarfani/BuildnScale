@@ -1,7 +1,7 @@
 # BuildnScale
 
-Free, open-source productivity and developer tools, with sourced AI coding
-benchmarks and model comparisons for developers building applications and agents.
+Free, open-source productivity and developer tools, with sourced AI model
+leaderboards and comparisons for developers building applications and agents.
 
 [Open the platform](https://www.buildnscale.dev) ·
 [Browse tools](https://www.buildnscale.dev/tools) ·
@@ -31,16 +31,29 @@ and optional sync for supported productivity data.
 The workspace includes tool search, favorites, a collapsible sidebar, mobile
 navigation, and light and dark themes.
 
-## AI benchmarks
+## AI model leaderboard
 
-[Explore benchmarks](https://www.buildnscale.dev/leaderboard) ·
+[Explore the Arena leaderboard](https://www.buildnscale.dev/leaderboard) ·
 [Compare models](https://www.buildnscale.dev/compare) ·
 [Methodology](https://www.buildnscale.dev/leaderboard/methodology)
 
-The initial coding dataset is an attributed historical EvalPlus snapshot. Source
-dates and missing measurements are explicit; BuildnScale does not claim to have
-run these evaluations. Current-data feeds require permitted source access.
-See [benchmark operations](docs/ai-benchmarks.md) for imports and deployment.
+The default leaderboard is Arena's official open `lmarena-ai/leaderboard-dataset`
+snapshot. It covers the overall text style-controlled board, web development
+board, and aggregate agent board. No Arena API key is required. These are
+**preference and agent IPS ratings, not pass rates or a universal benchmark
+score**; BuildnScale imports the published data and does not rerun evaluations.
+
+Scheduled imports target every four hours when the deployment is configured. The
+interface shows the source publication date, last successful check, confidence
+intervals, and whether the page is serving a stored database snapshot or the
+bundled fallback. Source dates and missing measurements are explicit.
+
+The historical [EvalPlus archive](https://www.buildnscale.dev/leaderboard/archive)
+is a separate December 2024 coding snapshot, not a current frontier ranking.
+Objective suites such as SWE-bench Verified and LiveCodeBench require a permitted,
+attributable feed and are not implied by this leaderboard. See
+[benchmark operations](docs/ai-benchmarks.md) for imports, freshness checks, and
+deployment.
 
 ## Run locally
 

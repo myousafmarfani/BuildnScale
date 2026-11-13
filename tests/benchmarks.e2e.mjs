@@ -52,7 +52,7 @@ try {
   await page.locator('tbody tr').first().waitFor()
   assert.equal(await page.locator('tbody tr').count(), 25)
   assert.match(await page.locator('aside').innerText(), /Arena published dataset/)
-  assert.match(await page.locator('tbody').innerText(), /Source CI|Published 2026/)
+  assert.match(await page.locator('tbody').innerText(), /Source CI|Published \d{4}-\d{2}-\d{2}/)
   assert.equal(await page.getByLabel('Benchmark', {exact:true}).inputValue(), 'arena-text')
   await page.screenshot({path:output+'/arena-desktop.png',fullPage:true})
   const currentProfile = await page.locator('tbody tr th a').first().getAttribute('href')

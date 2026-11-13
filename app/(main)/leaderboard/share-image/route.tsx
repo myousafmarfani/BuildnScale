@@ -22,7 +22,7 @@ export function GET() {
         Choose with evidence.
       </div>
       <div style={{ fontSize: 30, color: '#a4b2a8', marginTop: 30 }}>
-        Coding benchmarks. Model comparisons. Clear sources.
+        Arena ratings. Model comparisons. Clear sources.
       </div>
     </div>,
     size

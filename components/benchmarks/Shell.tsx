@@ -26,7 +26,7 @@ export function BenchmarkShell({
       >
         {[
           ['/leaderboard', 'Overview'],
-          ['/leaderboard/coding', 'Coding'],
+          ['/leaderboard/coding', 'Web development'],
           ['/leaderboard/agents', 'Agents'],
           ['/leaderboard/value', 'Price & performance'],
           ['/models', 'Models'],
@@ -60,6 +60,12 @@ export function SnapshotNotice({ snapshot }: { snapshot: Snapshot }) {
   const checkedAt = snapshot.lastCheckedAt || snapshot.retrievedAt
   const { checkOverdue: overdue, publicationOld: oldPublication } = arenaFreshness(snapshot)
   const stale = arena ? overdue || oldPublication : isStale(snapshot.sourceUpdatedAt)
+  const storageLabel =
+    snapshot.storage === 'bundled'
+      ? 'Bundled fallback'
+      : snapshot.storage === 'database'
+        ? 'Stored database snapshot'
+        : null
   return (
     <aside
       className={`mb-7 rounded-xl border p-4 text-sm leading-relaxed ${stale ? 'border-amber/40 bg-amber/5' : 'border-border bg-surface'}`}
@@ -70,11 +76,13 @@ export function SnapshotNotice({ snapshot }: { snapshot: Snapshot }) {
           ? 'Historical EvalPlus snapshot'
           : arena ? 'Arena published dataset' : 'Artificial Analysis snapshot'}{' '}
         · source published (oldest included board) {dateLabel(snapshot.sourceUpdatedAt)}
+        {storageLabel && ` · ${storageLabel}`}
       </p>
       <p className="mt-1 text-muted">
         {snapshot.source === 'evalplus'
           ? 'Coverage reflects this archived source, not today’s frontier or model availability. Scores are imported, not tested by BuildnScale.'
           : arena ? 'Latest published overall boards for text, web development, and agents. Each rating has its own scale and publication date. Results are imported, not evaluated by BuildnScale.' : 'Scores reflect the selected source index and configuration, not a universal ranking.'}{' '}
+        {arena && snapshot.storage === 'bundled' && 'Database storage is unavailable or empty, so this dated bundled snapshot is being served instead of a live import. '}
         {arena ? <> {overdue && 'Update check overdue: no successful source check in the last eight hours. Displaying the last validated snapshot.'} {oldPublication && 'At least one board was published more than seven days ago; a recent check does not make those measurements new.'}</> : stale && 'Source is older than 30 days or its update date is unavailable.'}
       </p>
       <p className="mt-2 text-xs text-muted">

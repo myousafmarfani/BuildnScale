@@ -12,8 +12,8 @@ import {
 import { Explorer } from '@/components/benchmarks/Explorer'
 import { CurrentCoverage } from '@/components/benchmarks/CurrentCoverage'
 export const metadata = benchmarkMetadata(
-  'AI benchmarks for developers',
-  'Compare the latest imported AI model benchmark ratings and uncertainty, with source dates and historical results kept in a separate archive.',
+  'Arena AI model leaderboard for developers',
+  'Compare Arena text, web development, and agent preference ratings with source dates, confidence intervals, and historical results kept in a separate archive.',
   '/leaderboard'
 )
 export const revalidate = 3600
@@ -23,7 +23,7 @@ export default async function Leaderboard() {
     <BenchmarkShell>
       <PageHeading
         title="Choose with evidence."
-        description="AI model benchmarks for developers building applications and agents. Compare the latest published snapshot, inspect its source, and weigh results across distinct Arena categories."
+        description="Arena's published text, web development, and agent boards for developers building applications and agents. These are preference and IPS ratings, not pass rates or a universal benchmark score. Inspect the source date and uncertainty before deciding."
       />
       {snapshot ? (
         <>

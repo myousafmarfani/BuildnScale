@@ -40,7 +40,9 @@ export default async function Models({
             >
               {s.source === 'evalplus'
                 ? 'Archive (2024)'
-                : 'Latest imported results'}
+                : s.source === 'arena'
+                  ? 'Arena latest published'
+                  : 'Artificial Analysis'}
             </Link>
           ))}
         </nav>

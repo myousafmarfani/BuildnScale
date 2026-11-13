@@ -6,8 +6,8 @@ import type { Snapshot } from './types'
 import { unstable_cache } from 'next/cache'
 const getStoredSnapshots = unstable_cache(
   async (): Promise<Snapshot[]> => {
-    const fallback = seed as Snapshot
-    const arenaFallback = arenaSeed as Snapshot
+    const fallback: Snapshot = { ...(seed as Snapshot), storage: 'bundled' }
+    const arenaFallback: Snapshot = { ...(arenaSeed as Snapshot), storage: 'bundled' }
     if (!process.env.DATABASE_URL) return [fallback, arenaFallback]
     try {
       const candidates = await Promise.all(
@@ -23,7 +23,11 @@ const getStoredSnapshots = unstable_cache(
       for (const row of rows) {
         if (latest.has(row.source)) continue
         try {
-          latest.set(row.source, { ...assertSnapshot(row.payload), lastCheckedAt: row.retrievedAt?.toISOString() || undefined } as Snapshot)
+          latest.set(row.source, {
+            ...assertSnapshot(row.payload),
+            lastCheckedAt: row.retrievedAt?.toISOString() || undefined,
+            storage: 'database',
+          } as Snapshot)
         } catch {
           console.warn('Ignoring invalid benchmark snapshot', row.id)
         }
@@ -62,7 +66,11 @@ export async function getModel(id: string) {
   return null
 }
 export async function getHistory() {
-  if (!process.env.DATABASE_URL) return [seed as Snapshot, arenaSeed as Snapshot]
+  const bundled: Snapshot[] = [
+    { ...(seed as Snapshot), storage: 'bundled' },
+    { ...(arenaSeed as Snapshot), storage: 'bundled' },
+  ]
+  if (!process.env.DATABASE_URL) return bundled
   try {
     const rows = await prisma.benchmarkSnapshot.findMany({
       where: { source: { in: publicSources() } },
@@ -70,12 +78,14 @@ export async function getHistory() {
       take: 20,
     })
     const history = [
-      seed as Snapshot,
-      arenaSeed as Snapshot,
-      ...rows.map((r) => assertSnapshot(r.payload) as Snapshot),
+      ...bundled,
+      ...rows.map((r) => ({
+        ...(assertSnapshot(r.payload) as Snapshot),
+        storage: 'database' as const,
+      })),
     ].sort((a, b) => b.retrievedAt.localeCompare(a.retrievedAt))
     return [...new Map(history.map(snapshot => [`${snapshot.source}:${snapshot.sourceRevision}`, snapshot])).values()]
   } catch {
-    return [seed as Snapshot, arenaSeed as Snapshot]
+    return bundled
   }
 }

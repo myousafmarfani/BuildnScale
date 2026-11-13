@@ -23,6 +23,7 @@ export type Model = {
   pricing: { input: number | null; output: number | null } | null
   speed: number | null
 }
+export type SnapshotStorage = 'database' | 'bundled'
 export type Snapshot = {
   schemaVersion: number
   source: 'evalplus' | 'artificial-analysis' | 'arena'
@@ -35,4 +36,6 @@ export type Snapshot = {
   lastCheckedAt?: string
   indexVersion?: string
   models: Model[]
+  /** Set at read time so the UI can distinguish stored data from the bundled fallback. */
+  storage?: SnapshotStorage
 }

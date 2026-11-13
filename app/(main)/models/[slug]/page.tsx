@@ -94,7 +94,12 @@ export default async function ModelPage({
               ],
               ['Model release date', dateLabel(m.releaseDate || null)],
               ['Evaluation date', 'Not supplied per model'],
-              ['Source updated', dateLabel(s.sourceUpdatedAt)],
+              [
+                s.source === 'arena'
+                  ? 'Oldest included board published'
+                  : 'Source updated',
+                dateLabel(s.sourceUpdatedAt),
+              ],
               ['Source revision', s.sourceRevision],
               [
                 'Reasoning effort / harness',

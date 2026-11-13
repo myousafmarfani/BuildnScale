@@ -1,6 +1,6 @@
 import { timingSafeEqual } from 'node:crypto'
 import { NextResponse } from 'next/server'
-import { revalidateTag } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { importBenchmarks } from '@/lib/benchmarks/import'
 export const runtime = 'nodejs'
 export const maxDuration = 300
@@ -18,7 +18,31 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unsupported source' }, { status: 400 })
   try {
     const result = await importBenchmarks(source)
-    revalidateTag('benchmarks', { expire: 0 })
+    try {
+      revalidateTag('benchmarks', { expire: 0 })
+      // The data cache is tagged, but the full route cache is not. Revalidate the
+      // public routes so "Last successful check" and the update history change now.
+      for (const path of [
+        '/leaderboard',
+        '/leaderboard/coding',
+        '/leaderboard/agents',
+        '/leaderboard/value',
+        '/leaderboard/changelog',
+        '/leaderboard/archive',
+        '/models',
+        '/compare',
+      ])
+        revalidatePath(path)
+      revalidatePath('/models/[slug]', 'page')
+      revalidatePath('/compare/[pair]', 'page')
+    } catch (error) {
+      // The snapshot is already stored. Do not report a failed import just
+      // because cache invalidation was unavailable; pages refresh within an hour.
+      console.warn(
+        'Benchmark snapshot imported but public cache revalidation failed',
+        error instanceof Error ? error.message : 'Unknown error'
+      )
+    }
     return NextResponse.json(result)
   } catch (error) {
     console.error(

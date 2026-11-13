@@ -46,8 +46,8 @@ export function Comparison({
           <thead>
             <tr>
               <th scope="col">Evidence</th>
-              {entries.map(({ m }) => (
-                <th scope="col" key={m.id}>
+              {entries.map(({ m, s }) => (
+                <th scope="col" key={`${s.source}:${s.sourceRevision}:${m.id}`}>
                   <Link className="text-teal" href={`/models/${m.id}`}>
                     {m.name}
                   </Link>
@@ -59,8 +59,8 @@ export function Comparison({
             {metrics.map((metric) => (
               <tr key={metric}>
                 <th scope="row">{METRICS[metric].name}</th>
-                {entries.map(({ m }) => (
-                  <td className="font-mono" key={m.id}>
+                {entries.map(({ m, s }) => (
+                  <td className="font-mono" key={`${s.source}:${s.sourceRevision}:${m.id}`}>
                     {formatScore(m.scores[metric], metric)}
                     <Measurement model={m} metric={metric} />
                   </td>
@@ -125,7 +125,7 @@ export function Comparison({
             <tr>
               <th scope="row">Source evidence</th>
               {entries.map(({ m, s }) => (
-                <td key={m.id}>
+                <td key={`${s.source}:${s.sourceRevision}:${m.id}`}>
                   <a
                     className="text-teal"
                     href={s.sourceURL}

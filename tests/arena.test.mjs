@@ -42,7 +42,9 @@ test('bundled live-source snapshot retains exact values from all three boards',(
  const s=JSON.parse(fs.readFileSync(new URL('../data/benchmarks/arena-snapshot.json',import.meta.url)))
  assertSnapshot(s)
  for(const metric of ['arena-text','arena-webdev','arena-agent']) {
-  const rows=rankModels(s.models,metric);assert.ok(rows.length>10);assert.ok(rows.every(m=>m.evidence[metric].publishedAt.startsWith('2026-')))
+  const rows=rankModels(s.models,metric);assert.ok(rows.length>10)
+  assert.ok(rows.every(m=>/^\d{4}-\d{2}-\d{2}$/.test(m.evidence[metric].publishedAt)))
+  assert.ok(rows.every(m=>Date.parse(m.evidence[metric].publishedAt)<=Date.parse(s.retrievedAt)))
  }
  assert.equal(s.license,'CC-BY-4.0')
 })
