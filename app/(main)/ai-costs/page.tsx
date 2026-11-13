@@ -89,12 +89,29 @@ export const metadata: Metadata = {
     description:
       "Turn a workload into cost per task and monthly spend across eight models, with dated list prices and visible assumptions.",
     url: PAGE_URL,
+    // The image files live in app/ai-costs/, outside this route group, so Next
+    // does not auto-link them. Keep these references explicit.
+    images: [
+      {
+        url: "/ai-costs/opengraph-image",
+        width: 1200,
+        height: 630,
+        type: "image/png",
+        alt: "AI model cost calculator — cost per task and month across Claude, GPT, Gemini, and DeepSeek",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "AI model cost calculator — cost per task and month",
     description:
       "Turn a workload into cost per task and monthly spend across eight models, with dated list prices and visible assumptions.",
+    images: [
+      {
+        url: "/ai-costs/twitter-image",
+        alt: "AI model cost calculator — cost per task and month across Claude, GPT, Gemini, and DeepSeek",
+      },
+    ],
   },
 }
 

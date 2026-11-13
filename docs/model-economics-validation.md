@@ -116,7 +116,10 @@ The page targets developers searching for an AI or LLM API cost calculator. Keep
 one `h1`, dated prices in the HTML, and answers that stand alone when quoted.
 
 - Metadata: canonical `/ai-costs`, OpenGraph and Twitter cards with a page-specific
-  1200×630 image, keywords, and `max-snippet: -1` for Google.
+  1200×630 image, keywords, and `max-snippet: -1` for Google. The image files are
+  outside the page's route group (see above), so `page.tsx` must reference
+  `/ai-costs/opengraph-image` and `/ai-costs/twitter-image` explicitly; do not rely
+  on file-based auto-injection.
 - Structured data: one `@graph` with `WebApplication`/`SoftwareApplication`,
   `BreadcrumbList`, `FAQPage` matching the visible FAQ, and a `Dataset` for the
   dated price snapshot.
